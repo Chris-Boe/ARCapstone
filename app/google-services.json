@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "913414162888",
+    "firebase_url": "https://capstone-ded70.firebaseio.com",
+    "project_id": "capstone-ded70",
+    "storage_bucket": "capstone-ded70.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:913414162888:android:91d87e3ebdcd8777",
+        "android_client_info": {
+          "package_name": "plu.capstone"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "913414162888-msc4r6a4rcsjrne2qfbo06o0psarit5k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCHvj-O8NJzAfPthC6fJXZ2lL6vthcfz4s"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -41,7 +41,16 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="plu.capstone.MainActivity" />
         </activity>
-        <activity android:name=".CalendarActivity"></activity>
+        <activity android:name=".CalendarActivity" />
+        <activity
+            android:name=".MyEvents"
+            android:label="@string/title_activity_my_events"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="plu.capstone.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

@@ -20,15 +20,6 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
-    <Button
-        android:text="My Events"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/myEventsButton"
-        android:layout_centerVertical="true"
-        android:layout_alignLeft="@+id/calButton"
-        android:layout_alignStart="@+id/calButton" />
-
     <android.support.design.widget.FloatingActionButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -42,5 +33,23 @@
         android:layout_marginEnd="37dp"
         android:layout_marginBottom="31dp"
         android:id="@+id/camButton" />
+
+    <Button
+        android:text="My Events"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/myEventsButton"
+        android:layout_below="@+id/calButton"
+        android:layout_alignLeft="@+id/calButton"
+        android:layout_alignStart="@+id/calButton" />
+
+    <Button
+        android:text="Map"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/mapButton"
+        android:layout_below="@+id/myEventsButton"
+        android:layout_alignLeft="@+id/myEventsButton"
+        android:layout_alignStart="@+id/myEventsButton" />
 
 </RelativeLayout>

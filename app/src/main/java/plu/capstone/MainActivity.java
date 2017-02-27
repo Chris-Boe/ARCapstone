@@ -39,6 +39,15 @@ public class MainActivity extends AppCompatActivity {
                 goToMyEvents();
             }
         });
+        Button mapButton = (Button)findViewById(R.id.mapButton);
+        mapButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+
+                goToMap();
+            }
+        });
+
 
         //HashMap<String, ArrayList<String>> map = new HashMap<String, ArrayList<String>>();
         //RSSReader reader = new RSSReader("https://25livepub.collegenet.com/calendars/all.rss");
@@ -54,6 +63,10 @@ public class MainActivity extends AppCompatActivity {
     }
     private void goToMyEvents(){
         Intent intent = new Intent(this, MyEvents.class);
+        startActivity(intent);
+    }
+    private void goToMap(){
+        Intent intent = new Intent(this, MapsActivity.class);
         startActivity(intent);
     }
     //public HashMap getMap(){

@@ -1,10 +1,17 @@
 package plu.capstone;
 
+import android.widget.LinearLayout;
+import android.view.ViewGroup.LayoutParams;
+import android.view.ViewGroup;
+
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorManager;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
@@ -30,6 +37,7 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -64,21 +72,48 @@ public class CameraActivity extends AppCompatActivity {
     private boolean mFlashSupported;
     private Handler mBackgroundHandler;
     private HandlerThread mBackgroundThread;
+    private SensorManager mSensorManager;
+    private Sensor rSensor, mSensor, aSensor;
+    private float azimuth;
+    Button testButton;
+    LinearLayout layout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
         textureView = (TextureView) findViewById(R.id.texture);
+        textureView = (TextureView) findViewById(R.id.texture);
         assert textureView != null;
         textureView.setSurfaceTextureListener(textureListener);
-        takePictureButton = (Button) findViewById(R.id.btn_takepicture);
-        assert takePictureButton != null;
-        takePictureButton.setOnClickListener(new View.OnClickListener() {
+        //takePictureButton = (Button) findViewById(R.id.btn_takepicture);
+        //assert takePictureButton != null;
+       /* takePictureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 takePicture();
             }
-        });
+        });*/
+
+        //SENSORS
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        Sensor rSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+        if(rSensor==null){
+            mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+            aSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        }
+
+        //BUTTON
+        RelativeLayout relativeLayout = (RelativeLayout)findViewById(R.id.rView);
+        Button tButton = new Button(this);
+        tButton.setText("hello world!");
+        tButton.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        tButton.setX((float)0.5);
+        tButton.setY((float)0.5);
+        relativeLayout.addView(tButton);
+
+
+
     }
     TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
         @Override
@@ -97,6 +132,40 @@ public class CameraActivity extends AppCompatActivity {
         @Override
         public void onSurfaceTextureUpdated(SurfaceTexture surface) {
         }
+        /*@Override
+        public void onSensorChanged(SensorEvent event){
+            float[] magnetic = null, accelerometer = null;
+
+            if(rSensor==null){
+                switch(event.sensor.getType()){
+                    case Sensor.TYPE_MAGNETIC_FIELD:
+                        magnetic = event.values.clone();
+                        break;
+                    case Sensor.TYPE_ACCELEROMETER:
+                        accelerometer = event.values.clone();
+                        break;
+                }
+            }
+
+            if(magnetic != null && accelerometer != null){
+                float[] Rot = new float[9];
+                float[] I = new float[9];
+                SensorManager.getRotationMatrix(Rot, I, accelerometer, magnetic);
+
+                float[] outR = new float[9];
+                SensorManager.remapCoordinateSystem(Rot, SensorManager.AXIS_X, SensorManager.AXIS_Z, outR);
+                SensorManager.getOrientation(outR,values);
+
+                azimuth = values[0];
+                magnetic = null;
+                accelerometer = null;
+
+            }
+        } else {
+            SensorManager.getRotationMatrixFromVector(mRotationMatrix, mValues);
+
+            azimuth = Math.toDegrees(mValues[0]);
+        }*/
     };
     private final CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
         @Override

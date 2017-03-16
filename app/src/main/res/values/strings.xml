@@ -178,4 +178,6 @@
     <string name="action_settings">Settings</string>
     <string name="connection_error">\"Connection Error\"</string>
     <string name="title_activity_maps">Map</string>
+
+    <string name="title_activity_ar">AR</string>
 </resources>

@@ -52,4 +52,12 @@
         android:layout_alignLeft="@+id/myEventsButton"
         android:layout_alignStart="@+id/myEventsButton" />
 
+    <Button
+        android:text="AR"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/arButton"
+        android:layout_alignStart="@+id/mapButton"
+        android:layout_below="@+id/mapButton" />
+
 </RelativeLayout>

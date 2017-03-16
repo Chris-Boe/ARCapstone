@@ -16,8 +16,7 @@ import android.widget.Toast;
 
 import android.location.LocationListener;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+
 
 public class MainActivity extends AppCompatActivity {
     //private HashMap<String, ArrayList<String>> map;
@@ -38,6 +37,13 @@ public class MainActivity extends AppCompatActivity {
                 goToCamView();
             }
         });
+        Button arButton = (Button)findViewById(R.id.arButton);
+        arButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                goToAR();
+            }
+        });
         Button calButton = (Button) findViewById(R.id.calButton);
         calButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         mapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toastLoc();
+               // toastLoc();
                 //Toast toast = Toast.makeText(getApplicationContext(), "Test", Toast.LENGTH_SHORT);
                 //toast.show();
                 // goToMap();
@@ -134,6 +140,10 @@ public class MainActivity extends AppCompatActivity {
     }
     private void goToMap(){
         Intent intent = new Intent(this, MapsActivity.class);
+        startActivity(intent);
+    }
+    private void goToAR(){
+        Intent intent = new Intent(this, AR.class);
         startActivity(intent);
     }
     //public HashMap getMap(){

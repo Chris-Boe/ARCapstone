@@ -1,7 +1,9 @@
 package plu.capstone;
 
+import java.lang.Math.*;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Camera;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -9,6 +11,10 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraDevice;
+import android.hardware.camera2.CameraManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -39,6 +45,7 @@ public class InfoOverlay extends View implements SensorEventListener, LocationLi
     private Context superContext;
     private float[] lastAccelerometer;
     private float[] lastCompass;
+    private CameraCharacteristics cc;
     private final static Location testLoc = new Location("manual");
     static {
         testLoc.setLatitude(47.1486470);
@@ -46,8 +53,11 @@ public class InfoOverlay extends View implements SensorEventListener, LocationLi
         testLoc.setAltitude(0);
     }
     private float vFOV, hFOV;
+    private float orientation[]=null;
+    private float curBearing;
 
-    public InfoOverlay(Context context) {
+
+    public InfoOverlay(Context context, CameraDevice cam, CameraManager man) {
         super(context);
         superContext = context;
 
@@ -97,8 +107,17 @@ public class InfoOverlay extends View implements SensorEventListener, LocationLi
         }
         locationManager.requestLocationUpdates(best, 3000, 0, this);
 
+        //GET FOV
+        cc = null;
+//        Log.d("TEST", cam.getId()+" ?");
+        /*try {
+            cc = man.getCameraCharacteristics(cam.getId());
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
+        }
 
-
+        Log.d("cc return:", cc + " ?");
+*/
     }
 
 
@@ -109,6 +128,7 @@ public class InfoOverlay extends View implements SensorEventListener, LocationLi
         super.onDraw(canvas);
 
         Paint contentPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        Paint targetPaint = new Paint(R.color.black_overlay);
         contentPaint.setTextAlign(Paint.Align.CENTER);
         contentPaint.setTextSize(20);
         contentPaint.setColor(Color.RED);
@@ -118,6 +138,39 @@ public class InfoOverlay extends View implements SensorEventListener, LocationLi
         canvas.drawText(bearing,canvas.getWidth()/2, (canvas.getHeight())*4/8, contentPaint);
         canvas.drawText(gps,canvas.getWidth()/2, (canvas.getHeight())*5/8, contentPaint);
         canvas.drawText(ori,canvas.getWidth()/2, (canvas.getHeight())*6/8, contentPaint);
+
+        Log.d("CC VAL", cc + " ?");
+
+/*
+        if(orientation!=null) {
+
+        hFOV = (float)(2 * Math.atan(
+                (cc.get(CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE).getWidth() /
+                        (2 * cc.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS)[0])
+                )));
+        vFOV = (float)(2 * Math.atan(
+                (cc.get(CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE).getHeight() /
+                        (2 * cc.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS)[0])
+                )));
+
+            canvas.rotate((float) (0.0f - Math.toDegrees(orientation[2])));
+            float dx = (float) ((canvas.getWidth() / hFOV) * (Math.toDegrees(orientation[0]) - curBearing));
+            float dy = (float) ((canvas.getHeight() / vFOV) * Math.toDegrees(orientation[1]));
+
+            // wait to translate the dx so the horizon doesn't get pushed off
+            canvas.translate(0.0f, 0.0f - dy);
+
+            // make our line big enough to draw regardless of rotation and translation
+            canvas.drawLine(0f - canvas.getHeight(), canvas.getHeight() / 2, canvas.getWidth() + canvas.getHeight(), canvas.getHeight() / 2, targetPaint);
+
+
+            // now translate the dx
+            canvas.translate(0.0f - dx, 0.0f);
+
+            // draw our point -- we've rotated and translated this to the right spot already
+            canvas.drawCircle(canvas.getWidth() / 2, canvas.getHeight() / 2, 8.0f, targetPaint);
+        }
+*/
     }
 
     @Override
@@ -140,6 +193,8 @@ public class InfoOverlay extends View implements SensorEventListener, LocationLi
                 lastCompass = event.values;
                 break;
         }
+
+
         this.invalidate();
 
         }
@@ -157,7 +212,7 @@ public class InfoOverlay extends View implements SensorEventListener, LocationLi
        // toast.show();
         gps = "GPS: " + printLoc;
 
-        float curBearing = lastLocation.bearingTo(testLoc);
+        curBearing = lastLocation.bearingTo(testLoc);
         bearing = "bearing: " + curBearing;
 
 
@@ -166,7 +221,6 @@ public class InfoOverlay extends View implements SensorEventListener, LocationLi
 
         boolean gotRotation = SensorManager.getRotationMatrix(rotation,identity,lastAccelerometer,lastCompass);
 
-        float orientation[]=null;
         float cameraRotation[];
         if(gotRotation){
             cameraRotation = new float[9];

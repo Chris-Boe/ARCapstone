@@ -32,6 +32,9 @@ public class InfoOverlay extends View implements SensorEventListener, LocationLi
     String accelData = "Accelerometer Data";
     String compassData = "Compass Data";
     String gyroData = "Gyro Data";
+    String bearing = "Bearing";
+    String gps = "GPS:";
+    String ori = "ORI:";
     private Location lastLocation = null;
     private Context superContext;
     private float[] lastAccelerometer;
@@ -39,9 +42,10 @@ public class InfoOverlay extends View implements SensorEventListener, LocationLi
     private final static Location testLoc = new Location("manual");
     static {
         testLoc.setLatitude(47.1486470);
-        testLoc.setLongitude(122.4509320);
+        testLoc.setLongitude(-122.4509320);
         testLoc.setAltitude(0);
     }
+    private float vFOV, hFOV;
 
     public InfoOverlay(Context context) {
         super(context);
@@ -89,41 +93,11 @@ public class InfoOverlay extends View implements SensorEventListener, LocationLi
                         android.Manifest.permission.INTERNET
                 }, 10);*/
                 return;
-            } else {
-                locationManager.requestLocationUpdates(best, 3000, 0, this);
             }
         }
-        /*
-        //compute rotation matrix
-        float rotation[] = new float[9];
-        float identity[] = new float[9];
-        boolean gotRotation = SensorManager.getRotationMatrix(rotation,identity,lastAccelerometer,lastCompass);
+        locationManager.requestLocationUpdates(best, 3000, 0, this);
 
-        //orientation vector
-        if(gotRotation){
-            float orientation[] = new float[3];
-            SensorManager.getOrientation(rotation,orientation);
-        }
 
-        //where is camera pointed?
-        if(gotRotation) {
-            float cameraRotation[] = new float[9];
-
-            SensorManager.remapCoordinateSystem(rotation,SensorManager.AXIS_X,SensorManager.AXIS_Z, cameraRotation);
-
-            //orientation vec
-            float orientation[] = new float[3];
-            SensorManager.getOrientation(cameraRotation,orientation);
-            if(gotRotation){
-                float cameraRotation2[] = new float[9];
-                //remap so camera is pointing positive
-                SensorManager.remapCoordinateSystem(rotation,SensorManager.AXIS_X,SensorManager.AXIS_Z,cameraRotation2);
-
-                //orientation vector
-                float orientation2[] = new float[3];
-                SensorManager.getOrientation(cameraRotation,orientation2);
-            }
-        }*/
 
     }
 
@@ -138,10 +112,12 @@ public class InfoOverlay extends View implements SensorEventListener, LocationLi
         contentPaint.setTextAlign(Paint.Align.CENTER);
         contentPaint.setTextSize(20);
         contentPaint.setColor(Color.RED);
-        canvas.drawText(accelData, canvas.getWidth()/2, canvas.getHeight()/4, contentPaint);
-        canvas.drawText(compassData, canvas.getWidth()/2, canvas.getHeight()/2, contentPaint);
-        canvas.drawText(gyroData, canvas.getWidth()/2, (canvas.getHeight()*3)/4, contentPaint);
-
+        canvas.drawText(accelData, canvas.getWidth()/2, canvas.getHeight()/8, contentPaint);
+        canvas.drawText(compassData, canvas.getWidth()/2, canvas.getHeight()*2/8, contentPaint);
+        canvas.drawText(gyroData, canvas.getWidth()/2, (canvas.getHeight())*3/8, contentPaint);
+        canvas.drawText(bearing,canvas.getWidth()/2, (canvas.getHeight())*4/8, contentPaint);
+        canvas.drawText(gps,canvas.getWidth()/2, (canvas.getHeight())*5/8, contentPaint);
+        canvas.drawText(ori,canvas.getWidth()/2, (canvas.getHeight())*6/8, contentPaint);
     }
 
     @Override
@@ -177,8 +153,39 @@ public class InfoOverlay extends View implements SensorEventListener, LocationLi
     public void onLocationChanged(Location location) {
         lastLocation = location;
         String printLoc = "Lat: " + location.getLatitude() + " Long: " + location.getLongitude();
-        Toast toast = Toast.makeText(superContext.getApplicationContext(), printLoc, Toast.LENGTH_SHORT);
-        toast.show();
+        //Toast toast = Toast.makeText(superContext.getApplicationContext(), printLoc, Toast.LENGTH_SHORT);
+       // toast.show();
+        gps = "GPS: " + printLoc;
+
+        float curBearing = lastLocation.bearingTo(testLoc);
+        bearing = "bearing: " + curBearing;
+
+
+        float rotation[] = new float[9];
+        float identity[] = new float[9];
+
+        boolean gotRotation = SensorManager.getRotationMatrix(rotation,identity,lastAccelerometer,lastCompass);
+
+        float orientation[]=null;
+        float cameraRotation[];
+        if(gotRotation){
+            cameraRotation = new float[9];
+            //remap so camera points straight down y axis
+            SensorManager.remapCoordinateSystem(rotation,SensorManager.AXIS_X,SensorManager.AXIS_Z,cameraRotation);
+           //orientation vec
+            orientation = new float[3];
+            SensorManager.getOrientation(cameraRotation,orientation);
+            if (gotRotation) {
+                cameraRotation = new float[9];
+                //remap so camera points positive
+                SensorManager.remapCoordinateSystem(rotation,SensorManager.AXIS_X,SensorManager.AXIS_Z,cameraRotation);
+
+                orientation = new float[3];
+                SensorManager.getOrientation(cameraRotation,orientation);
+            }
+        }
+        ori = "ORI: " + orientation[0] + " " + orientation[1] + " " + orientation[2];
+        this.invalidate();
     }
 
     @Override

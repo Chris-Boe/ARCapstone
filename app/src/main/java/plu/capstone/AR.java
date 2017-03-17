@@ -19,6 +19,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
+import android.hardware.camera2.*;
 
 /**
  * GET LOCATION

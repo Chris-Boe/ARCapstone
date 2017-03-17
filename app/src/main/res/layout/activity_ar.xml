@@ -46,6 +46,12 @@
                 android:text="@string/dummy_button" />
 
         </LinearLayout>
+        <TextureView
+            android:id="@+id/texture"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            />
     </FrameLayout>
 
 </FrameLayout>

@@ -57,7 +57,7 @@ public class InfoOverlay extends View implements SensorEventListener, LocationLi
     private float curBearing;
 
 
-    public InfoOverlay(Context context, CameraDevice cam, CameraManager man) {
+    public InfoOverlay(Context context, CameraDevice cam, CameraManager man, String cId) {
         super(context);
         superContext = context;
 
@@ -109,15 +109,15 @@ public class InfoOverlay extends View implements SensorEventListener, LocationLi
 
         //GET FOV
         cc = null;
-//        Log.d("TEST", cam.getId()+" ?");
-        /*try {
-            cc = man.getCameraCharacteristics(cam.getId());
+        Log.d("TEST", cId +" ?");
+        try {
+            cc = man.getCameraCharacteristics(cId);
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
 
         Log.d("cc return:", cc + " ?");
-*/
+
     }
 
 
@@ -139,7 +139,7 @@ public class InfoOverlay extends View implements SensorEventListener, LocationLi
         canvas.drawText(gps,canvas.getWidth()/2, (canvas.getHeight())*5/8, contentPaint);
         canvas.drawText(ori,canvas.getWidth()/2, (canvas.getHeight())*6/8, contentPaint);
 
-        Log.d("CC VAL", cc + " ?");
+  //      Log.d("CC VAL", cc + " ?");
 
 /*
         if(orientation!=null) {

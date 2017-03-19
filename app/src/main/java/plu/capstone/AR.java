@@ -140,7 +140,7 @@ public class AR extends AppCompatActivity {
     private Handler mBackgroundHandler;
     private HandlerThread mBackgroundThread;
     private TextureView textureView;
-
+    private CameraManager manager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -185,9 +185,6 @@ public class AR extends AppCompatActivity {
             }
 
         //get tilt
-        InfoOverlay gyrodata = new InfoOverlay(getApplicationContext());
-        FrameLayout arViewPane = (FrameLayout) findViewById(R.id.frame_parent);
-        arViewPane.addView(gyrodata);
 
         textureView = (TextureView) findViewById(R.id.texture);
         textureView = (TextureView) findViewById(R.id.texture);
@@ -285,7 +282,7 @@ public class AR extends AppCompatActivity {
         }
     }
     private void openCamera() {
-        CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
+        manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
         Log.e(TAG, "is camera open");
         try {
             cameraId = manager.getCameraIdList()[0];
@@ -299,6 +296,9 @@ public class AR extends AppCompatActivity {
                 return;
             }
             manager.openCamera(cameraId, stateCallback, null);
+            InfoOverlay gyrodata = new InfoOverlay(getApplicationContext(),cameraDevice,manager,cameraId);
+            FrameLayout arViewPane = (FrameLayout) findViewById(R.id.frame_parent);
+            arViewPane.addView(gyrodata);
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }

@@ -172,7 +172,7 @@ public class InfoOverlay extends View implements SensorEventListener, LocationLi
 
 
             // wait to translate the dx so the horizon doesn't get pushed off
-            canvas.translate(0.0f, 0.0f - dy);
+            //canvas.translate(0.0f, 0.0f - dy);
 
             // make our line big enough to draw regardless of rotation and translation
             canvas.drawLine(0f - canvas.getHeight(), canvas.getHeight() / 2, canvas.getWidth() + canvas.getHeight(), canvas.getHeight() / 2, targetPaint);
@@ -183,7 +183,7 @@ public class InfoOverlay extends View implements SensorEventListener, LocationLi
 
             // draw our point -- we've rotated and translated this to the right spot already
            // Log.d("w/h: ", canvas.getWidth() / 2 + "/" + canvas.getHeight() / 2);
-            canvas.drawCircle(canvas.getWidth() / 2, canvas.getHeight()*6/8, 100, targetPaint);
+            canvas.drawCircle(canvas.getWidth() / 2, canvas.getHeight()/2, 100, targetPaint);
         }
 
     }

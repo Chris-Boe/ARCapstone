@@ -1,6 +1,8 @@
 package plu.capstone;
 
 import java.lang.Math.*;
+import java.sql.Time;
+
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Camera;
@@ -28,6 +30,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import static android.R.attr.value;
+import static java.lang.System.currentTimeMillis;
 
 /**
  * Created by playt on 3/15/2017.
@@ -48,13 +51,16 @@ public class InfoOverlay extends View implements SensorEventListener, LocationLi
     private CameraCharacteristics cc;
     private final static Location testLoc = new Location("manual");
     static {
-        testLoc.setLatitude(47.1486470);
-        testLoc.setLongitude(-122.4509320);
+        testLoc.setLatitude(47.1486260);
+        testLoc.setLongitude(-122.4504670);
         testLoc.setAltitude(0);
     }
     private float vFOV, hFOV;
     private float orientation[]=null;
     private float curBearing;
+    private Time lastTime;
+    private float[] smoothedAccel, smoothedCompass;
+
 
 
     public InfoOverlay(Context context, CameraDevice cam, CameraManager man, String cId) {
@@ -105,18 +111,18 @@ public class InfoOverlay extends View implements SensorEventListener, LocationLi
                 return;
             }
         }
-        locationManager.requestLocationUpdates(best, 3000, 0, this);
+        locationManager.requestLocationUpdates(best, 500, 0, this);
 
         //GET FOV
         cc = null;
-        Log.d("TEST", cId +" ?");
+        //Log.d("TEST", cId +" ?");
         try {
             cc = man.getCameraCharacteristics(cId);
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
 
-        Log.d("cc return:", cc + " ?");
+        //Log.d("cc return:", cc + " ?");
 
     }
 
@@ -128,7 +134,7 @@ public class InfoOverlay extends View implements SensorEventListener, LocationLi
         super.onDraw(canvas);
 
         Paint contentPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        Paint targetPaint = new Paint(R.color.black_overlay);
+        Paint targetPaint = new Paint(Color.CYAN);
         contentPaint.setTextAlign(Paint.Align.CENTER);
         contentPaint.setTextSize(20);
         contentPaint.setColor(Color.RED);
@@ -139,23 +145,31 @@ public class InfoOverlay extends View implements SensorEventListener, LocationLi
         canvas.drawText(gps,canvas.getWidth()/2, (canvas.getHeight())*5/8, contentPaint);
         canvas.drawText(ori,canvas.getWidth()/2, (canvas.getHeight())*6/8, contentPaint);
 
-  //      Log.d("CC VAL", cc + " ?");
+        //Log.d("CC VAL", cc + " ?");
 
-/*
+        float lVFOV, lHFOV;
+
         if(orientation!=null) {
 
-        hFOV = (float)(2 * Math.atan(
+
+
+            hFOV = (float)(2 * Math.atan(
                 (cc.get(CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE).getWidth() /
                         (2 * cc.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS)[0])
                 )));
-        vFOV = (float)(2 * Math.atan(
+            vFOV = (float)(2 * Math.atan(
                 (cc.get(CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE).getHeight() /
                         (2 * cc.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS)[0])
                 )));
 
+
+
+
             canvas.rotate((float) (0.0f - Math.toDegrees(orientation[2])));
             float dx = (float) ((canvas.getWidth() / hFOV) * (Math.toDegrees(orientation[0]) - curBearing));
             float dy = (float) ((canvas.getHeight() / vFOV) * Math.toDegrees(orientation[1]));
+
+
 
             // wait to translate the dx so the horizon doesn't get pushed off
             canvas.translate(0.0f, 0.0f - dy);
@@ -165,32 +179,61 @@ public class InfoOverlay extends View implements SensorEventListener, LocationLi
 
 
             // now translate the dx
-            canvas.translate(0.0f - dx, 0.0f);
+           // canvas.translate(0.0f - dx, 0.0f);
 
             // draw our point -- we've rotated and translated this to the right spot already
-            canvas.drawCircle(canvas.getWidth() / 2, canvas.getHeight() / 2, 8.0f, targetPaint);
+           // Log.d("w/h: ", canvas.getWidth() / 2 + "/" + canvas.getHeight() / 2);
+            canvas.drawCircle(canvas.getWidth() / 2, canvas.getHeight()*6/8, 100, targetPaint);
         }
-*/
+
     }
 
     @Override
     public void onSensorChanged(SensorEvent event){
         StringBuilder msg = new StringBuilder(event.sensor.getName()).append(" ");
-        for(float value: event.values) {
-            msg.append("[").append(value).append("]");
-        }
+
+        int smoothing = 15;
+        Time time = new Time(currentTimeMillis());
 
         switch(event.sensor.getType()) {
             case Sensor.TYPE_ACCELEROMETER:
-                accelData = msg.toString();
+                float temp[] = null;
+                smoothedAccel = lastAccelerometer;
+                if(smoothedAccel==null)
+                    for(int i=0;i<event.values.length;i++) {
+                        smoothedAccel = new float[event.values.length];
+                        smoothedAccel[i] = 0;
+                    }
                 lastAccelerometer = event.values;
+                float elapsed[] = new float[3];
+                for(int i=0;i<event.values.length;i++){
+                    smoothedAccel[i] += elapsed[i] * (lastAccelerometer[i] - smoothedAccel[i])/smoothing;         lastTime = time;
+                }
+                for(float value: smoothedAccel) {
+                    msg.append("[").append(value).append("]");
+                }
+                accelData = msg.toString();
                 break;
-            case Sensor.TYPE_GYROSCOPE:
+          /*  case Sensor.TYPE_GYROSCOPE:
                 gyroData = msg.toString();
-                break;
+                break;*/
             case Sensor.TYPE_MAGNETIC_FIELD:
-                compassData = msg.toString();
+
+                smoothedCompass = lastCompass;
+                if(smoothedCompass==null)
+                    for(int i=0;i<event.values.length;i++) {
+                        smoothedCompass = new float[event.values.length];
+                        smoothedCompass[i] = 0;
+                    }
                 lastCompass = event.values;
+                float elapsedC[] = new float[3];
+                for(int i=0;i<event.values.length;i++){
+                    smoothedAccel[i] += elapsedC[i] * (lastCompass[i] - smoothedCompass[i])/smoothing;         lastTime = time;
+                }
+                for(float value: smoothedCompass) {
+                    msg.append("[").append(value).append("]");
+                }
+                compassData = msg.toString();
                 break;
         }
 
@@ -213,13 +256,15 @@ public class InfoOverlay extends View implements SensorEventListener, LocationLi
         gps = "GPS: " + printLoc;
 
         curBearing = lastLocation.bearingTo(testLoc);
+        Log.d("bearing: ",curBearing+"");
         bearing = "bearing: " + curBearing;
+        Log.d("loc:",printLoc);
 
 
         float rotation[] = new float[9];
         float identity[] = new float[9];
 
-        boolean gotRotation = SensorManager.getRotationMatrix(rotation,identity,lastAccelerometer,lastCompass);
+        boolean gotRotation = SensorManager.getRotationMatrix(rotation,identity,smoothedAccel,smoothedCompass);
 
         float cameraRotation[];
         if(gotRotation){
@@ -238,6 +283,7 @@ public class InfoOverlay extends View implements SensorEventListener, LocationLi
                 SensorManager.getOrientation(cameraRotation,orientation);
             }
         }
+        Log.d("ORI:",ori+"");
         ori = "ORI: " + orientation[0] + " " + orientation[1] + " " + orientation[2];
         this.invalidate();
     }

@@ -168,22 +168,26 @@ public class InfoOverlay extends View implements SensorEventListener, LocationLi
             canvas.rotate((float) (0.0f - Math.toDegrees(orientation[2])));
             float dx = (float) ((canvas.getWidth() / hFOV) * (Math.toDegrees(orientation[0]) - curBearing));
             float dy = (float) ((canvas.getHeight() / vFOV) * Math.toDegrees(orientation[1]));
+           // Log.d("ORI[0]/BEARING:", orientation[0]+"/"+curBearing);
+           // Log.d("o/d", (orientation[0]-curBearing)+"");
+            Log.d("DX/DY:",dx+"/"+dy);
 
 
 
             // wait to translate the dx so the horizon doesn't get pushed off
-            //canvas.translate(0.0f, 0.0f - dy);
+           // canvas.translate(0.0f, 0.0f - dy);
 
             // make our line big enough to draw regardless of rotation and translation
             canvas.drawLine(0f - canvas.getHeight(), canvas.getHeight() / 2, canvas.getWidth() + canvas.getHeight(), canvas.getHeight() / 2, targetPaint);
 
 
             // now translate the dx
-           // canvas.translate(0.0f - dx, 0.0f);
+            //canvas.translate(0.0f - dx, 0.0f);
 
             // draw our point -- we've rotated and translated this to the right spot already
-           // Log.d("w/h: ", canvas.getWidth() / 2 + "/" + canvas.getHeight() / 2);
-            canvas.drawCircle(canvas.getWidth() / 2, canvas.getHeight()/2, 100, targetPaint);
+            Log.d("w/h: ", canvas.getWidth() + "/" + canvas.getHeight());
+
+            canvas.drawCircle(canvas.getWidth()/2, canvas.getHeight()/2, 100, targetPaint);
         }
 
     }
@@ -256,9 +260,9 @@ public class InfoOverlay extends View implements SensorEventListener, LocationLi
         gps = "GPS: " + printLoc;
 
         curBearing = lastLocation.bearingTo(testLoc);
-        Log.d("bearing: ",curBearing+"");
+        Log.d("CURBEARING: ",curBearing+"");
         bearing = "bearing: " + curBearing;
-        Log.d("loc:",printLoc);
+        //Log.d("CURBEARING:",curBearing+"");
 
 
         float rotation[] = new float[9];
@@ -266,9 +270,8 @@ public class InfoOverlay extends View implements SensorEventListener, LocationLi
 
         boolean gotRotation = SensorManager.getRotationMatrix(rotation,identity,smoothedAccel,smoothedCompass);
 
-        float cameraRotation[];
         if(gotRotation){
-            cameraRotation = new float[9];
+            float cameraRotation[] = new float[9];
             //remap so camera points straight down y axis
             SensorManager.remapCoordinateSystem(rotation,SensorManager.AXIS_X,SensorManager.AXIS_Z,cameraRotation);
            //orientation vec
@@ -283,7 +286,7 @@ public class InfoOverlay extends View implements SensorEventListener, LocationLi
                 SensorManager.getOrientation(cameraRotation,orientation);
             }
         }
-        Log.d("ORI:",ori+"");
+        //Log.d("ORI:",ori+"");
         ori = "ORI: " + orientation[0] + " " + orientation[1] + " " + orientation[2];
         this.invalidate();
     }

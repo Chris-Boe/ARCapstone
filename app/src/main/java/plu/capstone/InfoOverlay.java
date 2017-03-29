@@ -61,7 +61,8 @@ public class InfoOverlay extends View implements SensorEventListener, LocationLi
     private Time lastTime;
     private float[] smoothedAccel, smoothedCompass;
 
-
+    private String dName;
+    private DataBaseBuildings dbb;
 
     public InfoOverlay(Context context, CameraDevice cam, CameraManager man, String cId) {
         super(context);
@@ -123,6 +124,9 @@ public class InfoOverlay extends View implements SensorEventListener, LocationLi
         }
 
         //Log.d("cc return:", cc + " ?");
+
+        dbb = new DataBaseBuildings(context);
+        dName = "";
 
     }
 

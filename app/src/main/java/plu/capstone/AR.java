@@ -451,6 +451,9 @@ public class AR extends AppCompatActivity implements SensorsFragment.OnFragmentI
 
             //Log.d("frag",fragment+"?");
             //Log.d("man/cam",manager+"/"+cameraId+"?");
+
+
+            //change this to bundle
             fragment.update(aData, cData, gData, b, g, o, or, cb, manager, cameraId);
         }
 /*

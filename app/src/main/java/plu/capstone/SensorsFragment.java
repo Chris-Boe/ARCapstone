@@ -245,7 +245,8 @@ public class SensorsFragment extends Fragment implements SensorEventListener, Lo
                 lastCompass = event.values;
                 float elapsedC[] = new float[3];
                 for(int i=0;i<event.values.length;i++){
-                    smoothedAccel[i] += elapsedC[i] * (lastCompass[i] - smoothedCompass[i])/smoothing;         lastTime = time;
+                    smoothedAccel[i] += elapsedC[i] * (lastCompass[i] - smoothedCompass[i])/smoothing;
+                    lastTime = time;
                 }
                 for(float value: smoothedCompass) {
                     msg.append("[").append(value).append("]");

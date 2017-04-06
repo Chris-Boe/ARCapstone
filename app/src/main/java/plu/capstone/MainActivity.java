@@ -1,5 +1,6 @@
 package plu.capstone;
 
+import android.app.IntentService;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -16,14 +17,15 @@ import android.widget.Toast;
 
 import android.location.LocationListener;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class MainActivity extends AppCompatActivity {
-    //private HashMap<String, ArrayList<String>> map;
-    //Blah blah blah test comment again
     private LocationManager locationManager;
     private LocationListener locationListener;
     private Button mapButton;
+    private static HashMap<String, ArrayList<String>> map;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         camButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                goToCamView();
+                updateDB();
             }
         });
         Button arButton = (Button)findViewById(R.id.arButton);
@@ -70,11 +72,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        //HashMap<String, ArrayList<String>> map = new HashMap<String, ArrayList<String>>();
-        //RSSReader reader = new RSSReader("https://25livepub.collegenet.com/calendars/all.rss");
-        //map = reader.getMap();
-    }
 
+    }
+    /*
     private void toastLoc() {
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         locationListener = new LocationListener() {
@@ -126,9 +126,17 @@ public class MainActivity extends AppCompatActivity {
                 return;
         }
     }
-    private void goToCamView(){
-        Intent intent = new Intent(this, CameraActivity.class);
-        startActivity(intent);
+    */
+    private void updateDB(){
+        //Intent intent = new Intent(this, CameraActivity.class);
+        //startActivity(intent);
+        Toast toast1 = Toast.makeText(getApplicationContext(), "Starting update", Toast.LENGTH_SHORT);
+        toast1.show();
+        Intent rssIntent = new Intent(this, RSSReader.class);
+        rssIntent.putExtra(RSSReader.urlInMessage, "https://25livepub.collegenet.com/calendars/all.rss");
+        startService(rssIntent);
+        Toast toast2 = Toast.makeText(getApplicationContext(), "Update Complete", Toast.LENGTH_SHORT);
+        toast2.show();
     }
     private void goToCal(){
         Intent intent = new Intent(this, CalendarActivity.class);

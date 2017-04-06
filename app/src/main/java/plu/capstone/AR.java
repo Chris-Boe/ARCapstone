@@ -52,7 +52,7 @@ import java.util.Arrays;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class AR extends AppCompatActivity implements SensorsFragment.OnFragmentInteractionListener {
+public class AR extends AppCompatActivity implements SensorsFragment.OnFragmentInteractionListener, BuildingOverlay.OnFragmentInteractionListener {
 /**TODO
  * sensorsfragment listeners
  */
@@ -151,6 +151,9 @@ public class AR extends AppCompatActivity implements SensorsFragment.OnFragmentI
     private HandlerThread mBackgroundThread;
     private TextureView textureView;
     private CameraManager manager;
+    private View tempView;
+    private BuildingOverlay buildingDisplay;
+    private boolean isready;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -317,6 +320,7 @@ public class AR extends AppCompatActivity implements SensorsFragment.OnFragmentI
            // InfoOverlay gyrodata = new InfoOverlay(getApplicationContext(),cameraDevice,manager,cameraId);
            arViewPane = (FrameLayout) findViewById(R.id.frame_parent);
            // arViewPane.addView(gyrodata);
+            ft.add(R.id.frame_parent, new BuildingOverlay(), "building");
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
@@ -441,7 +445,18 @@ public class AR extends AppCompatActivity implements SensorsFragment.OnFragmentI
     public void invalidate(String aData, String cData, String gData, String b,
                            String g, String o, float[] or, float cb) {
 
+        if(isready==true) {
 
+            BuildingOverlay fragment = (BuildingOverlay) getSupportFragmentManager().findFragmentByTag("building");
+
+            //Log.d("frag",fragment+"?");
+            //Log.d("man/cam",manager+"/"+cameraId+"?");
+
+
+            //change this to bundle
+            fragment.update(aData, cData, gData, b, g, o, or, cb, manager, cameraId);
+        }
+/*
         final String accelData = aData, compassData = cData, gyroData = gData, bearing = b, gps = g, ori = o;
         final float[] orientation = or;
         final float curBearing = cb;
@@ -456,7 +471,10 @@ public class AR extends AppCompatActivity implements SensorsFragment.OnFragmentI
 
         final CameraCharacteristics fcc = cc;
 
-        View tempView = new View(this){
+        if(tempView != null)
+            arViewPane.removeView(tempView);
+
+        tempView = new View(this){
             @Override
             public void onDraw(Canvas canvas){
                 Paint contentPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -510,6 +528,8 @@ public class AR extends AppCompatActivity implements SensorsFragment.OnFragmentI
                     Log.d("w/h: ", canvas.getWidth() + "/" + canvas.getHeight());
 
                     canvas.drawCircle(testx, canvas.getHeight() / 2, 100, targetPaint);
+
+
                 }
             }
         };
@@ -517,7 +537,13 @@ public class AR extends AppCompatActivity implements SensorsFragment.OnFragmentI
         tempView.draw(tempCanvas);
 
         arViewPane.addView(tempView);
+*/
+    }
 
+    @Override
+    public boolean onReady() {
+        isready = true;
+        return true;
     }
 }
 

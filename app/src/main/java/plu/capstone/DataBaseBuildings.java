@@ -66,7 +66,7 @@ public class DataBaseBuildings {
                 }
                 Log.d("TEST", bList);
                 Toast toast = Toast.makeText(con.getApplicationContext(), bList, Toast.LENGTH_SHORT);
-                toast.show();;
+                toast.show();
             }
 
             //error

@@ -57,6 +57,7 @@ public class BuildingOverlay extends Fragment {
 
     private Button buildingButton;
     private View buttonView;
+    private int count = 1;
 
     private OnFragmentInteractionListener mListener;
 
@@ -141,7 +142,7 @@ public class BuildingOverlay extends Fragment {
 
 
     public void update(String aData, String cData, String gData, String b,
-                       String g, String o, float[] or, float cb, CameraManager manager, String cameraId){
+                       String g, String o, final float[] or, float cb, CameraManager manager, String cameraId){
 
         CameraCharacteristics cc = null;
 
@@ -170,9 +171,10 @@ public class BuildingOverlay extends Fragment {
 
         if(or!=null) {
             final float dx = (float) ((getView().getWidth() / hFOV) * (Math.toDegrees(or[0]) - cb));
-
-            final float testx = dx / -100;
-            Log.d("TESTX",dx+"?");
+            final float dy = (float) ((getView().getHeight() / vFOV) * Math.toDegrees(or[1]));
+            final float testx = dx / 100;
+            final float testy = dx / 200;
+            Log.d("TESTX/Y",testx+"/"+testy);
 
 
             //listener for onDataChange
@@ -187,16 +189,25 @@ public class BuildingOverlay extends Fragment {
                     if(buildingButton!=null)
                         arViewPane.removeView(buildingButton);
 
-                    buildingButton = new Button(getContext());
+                    buildingButton = new BuildingButton(getContext(),getView().getWidth(),getView().getHeight(),or);
                     buildingButton.setTag("Building");
                     buildingButton.setText("TEMPORARY");
+                    buildingButton.setRotation((float) (0.0f - Math.toDegrees(or[2])));
+                    buildingButton.setTranslationX(testx);
+                    //buildingButton.setTranslationY(0.0f-testy);
+
                     RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                     params.leftMargin = getView().getWidth()/2;
                     params.topMargin = getView().getHeight()/2;
 
-
                     arViewPane.addView(buildingButton,params);
 
+                    buildingButton.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View v){
+                            Log.d("HI","HIHIHIH");
+                            buildingButton.setText("Click");
+                        }
+                    });
                     // String bList = "";
 
                    /* for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {

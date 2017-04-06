@@ -13,6 +13,8 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -63,6 +65,12 @@ public class SensorsFragment extends Fragment implements SensorEventListener, Lo
         testLoc.setLatitude(47.1486260);
         testLoc.setLongitude(-122.4504670);
         testLoc.setAltitude(0);
+    }
+    private final static Location testLoc2 = new Location("manual");
+    static {
+        testLoc2.setLatitude(47.143121);
+        testLoc2.setLongitude(-122.454317);
+        testLoc2.setAltitude(0);
     }
     private float vFOV, hFOV;
     private float orientation[]=null;
@@ -130,10 +138,14 @@ public class SensorsFragment extends Fragment implements SensorEventListener, Lo
         //location
         LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
-        criteria.setAccuracy(Criteria.ACCURACY_FINE);
+        criteria.setAccuracy(Criteria.NO_REQUIREMENT);
         criteria.setPowerRequirement(Criteria.NO_REQUIREMENT);
 
         String best = locationManager.getBestProvider(criteria, true);
+        //check if network is available
+        ConnectivityManager connectivityManager = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        //return activeNetworkInfo != null && activeNetworkInfo.isConnected();
 
         Log.v(TAG, "best provider: " + best);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -148,6 +160,10 @@ public class SensorsFragment extends Fragment implements SensorEventListener, Lo
                 }, 10);
                 //request permission
             } else {
+                if(activeNetworkInfo != null) {
+                    locationManager.requestLocationUpdates(locationManager.NETWORK_PROVIDER, 500, 0, this);
+                    locationManager.removeUpdates(this);
+                }
                 locationManager.requestLocationUpdates(best, 500, 0, this);
             }
         }
@@ -163,7 +179,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, Lo
 
        //Log.d("cc return:", cc + " ?");
 
-        //dbb = new DataBaseBuildings(getContext());
+        dbb = new DataBaseBuildings(getContext());
        // dName = "";
 
         return inflater.inflate(R.layout.fragment_sensors, container, false);

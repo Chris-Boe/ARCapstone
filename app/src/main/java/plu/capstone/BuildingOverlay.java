@@ -172,7 +172,7 @@ public class BuildingOverlay extends Fragment {
         if(or!=null) {
             final float dx = (float) ((getView().getWidth() / hFOV) * (Math.toDegrees(or[0]) - cb));
             final float dy = (float) ((getView().getHeight() / vFOV) * Math.toDegrees(or[1]));
-            final float testx = dx / 100;
+            final float testx = dx / -100;
             final float testy = dx / 200;
             Log.d("TESTX/Y",testx+"/"+testy);
 

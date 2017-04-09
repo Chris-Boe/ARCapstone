@@ -77,6 +77,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, Lo
     private float curBearing;
     private Time lastTime;
     private float[] smoothedAccel, smoothedCompass;
+    private int TWENTYSEC = 1000*20;
 
     private String dName;
     private DataBaseBuildings dbb;
@@ -162,9 +163,9 @@ public class SensorsFragment extends Fragment implements SensorEventListener, Lo
             } else {
                 if(activeNetworkInfo != null) {
                     locationManager.requestLocationUpdates(locationManager.NETWORK_PROVIDER, 500, 0, this);
-                    locationManager.removeUpdates(this);
+                    //locationManager.removeUpdates(this);
                 }
-                locationManager.requestLocationUpdates(best, 500, 0, this);
+                locationManager.requestLocationUpdates(best, 500, 5, this);
             }
         }
 
@@ -282,7 +283,9 @@ public class SensorsFragment extends Fragment implements SensorEventListener, Lo
 
     @Override
     public void onLocationChanged(Location location) {
-        lastLocation = location;
+        if(isBetterLocation(location, lastLocation)){
+            lastLocation = location;
+        }
         String printLoc = "Lat: " + location.getLatitude() + " Long: " + location.getLongitude();
         //Toast toast = Toast.makeText(superContext.getApplicationContext(), printLoc, Toast.LENGTH_SHORT);
         // toast.show();
@@ -322,7 +325,55 @@ public class SensorsFragment extends Fragment implements SensorEventListener, Lo
         ori = "ORI: " + orientation[0] + " " + orientation[1] + " " + orientation[2];
         invalidate(accelData, compassData, gyroData, bearing, gps, ori, orientation, curBearing);
     }
+    //From Google Location Strategies
+    //Smooth location results
+    protected boolean isBetterLocation(Location location, Location currentBestLocation) {
+        if (currentBestLocation == null) {
+            // A new location is always better than no location
+            return true;
+        }
 
+        // Check whether the new location fix is newer or older
+        long timeDelta = location.getTime() - currentBestLocation.getTime();
+        boolean isSignificantlyNewer = timeDelta > TWENTYSEC;
+        boolean isSignificantlyOlder = timeDelta < -TWENTYSEC;
+        boolean isNewer = timeDelta > 0;
+
+        // If it's been more than two minutes since the current location, use the new location
+        // because the user has likely moved
+        if (isSignificantlyNewer) {
+            return true;
+            // If the new location is more than two minutes older, it must be worse
+        } else if (isSignificantlyOlder) {
+            return false;
+        }
+
+        // Check whether the new location fix is more or less accurate
+        int accuracyDelta = (int) (location.getAccuracy() - currentBestLocation.getAccuracy());
+        boolean isLessAccurate = accuracyDelta > 0;
+        boolean isMoreAccurate = accuracyDelta < 0;
+        boolean isSignificantlyLessAccurate = accuracyDelta > 200;
+
+        // Check if the old and new location are from the same provider
+        boolean isFromSameProvider = isSameProvider(location.getProvider(),
+                currentBestLocation.getProvider());
+
+        // Determine location quality using a combination of timeliness and accuracy
+        if (isMoreAccurate) {
+            return true;
+        } else if (isNewer && !isLessAccurate) {
+            return true;
+        } else if (isNewer && !isSignificantlyLessAccurate && isFromSameProvider) {
+            return true;
+        }
+        return false;
+    }
+    private boolean isSameProvider(String provider1, String provider2) {
+        if (provider1 == null) {
+            return provider2 == null;
+        }
+        return provider1.equals(provider2);
+    }
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
 

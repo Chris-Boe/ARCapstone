@@ -165,7 +165,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, Lo
                     locationManager.requestLocationUpdates(locationManager.NETWORK_PROVIDER, 500, 0, this);
                     //locationManager.removeUpdates(this);
                 }
-                locationManager.requestLocationUpdates(best, 500, 5, this);
+                locationManager.requestLocationUpdates(best, 500, 0, this);
             }
         }
 

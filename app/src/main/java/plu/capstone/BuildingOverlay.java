@@ -27,6 +27,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -143,7 +145,7 @@ public class BuildingOverlay extends Fragment {
 
 
     public void update(String aData, String cData, String gData, String b,
-                       String g, String o, final float[] or, float cb, CameraManager manager, String cameraId){
+                       String g, String o, ArrayList<PointOfInterest> poiList, CameraManager manager, String cameraId){
 
         CameraCharacteristics cc = null;
 
@@ -154,7 +156,8 @@ public class BuildingOverlay extends Fragment {
         }
 
         CameraCharacteristics fcc = cc;
-        tempView.setOptions(aData, cData, gData, b, g, o, or, cb, cc);
+        tempView.setOptions(aData, cData, gData, b, g, o, poiList.get(0).getOrientation(),
+                poiList.get(0).getCurBearing(), cc);
 
         //TODO:calculate query
     //    Query testQuery = mDatabase.child("Pacific Lutheran University/Buildings");
@@ -170,9 +173,9 @@ public class BuildingOverlay extends Fragment {
 
 
 
-        if(or!=null) {
-            final float dx = (float) ((getView().getWidth() / hFOV) * (Math.toDegrees(or[0]) - cb));
-            final float dy = (float) ((getView().getHeight() / vFOV) * Math.toDegrees(or[1]));
+        if(poiList.get(0)!=null) {
+            final float dx = (float) ((getView().getWidth() / hFOV) * (Math.toDegrees(poiList.get(0).getOrientation()[0]) - poiList.get(0).getCurBearing()));
+            final float dy = (float) ((getView().getHeight() / vFOV) * Math.toDegrees(poiList.get(0).getOrientation()[1]));
             final float testx = dx / -100;
             final float testy = dx / 200;
             //Log.d("TESTX/Y",testx+"/"+testy);
@@ -190,10 +193,10 @@ public class BuildingOverlay extends Fragment {
             if(buildingButton!=null)
                 arViewPane.removeView(buildingButton);
 
-            buildingButton = new BuildingButton(getContext(),getView().getWidth(),getView().getHeight(),or);
+            buildingButton = new BuildingButton(getContext(),getView().getWidth(),getView().getHeight(),poiList.get(0).getOrientation());
             buildingButton.setTag("Building");
-            buildingButton.setText("TEMPORARY");
-            buildingButton.setRotation((float) (0.0f - Math.toDegrees(or[2])));
+            buildingButton.setText(poiList.get(0).getBuilding().Name);
+            buildingButton.setRotation((float) (0.0f - Math.toDegrees(poiList.get(0).getOrientation()[2])));
             buildingButton.setTranslationX(testx);
             //buildingButton.setTranslationY(0.0f-testy);
 

@@ -43,6 +43,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.File;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -448,7 +450,7 @@ public class AR extends AppCompatActivity implements SensorsFragment.OnFragmentI
 
     @Override
     public void invalidate(String aData, String cData, String gData, String b,
-                           String g, String o, float[] or, float cb) {
+                           String g, String o, ArrayList<PointOfInterest> poiList) {
 
         if(isready==true) {
 
@@ -460,7 +462,7 @@ public class AR extends AppCompatActivity implements SensorsFragment.OnFragmentI
             //TODO:get list of buildings to send to buildingoverlay
 
             //change this to bundle
-            fragment.update(aData, cData, gData, b, g, o, or, cb, manager, cameraId);
+            fragment.update(aData, cData, gData, b, g, o, poiList, manager, cameraId);
         }
 /*
         final String accelData = aData, compassData = cData, gyroData = gData, bearing = b, gps = g, ori = o;

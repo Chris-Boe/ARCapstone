@@ -34,8 +34,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.lang.reflect.Array;
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.List;
 
 import static java.lang.System.currentTimeMillis;
 
@@ -104,6 +106,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, Lo
     private static final String CC_KEY = "camchar_key";
     private CameraCharacteristics camchar;
     private DatabaseReference mDatabase;
+    ArrayList<PointOfInterest> poiList;
 
     /**
      * Use this factory method to create a new instance of
@@ -237,7 +240,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, Lo
                        String bearing,
                        String gps,
                        String ori,
-                       float orientation[], float curBearing) {
+                       ArrayList<PointOfInterest> poiList) {
         if (mListener != null) {
             mListener.invalidate(accelData,
                     compassData,
@@ -245,7 +248,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, Lo
                     bearing,
                     gps,
                     ori,
-                    orientation, curBearing);
+                    poiList);
         }
     }
 
@@ -317,7 +320,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, Lo
         }
 
 
-        invalidate(accelData, compassData, gyroData, bearing, gps, ori, orientation, curBearing);
+      //  invalidate(accelData, compassData, gyroData, bearing, gps, ori, orientation, curBearing);
     }
 
     @Override
@@ -331,6 +334,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, Lo
         if (buildingList.size() > 0) {
             Log.d("BUILDING:", buildingList.get(0).Name);
 
+            poiList = new ArrayList<PointOfInterest>();
             if (isBetterLocation(location, lastLocation)) {
                 lastLocation = location;
             }
@@ -379,10 +383,14 @@ public class SensorsFragment extends Fragment implements SensorEventListener, Lo
             }
             //Log.d("ORI:",ori+"");
             ori = "ORI: " + orientation[0] + " " + orientation[1] + " " + orientation[2];
-            invalidate(accelData, compassData, gyroData, bearing, gps, ori, orientation, curBearing);
+
+            PointOfInterest poi = new PointOfInterest(orientation, curBearing, buildingList.get(0));
+            poiList.add(poi);
+
+            invalidate(accelData, compassData, gyroData, bearing, gps, ori, poiList);
         }
     }
- 
+
     //From Google Location Strategies
     //Smooth location results
     protected boolean isBetterLocation(Location location, Location currentBestLocation) {
@@ -465,6 +473,6 @@ public class SensorsFragment extends Fragment implements SensorEventListener, Lo
                     String bearing,
                     String gps,
                     String ori,
-                    float orientation[], float curBearing);
+                    ArrayList<PointOfInterest> poiList);
     }
 }

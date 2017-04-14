@@ -303,27 +303,31 @@ public class SensorsFragment extends Fragment implements SensorEventListener, Lo
         if(smoothedAccel==null)
             Log.d(":c","like really");
 
-        boolean gotRotation = SensorManager.getRotationMatrix(rotation,identity,smoothedAccel,smoothedCompass);
+        if(smoothedAccel!=null && smoothedCompass!=null) {
+            boolean gotRotation = SensorManager.getRotationMatrix(rotation, identity, smoothedAccel, smoothedCompass);
 
-        if(gotRotation){
-            float cameraRotation[] = new float[9];
-            //remap so camera points straight down y axis
-            SensorManager.remapCoordinateSystem(rotation,SensorManager.AXIS_X,SensorManager.AXIS_Z,cameraRotation);
-            //orientation vec
-            orientation = new float[3];
-            SensorManager.getOrientation(cameraRotation,orientation);
             if (gotRotation) {
-                cameraRotation = new float[9];
-                //remap so camera points positive
-                SensorManager.remapCoordinateSystem(rotation,SensorManager.AXIS_X,SensorManager.AXIS_Z,cameraRotation);
-
+                float cameraRotation[] = new float[9];
+                //remap so camera points straight down y axis
+                SensorManager.remapCoordinateSystem(rotation, SensorManager.AXIS_X, SensorManager.AXIS_Z, cameraRotation);
+                //orientation vec
                 orientation = new float[3];
-                SensorManager.getOrientation(cameraRotation,orientation);
+                SensorManager.getOrientation(cameraRotation, orientation);
+                if (gotRotation) {
+                    cameraRotation = new float[9];
+                    //remap so camera points positive
+                    SensorManager.remapCoordinateSystem(rotation, SensorManager.AXIS_X, SensorManager.AXIS_Z, cameraRotation);
+
+                    orientation = new float[3];
+                    SensorManager.getOrientation(cameraRotation, orientation);
+                }
+            }
+            //Log.d("ORI:",ori+"");
+            if(orientation!=null) {
+                ori = "ORI: " + orientation[0] + " " + orientation[1] + " " + orientation[2];
+                invalidate(accelData, compassData, gyroData, bearing, gps, ori, orientation, curBearing);
             }
         }
-        //Log.d("ORI:",ori+"");
-        ori = "ORI: " + orientation[0] + " " + orientation[1] + " " + orientation[2];
-        invalidate(accelData, compassData, gyroData, bearing, gps, ori, orientation, curBearing);
     }
     //From Google Location Strategies
     //Smooth location results

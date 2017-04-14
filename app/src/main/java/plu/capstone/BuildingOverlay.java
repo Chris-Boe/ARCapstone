@@ -174,11 +174,34 @@ public class BuildingOverlay extends Fragment {
             final float dy = (float) ((getView().getHeight() / vFOV) * Math.toDegrees(or[1]));
             final float testx = dx / -100;
             final float testy = dx / 200;
-            Log.d("TESTX/Y",testx+"/"+testy);
+            //Log.d("TESTX/Y",testx+"/"+testy);
+
+            if(buildingButton!=null)
+                arViewPane.removeView(buildingButton);
+
+            buildingButton = new BuildingButton(getContext(),getView().getWidth(),getView().getHeight(),or);
+            buildingButton.setTag("Building");
+            buildingButton.setText("TEMPORARY");
+            buildingButton.setRotation((float) (0.0f - Math.toDegrees(or[2])));
+            buildingButton.setTranslationX(testx);
+            //buildingButton.setTranslationY(0.0f-testy);
+
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            params.leftMargin = getView().getWidth()/2;
+            params.topMargin = getView().getHeight()/2;
+
+            arViewPane.addView(buildingButton,params);
+
+            buildingButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v){
+                    Log.d("HI","HIHIHIH");
+                    buildingButton.setText("Click");
+                }
+            });
 
 
             //listener for onDataChange
-            testQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+       /*     testQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                 //reads in data whenever changed (maybe find a more appropriate callback)
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -217,14 +240,14 @@ public class BuildingOverlay extends Fragment {
                     //send query to customView
                     //Toast toast = Toast.makeText(getContext().getApplicationContext(), bList, Toast.LENGTH_SHORT);
                     //toast.show();*/
-                }
+              /*  }
 
                 //error
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                     Log.e("ERR", "onCancelled", databaseError.toException());
                 }
-            });
+            }); */
         }
 
        /* CameraCharacteristics cc = null;

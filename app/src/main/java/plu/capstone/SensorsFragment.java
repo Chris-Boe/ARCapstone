@@ -180,7 +180,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, Lo
 
        //Log.d("cc return:", cc + " ?");
 
-        dbb = new DataBaseBuildings(getContext());
+       // dbb = new DataBaseBuildings(getContext());
        // dName = "";
 
         return inflater.inflate(R.layout.fragment_sensors, container, false);
@@ -286,6 +286,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, Lo
         if(isBetterLocation(location, lastLocation)){
             lastLocation = location;
         }
+        //lastLocation = location;
         String printLoc = "Lat: " + location.getLatitude() + " Long: " + location.getLongitude();
         //Toast toast = Toast.makeText(superContext.getApplicationContext(), printLoc, Toast.LENGTH_SHORT);
         // toast.show();
@@ -303,6 +304,51 @@ public class SensorsFragment extends Fragment implements SensorEventListener, Lo
         if(smoothedAccel==null)
             Log.d(":c","like really");
 
+        boolean gotRotation = SensorManager.getRotationMatrix(rotation,identity,smoothedAccel,smoothedCompass);
+
+        if(gotRotation){
+            float cameraRotation[] = new float[9];
+            //remap so camera points straight down y axis
+            SensorManager.remapCoordinateSystem(rotation,SensorManager.AXIS_X,SensorManager.AXIS_Z,cameraRotation);
+            //orientation vec
+            orientation = new float[3];
+            SensorManager.getOrientation(cameraRotation,orientation);
+            if (gotRotation) {
+                cameraRotation = new float[9];
+                //remap so camera points positive
+                SensorManager.remapCoordinateSystem(rotation,SensorManager.AXIS_X,SensorManager.AXIS_Z,cameraRotation);
+
+                orientation = new float[3];
+                SensorManager.getOrientation(cameraRotation,orientation);
+            }
+        }
+        //Log.d("ORI:",ori+"");
+        ori = "ORI: " + orientation[0] + " " + orientation[1] + " " + orientation[2];
+        invalidate(accelData, compassData, gyroData, bearing, gps, ori, orientation, curBearing);
+    }
+    /*
+    THIS WASNT WORKING???
+    public void onLocationChanged(Location location) {
+      if(isBetterLocation(location, lastLocation)){
+          lastLocation = location;
+      }
+        String printLoc = "Lat: " + location.getLatitude() + " Long: " + location.getLongitude();
+        //Toast toast = Toast.makeText(superContext.getApplicationContext(), printLoc, Toast.LENGTH_SHORT);
+        // toast.show();
+        gps = "GPS: " + printLoc;
+
+        curBearing = lastLocation.bearingTo(testLoc);
+        Log.d("CURBEARING: ",curBearing+"");
+        bearing = "bearing: " + curBearing;
+
+
+        float rotation[] = new float[9];
+        float identity[] = new float[9];
+
+        if(smoothedAccel==null || smoothedCompass==null)
+            Log.d(":c","WTFWTFWTFWTFWTF");
+
+        //TODO:why is it sometimes null??????
         if(smoothedAccel!=null && smoothedCompass!=null) {
             boolean gotRotation = SensorManager.getRotationMatrix(rotation, identity, smoothedAccel, smoothedCompass);
 
@@ -322,13 +368,13 @@ public class SensorsFragment extends Fragment implements SensorEventListener, Lo
                     SensorManager.getOrientation(cameraRotation, orientation);
                 }
             }
-            //Log.d("ORI:",ori+"");
             if(orientation!=null) {
                 ori = "ORI: " + orientation[0] + " " + orientation[1] + " " + orientation[2];
                 invalidate(accelData, compassData, gyroData, bearing, gps, ori, orientation, curBearing);
             }
         }
     }
+    */
     //From Google Location Strategies
     //Smooth location results
     protected boolean isBetterLocation(Location location, Location currentBestLocation) {

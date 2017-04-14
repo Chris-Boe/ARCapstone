@@ -64,7 +64,7 @@ public class DataBaseBuildings {
                 for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
                     bList += singleSnapshot.getValue(Buildings.class).Name + " ";
                 }
-                Log.d("TEST", bList);
+               // Log.d("TEST", bList);
                 Toast toast = Toast.makeText(con.getApplicationContext(), bList, Toast.LENGTH_SHORT);
                 toast.show();
             }

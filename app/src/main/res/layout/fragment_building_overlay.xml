@@ -15,6 +15,18 @@
         android:orientation="horizontal"
         tools:ignore="UselessParent">
 
+        <RelativeLayout
+            android:id="@+id/buttonsView"
+            style="?metaButtonBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom|center_horizontal"
+            android:background="@color/black_overlay"
+            android:orientation="horizontal"
+            tools:ignore="UselessParent">
+
+        </RelativeLayout>
+
         <!--<fragment android:name="plu.capstone.SensorsFragment"
                android:id="@+id/sensors"
                android:layout_weight="1"

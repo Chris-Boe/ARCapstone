@@ -47,12 +47,12 @@ public class BuildingOverlay extends Fragment {
     private String mParam2;
     private Query bQuery;
     private customView tempView;
-    private RelativeLayout arViewPane;
+    private RelativeLayout arViewPane, buttonsView;
 
     private  String accelData, aData, compassData, cData, gyroData, gData, bearing, b, gps, g, ori, o;
     private float[] orientation;
     private float curBearing;
-    private DatabaseReference mDatabase;
+   // private DatabaseReference mDatabase;
     private FrameLayout buildingInfo;
 
     private Button buildingButton;
@@ -93,7 +93,7 @@ public class BuildingOverlay extends Fragment {
         }
 
         //instantiate database
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+       // mDatabase = FirebaseDatabase.getInstance().getReference();
 
         //TODO: query database for possible locations
         //queries each building (should probably test for more buildings)
@@ -111,6 +111,7 @@ public class BuildingOverlay extends Fragment {
         Canvas temp = new Canvas();
         tempView = new customView(getContext());
         arViewPane.addView(tempView);
+
         onReady();
         return in;
     }
@@ -156,7 +157,7 @@ public class BuildingOverlay extends Fragment {
         tempView.setOptions(aData, cData, gData, b, g, o, or, cb, cc);
 
         //TODO:calculate query
-        Query testQuery = mDatabase.child("Pacific Lutheran University/Buildings");
+    //    Query testQuery = mDatabase.child("Pacific Lutheran University/Buildings");
 
         float hFOV = (float) (2 * Math.atan(
                 (fcc.get(CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE).getWidth() /
@@ -175,6 +176,16 @@ public class BuildingOverlay extends Fragment {
             final float testx = dx / -100;
             final float testy = dx / 200;
             //Log.d("TESTX/Y",testx+"/"+testy);
+
+        /*    if(buttonsView!=null){
+                arViewPane.removeView(buttonsView);
+            }
+
+            buttonsView = (RelativeLayout)getView().findViewById(R.id.buttonsView);
+            for(int i=0;i<3;i++){
+
+            } */
+
 
             if(buildingButton!=null)
                 arViewPane.removeView(buildingButton);

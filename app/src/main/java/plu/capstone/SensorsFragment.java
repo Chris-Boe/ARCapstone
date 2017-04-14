@@ -18,14 +18,24 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.sql.Time;
+import java.util.ArrayList;
 
 import static java.lang.System.currentTimeMillis;
 
@@ -85,6 +95,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, Lo
     private String cId;
 
     private OnFragmentInteractionListener mListener;
+    private ArrayList<Buildings> buildingList;
 
     public SensorsFragment() {
         // Required empty public constructor
@@ -92,6 +103,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, Lo
 
     private static final String CC_KEY = "camchar_key";
     private CameraCharacteristics camchar;
+    private DatabaseReference mDatabase;
 
     /**
      * Use this factory method to create a new instance of
@@ -126,6 +138,35 @@ public class SensorsFragment extends Fragment implements SensorEventListener, Lo
         man = ((AR)getActivity()).getCameraManager();
         cId = ((AR)getActivity()).getCameraId();
         Log.d("CAMINFO (v)", man + "/" + cId + "?");
+
+        /**
+         * GENERATE BUILDINGS
+         */
+        //get this moved later
+        buildingList = new ArrayList<Buildings>();
+
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        Query testQuery = mDatabase.child("Pacific Lutheran University/Buildings");
+        //probably use minheap instead
+        testQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            //reads in data whenever changed (maybe find a more appropriate callback)
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
+                    buildingList.add(singleSnapshot.getValue(Buildings.class));
+                    //Log.d("NAME",singleSnapshot.getValue(Buildings.class).Name);
+                }
+            }
+
+            //error
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("ERR", "onCancelled", databaseError.toException());
+            }
+        });
+
+        Log.d("BLIST:",buildingList.toString());
+
 
         SensorManager sensors = (SensorManager) getContext().getSystemService(Context.SENSOR_SERVICE);
         Sensor accelSensor = sensors.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -167,7 +208,10 @@ public class SensorsFragment extends Fragment implements SensorEventListener, Lo
                 }
                 locationManager.requestLocationUpdates(best, 500, 0, this);
             }
+
         }
+
+
 
         //GET FOV
         cc = null;
@@ -283,48 +327,60 @@ public class SensorsFragment extends Fragment implements SensorEventListener, Lo
 
     @Override
     public void onLocationChanged(Location location) {
-        if(isBetterLocation(location, lastLocation)){
-            lastLocation = location;
-        }
-        //lastLocation = location;
-        String printLoc = "Lat: " + location.getLatitude() + " Long: " + location.getLongitude();
-        //Toast toast = Toast.makeText(superContext.getApplicationContext(), printLoc, Toast.LENGTH_SHORT);
-        // toast.show();
-        gps = "GPS: " + printLoc;
+      //  Log.d("BLIST2", buildingList.toString());
+        if (buildingList.size() > 0) {
+            Log.d("BUILDING:", buildingList.get(0).Name);
 
-        curBearing = lastLocation.bearingTo(testLoc);
-        Log.d("CURBEARING: ",curBearing+"");
-        bearing = "bearing: " + curBearing;
-        Log.d("CURBEARING:",curBearing+"?");
-
-
-        float rotation[] = new float[9];
-        float identity[] = new float[9];
-
-        if(smoothedAccel==null)
-            Log.d(":c","like really");
-
-        boolean gotRotation = SensorManager.getRotationMatrix(rotation,identity,smoothedAccel,smoothedCompass);
-
-        if(gotRotation){
-            float cameraRotation[] = new float[9];
-            //remap so camera points straight down y axis
-            SensorManager.remapCoordinateSystem(rotation,SensorManager.AXIS_X,SensorManager.AXIS_Z,cameraRotation);
-            //orientation vec
-            orientation = new float[3];
-            SensorManager.getOrientation(cameraRotation,orientation);
-            if (gotRotation) {
-                cameraRotation = new float[9];
-                //remap so camera points positive
-                SensorManager.remapCoordinateSystem(rotation,SensorManager.AXIS_X,SensorManager.AXIS_Z,cameraRotation);
-
-                orientation = new float[3];
-                SensorManager.getOrientation(cameraRotation,orientation);
+            if (isBetterLocation(location, lastLocation)) {
+                lastLocation = location;
             }
+
+            Location auc = new Location("manual");
+                auc.setLatitude(buildingList.get(0).Latitude);
+                auc.setLongitude(buildingList.get(0).Longitude);
+                auc.setAltitude(0);
+
+
+            //lastLocation = location;
+            String printLoc = "Lat: " + location.getLatitude() + " Long: " + location.getLongitude();
+            //Toast toast = Toast.makeText(superContext.getApplicationContext(), printLoc, Toast.LENGTH_SHORT);
+            // toast.show();
+            gps = "GPS: " + printLoc;
+
+            curBearing = lastLocation.bearingTo(auc);
+            Log.d("CURBEARING: ", curBearing + "");
+            bearing = "bearing: " + curBearing;
+            Log.d("CURBEARING:", curBearing + "?");
+
+
+            float rotation[] = new float[9];
+            float identity[] = new float[9];
+
+            if (smoothedAccel == null)
+                Log.d(":c", "like really");
+
+            boolean gotRotation = SensorManager.getRotationMatrix(rotation, identity, smoothedAccel, smoothedCompass);
+
+            if (gotRotation) {
+                float cameraRotation[] = new float[9];
+                //remap so camera points straight down y axis
+                SensorManager.remapCoordinateSystem(rotation, SensorManager.AXIS_X, SensorManager.AXIS_Z, cameraRotation);
+                //orientation vec
+                orientation = new float[3];
+                SensorManager.getOrientation(cameraRotation, orientation);
+                if (gotRotation) {
+                    cameraRotation = new float[9];
+                    //remap so camera points positive
+                    SensorManager.remapCoordinateSystem(rotation, SensorManager.AXIS_X, SensorManager.AXIS_Z, cameraRotation);
+
+                    orientation = new float[3];
+                    SensorManager.getOrientation(cameraRotation, orientation);
+                }
+            }
+            //Log.d("ORI:",ori+"");
+            ori = "ORI: " + orientation[0] + " " + orientation[1] + " " + orientation[2];
+            invalidate(accelData, compassData, gyroData, bearing, gps, ori, orientation, curBearing);
         }
-        //Log.d("ORI:",ori+"");
-        ori = "ORI: " + orientation[0] + " " + orientation[1] + " " + orientation[2];
-        invalidate(accelData, compassData, gyroData, bearing, gps, ori, orientation, curBearing);
     }
     /*
     THIS WASNT WORKING???

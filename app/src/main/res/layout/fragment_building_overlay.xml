@@ -16,7 +16,7 @@
         tools:ignore="UselessParent">
 
         <RelativeLayout
-            android:id="@+id/buttonsView"
+            android:id="@+id/bView"
             style="?metaButtonBarStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

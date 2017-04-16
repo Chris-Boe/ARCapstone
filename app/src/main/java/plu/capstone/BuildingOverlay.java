@@ -58,7 +58,6 @@ public class BuildingOverlay extends Fragment {
     private FrameLayout buildingInfo;
 
     private Button buildingButton;
-    private View buttonView;
     private int count = 1;
 
     private OnFragmentInteractionListener mListener;
@@ -155,9 +154,11 @@ public class BuildingOverlay extends Fragment {
             e.printStackTrace();
         }
 
+       //Log.d("poiListSize",poiList.size()+"?");
+
         CameraCharacteristics fcc = cc;
-        tempView.setOptions(aData, cData, gData, b, g, o, poiList.get(0).getOrientation(),
-                poiList.get(0).getCurBearing(), cc);
+        //tempView.setOptions(aData, cData, gData, b, g, o, poiList.get(0).getOrientation(),
+          //      poiList.get(0).getCurBearing(), cc);
 
         //TODO:calculate query
     //    Query testQuery = mDatabase.child("Pacific Lutheran University/Buildings");
@@ -172,15 +173,55 @@ public class BuildingOverlay extends Fragment {
                 )));
 
 
+        if(buttonsView!=null){
+            buttonsView.removeAllViews();
+            //arViewPane.removeView(buttonsView);
+        }
+        buttonsView = (RelativeLayout)getView().findViewById(R.id.bView);
 
-        if(poiList.get(0)!=null) {
+        //TODO:make better check
+        if(poiList.size()>=4) {
+            Log.d("listsize",poiList.size()+"?");
+            for(int i=0;i<4;i++) {
+                final float dx = (float) ((getView().getWidth() / hFOV) * (Math.toDegrees(poiList.get(i).getOrientation()[0]) - poiList.get(i).getCurBearing()));
+                final float dy = (float) ((getView().getHeight() / vFOV) * Math.toDegrees(poiList.get(i).getOrientation()[1]));
+                final float testx = dx / -100;
+                final float testy = dx / -100;
+
+
+                buildingButton = new BuildingButton(getContext(),getView().getWidth(),getView().getHeight(),poiList.get(i).getOrientation());
+                buildingButton.setTag("Building");
+                buildingButton.setText(poiList.get(i).getBuilding().Name);
+                buildingButton.setRotation((float) (0.0f - Math.toDegrees(poiList.get(i).getOrientation()[2])));
+                buildingButton.setTranslationX(testx);
+               // buildingButton.setTranslationY(testy);
+                //buildingButton.setTranslationY(0.0f-testy);
+
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                params.leftMargin = getView().getWidth()/2;
+                params.topMargin = getView().getHeight()/2;
+
+                buttonsView.addView(buildingButton,params);
+
+                buildingButton.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v){
+                        Log.d("HI","HIHIHIH");
+                        buildingButton.setText("Click");
+                    }
+                });
+            }
+
+           // arViewPane.addView(buttonsView);
+
+        /*
             final float dx = (float) ((getView().getWidth() / hFOV) * (Math.toDegrees(poiList.get(0).getOrientation()[0]) - poiList.get(0).getCurBearing()));
             final float dy = (float) ((getView().getHeight() / vFOV) * Math.toDegrees(poiList.get(0).getOrientation()[1]));
             final float testx = dx / -100;
             final float testy = dx / 200;
-            //Log.d("TESTX/Y",testx+"/"+testy);
+            //Log.d("TESTX/Y",testx+"/"+testy);*/
 
-        /*    if(buttonsView!=null){
+        /*  DELETE:
+          if(buttonsView!=null){
                 arViewPane.removeView(buttonsView);
             }
 
@@ -190,7 +231,7 @@ public class BuildingOverlay extends Fragment {
             } */
 
 
-            if(buildingButton!=null)
+          /*  if(buildingButton!=null)
                 arViewPane.removeView(buildingButton);
 
             buildingButton = new BuildingButton(getContext(),getView().getWidth(),getView().getHeight(),poiList.get(0).getOrientation());
@@ -211,7 +252,7 @@ public class BuildingOverlay extends Fragment {
                     Log.d("HI","HIHIHIH");
                     buildingButton.setText("Click");
                 }
-            });
+            });*/
 
 
             //listener for onDataChange

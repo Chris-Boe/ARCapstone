@@ -144,6 +144,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, Lo
 
         /**
          * GENERATE BUILDINGS
+         * todo:SORT THIS BY LOCATION SOMEHOW
          */
         //get this moved later
         buildingList = new ArrayList<Buildings>();
@@ -339,6 +340,55 @@ public class SensorsFragment extends Fragment implements SensorEventListener, Lo
                 lastLocation = location;
             }
 
+            for(int i=0;i<buildingList.size();i++) {
+                Location loc  = new Location("manual");
+                    loc.setLatitude(buildingList.get(i).Latitude);
+                    loc.setLongitude(buildingList.get(i).Longitude);
+                    loc.setAltitude(0);
+
+                String printLoc = "Lat: " + location.getLatitude() + " Long: " + location.getLongitude();
+                //Toast toast = Toast.makeText(superContext.getApplicationContext(), printLoc, Toast.LENGTH_SHORT);
+                // toast.show();
+                gps = "GPS: " + printLoc;
+
+                curBearing = lastLocation.bearingTo(loc);
+               // Log.d("CURBEARING: ", curBearing + "");
+                bearing = "bearing: " + curBearing;
+              //  Log.d("CURBEARING:", curBearing + "?");
+
+
+                float rotation[] = new float[9];
+                float identity[] = new float[9];
+
+                if (smoothedAccel == null)
+                    Log.d(":c", "like really");
+
+                boolean gotRotation = SensorManager.getRotationMatrix(rotation, identity, smoothedAccel, smoothedCompass);
+
+                if (gotRotation) {
+                    float cameraRotation[] = new float[9];
+                    //remap so camera points straight down y axis
+                    SensorManager.remapCoordinateSystem(rotation, SensorManager.AXIS_X, SensorManager.AXIS_Z, cameraRotation);
+                    //orientation vec
+                    orientation = new float[3];
+                    SensorManager.getOrientation(cameraRotation, orientation);
+                    if (gotRotation) {
+                        cameraRotation = new float[9];
+                        //remap so camera points positive
+                        SensorManager.remapCoordinateSystem(rotation, SensorManager.AXIS_X, SensorManager.AXIS_Z, cameraRotation);
+
+                        orientation = new float[3];
+                        SensorManager.getOrientation(cameraRotation, orientation);
+                    }
+                }
+                //Log.d("ORI:",ori+"");
+                ori = "ORI: " + orientation[0] + " " + orientation[1] + " " + orientation[2];
+
+                PointOfInterest poi = new PointOfInterest(orientation, curBearing, buildingList.get(i));
+                poiList.add(poi);
+            }
+
+ /*
             Location auc = new Location("manual");
                 auc.setLatitude(buildingList.get(0).Latitude);
                 auc.setLongitude(buildingList.get(0).Longitude);
@@ -386,7 +436,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, Lo
 
             PointOfInterest poi = new PointOfInterest(orientation, curBearing, buildingList.get(0));
             poiList.add(poi);
-
+*/
             invalidate(accelData, compassData, gyroData, bearing, gps, ori, poiList);
         }
     }

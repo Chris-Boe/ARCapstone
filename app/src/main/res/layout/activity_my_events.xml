@@ -19,8 +19,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
-            app:contentScrim="?attr/colorPrimary"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            app:contentScrim="?attr/colorPrimary">
+            <!--app:layout_scrollFlags="scroll|exitUntilCollapsed">-->
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -32,7 +32,12 @@
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_my_events" />
+    <!--<include layout="@layout/content_my_events" />-->
+    <ExpandableListView
+        android:id="@+id/lvExp"
+        android:layout_width="match_parent"
+        android:layout_height="510dp"
+        android:layout_gravity="bottom"></ExpandableListView>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
@@ -41,6 +46,6 @@
         android:layout_margin="@dimen/fab_margin"
         app:layout_anchor="@id/app_bar"
         app:layout_anchorGravity="bottom|end"
-        app:srcCompat="@android:drawable/ic_menu_add" />
+        app:srcCompat="@android:drawable/ic_menu_my_calendar" />
 
-</android.support.design.widget.CoordinatorLayout>
+    </android.support.design.widget.CoordinatorLayout>

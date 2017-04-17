@@ -35,13 +35,13 @@
         app:srcCompat="@drawable/ic_sync_black_24dp" />
 
     <Button
-        android:text="My Events"
+        android:id="@+id/myEventsButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/myEventsButton"
-        android:layout_below="@+id/calButton"
         android:layout_alignLeft="@+id/calButton"
-        android:layout_alignStart="@+id/calButton" />
+        android:layout_alignStart="@+id/calButton"
+        android:layout_below="@+id/calButton"
+        android:text="Events" />
 
     <Button
         android:text="Map"

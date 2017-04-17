@@ -5,10 +5,10 @@ package plu.capstone;
  */
 
 public class Event {
-    public String description;
-    public String loc;
-    public String link;
-    public String category;
+    private String description;
+    private String loc;
+    private String link;
+    private String category;
 
     public Event(){
 
@@ -17,6 +17,38 @@ public class Event {
         this.description = description;
         this.loc = loc;
         this.link = link;
+        this.category = category;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getLoc() {
+        return loc;
+    }
+
+    public void setLoc(String loc) {
+        this.loc = loc;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
         this.category = category;
     }
 }

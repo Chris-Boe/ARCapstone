@@ -27,6 +27,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -47,16 +49,15 @@ public class BuildingOverlay extends Fragment {
     private String mParam2;
     private Query bQuery;
     private customView tempView;
-    private RelativeLayout arViewPane;
+    private RelativeLayout arViewPane, buttonsView;
 
     private  String accelData, aData, compassData, cData, gyroData, gData, bearing, b, gps, g, ori, o;
     private float[] orientation;
     private float curBearing;
-    private DatabaseReference mDatabase;
+   // private DatabaseReference mDatabase;
     private FrameLayout buildingInfo;
 
     private Button buildingButton;
-    private View buttonView;
     private int count = 1;
 
     private OnFragmentInteractionListener mListener;
@@ -93,7 +94,7 @@ public class BuildingOverlay extends Fragment {
         }
 
         //instantiate database
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+       // mDatabase = FirebaseDatabase.getInstance().getReference();
 
         //TODO: query database for possible locations
         //queries each building (should probably test for more buildings)
@@ -111,6 +112,7 @@ public class BuildingOverlay extends Fragment {
         Canvas temp = new Canvas();
         tempView = new customView(getContext());
         arViewPane.addView(tempView);
+
         onReady();
         return in;
     }
@@ -142,7 +144,7 @@ public class BuildingOverlay extends Fragment {
 
 
     public void update(String aData, String cData, String gData, String b,
-                       String g, String o, final float[] or, float cb, CameraManager manager, String cameraId){
+                       String g, String o, ArrayList<PointOfInterest> poiList, CameraManager manager, String cameraId){
 
         CameraCharacteristics cc = null;
 
@@ -152,11 +154,14 @@ public class BuildingOverlay extends Fragment {
             e.printStackTrace();
         }
 
+       //Log.d("poiListSize",poiList.size()+"?");
+
         CameraCharacteristics fcc = cc;
-        tempView.setOptions(aData, cData, gData, b, g, o, or, cb, cc);
+        //tempView.setOptions(aData, cData, gData, b, g, o, poiList.get(0).getOrientation(),
+          //      poiList.get(0).getCurBearing(), cc);
 
         //TODO:calculate query
-        Query testQuery = mDatabase.child("Pacific Lutheran University/Buildings");
+    //    Query testQuery = mDatabase.child("Pacific Lutheran University/Buildings");
 
         float hFOV = (float) (2 * Math.atan(
                 (fcc.get(CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE).getWidth() /
@@ -168,17 +173,90 @@ public class BuildingOverlay extends Fragment {
                 )));
 
 
+        if(buttonsView!=null){
+            buttonsView.removeAllViews();
+            //arViewPane.removeView(buttonsView);
+        }
+        buttonsView = (RelativeLayout)getView().findViewById(R.id.bView);
 
-        if(or!=null) {
-            final float dx = (float) ((getView().getWidth() / hFOV) * (Math.toDegrees(or[0]) - cb));
-            final float dy = (float) ((getView().getHeight() / vFOV) * Math.toDegrees(or[1]));
+        //TODO:make better check
+        if(poiList.size()>=4) {
+            Log.d("listsize",poiList.size()+"?");
+            for(int i=0;i<4;i++) {
+                final float dx = (float) ((getView().getWidth() / hFOV) * (Math.toDegrees(poiList.get(i).getOrientation()[0]) - poiList.get(i).getCurBearing()));
+                final float dy = (float) ((getView().getHeight() / vFOV) * Math.toDegrees(poiList.get(i).getOrientation()[1]));
+                final float testx = dx / -100;
+                final float testy = dx / -100;
+
+
+                buildingButton = new BuildingButton(getContext(),getView().getWidth(),getView().getHeight(),poiList.get(i).getOrientation());
+                buildingButton.setTag("Building");
+                buildingButton.setText(poiList.get(i).getBuilding().Name);
+                buildingButton.setRotation((float) (0.0f - Math.toDegrees(poiList.get(i).getOrientation()[2])));
+                buildingButton.setTranslationX(testx);
+               // buildingButton.setTranslationY(testy);
+                //buildingButton.setTranslationY(0.0f-testy);
+
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                params.leftMargin = getView().getWidth()/2;
+                params.topMargin = getView().getHeight()/2;
+
+                buttonsView.addView(buildingButton,params);
+
+                buildingButton.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v){
+                        Log.d("HI","HIHIHIH");
+                        buildingButton.setText("Click");
+                    }
+                });
+            }
+
+           // arViewPane.addView(buttonsView);
+
+        /*
+            final float dx = (float) ((getView().getWidth() / hFOV) * (Math.toDegrees(poiList.get(0).getOrientation()[0]) - poiList.get(0).getCurBearing()));
+            final float dy = (float) ((getView().getHeight() / vFOV) * Math.toDegrees(poiList.get(0).getOrientation()[1]));
             final float testx = dx / -100;
             final float testy = dx / 200;
-            Log.d("TESTX/Y",testx+"/"+testy);
+            //Log.d("TESTX/Y",testx+"/"+testy);*/
+
+        /*  DELETE:
+          if(buttonsView!=null){
+                arViewPane.removeView(buttonsView);
+            }
+
+            buttonsView = (RelativeLayout)getView().findViewById(R.id.buttonsView);
+            for(int i=0;i<3;i++){
+
+            } */
+
+
+          /*  if(buildingButton!=null)
+                arViewPane.removeView(buildingButton);
+
+            buildingButton = new BuildingButton(getContext(),getView().getWidth(),getView().getHeight(),poiList.get(0).getOrientation());
+            buildingButton.setTag("Building");
+            buildingButton.setText(poiList.get(0).getBuilding().Name);
+            buildingButton.setRotation((float) (0.0f - Math.toDegrees(poiList.get(0).getOrientation()[2])));
+            buildingButton.setTranslationX(testx);
+            //buildingButton.setTranslationY(0.0f-testy);
+
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            params.leftMargin = getView().getWidth()/2;
+            params.topMargin = getView().getHeight()/2;
+
+            arViewPane.addView(buildingButton,params);
+
+            buildingButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v){
+                    Log.d("HI","HIHIHIH");
+                    buildingButton.setText("Click");
+                }
+            });*/
 
 
             //listener for onDataChange
-            testQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+       /*     testQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                 //reads in data whenever changed (maybe find a more appropriate callback)
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -217,14 +295,14 @@ public class BuildingOverlay extends Fragment {
                     //send query to customView
                     //Toast toast = Toast.makeText(getContext().getApplicationContext(), bList, Toast.LENGTH_SHORT);
                     //toast.show();*/
-                }
+              /*  }
 
                 //error
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                     Log.e("ERR", "onCancelled", databaseError.toException());
                 }
-            });
+            }); */
         }
 
        /* CameraCharacteristics cc = null;

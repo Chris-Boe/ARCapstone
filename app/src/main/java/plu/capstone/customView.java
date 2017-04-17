@@ -99,7 +99,7 @@ public class customView extends View {
                 canvas.rotate((float) (0.0f - Math.toDegrees(orientation[2])));
                 //float dx = (float) ((canvas.getWidth() / hFOV) * (Math.toDegrees(orientation[0]) - curBearing));
                 //float dy = (float) ((canvas.getHeight() / vFOV) * Math.toDegrees(orientation[1]));
-                Log.d("ORI[0]/BEARING:", orientation[0] + "/" + curBearing);
+               // Log.d("ORI[0]/BEARING:", orientation[0] + "/" + curBearing);
                 //Log.d("o/d", (orientation[0] - curBearing) + "");
                // float testx = dx / -100;
                 //Log.d("DX/TestX:", dx + "/" + testx);

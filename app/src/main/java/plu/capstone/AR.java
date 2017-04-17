@@ -39,7 +39,12 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 import android.hardware.camera2.*;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.io.File;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -153,6 +158,7 @@ public class AR extends AppCompatActivity implements SensorsFragment.OnFragmentI
     private CameraManager manager;
     private View tempView;
     private BuildingOverlay buildingDisplay;
+    private DatabaseReference mDatabase;
     private boolean isready;
 
     @Override
@@ -166,13 +172,14 @@ public class AR extends AppCompatActivity implements SensorsFragment.OnFragmentI
         mContentView = findViewById(R.id.fullscreen_content);
 
 
+       // mDatabase = FirebaseDatabase.getInstance().getReference();
 
 
         // Set up the user interaction to manually show or hide the system UI.
         mContentView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                toggle();
+       //         toggle();
             }
         });
 
@@ -443,7 +450,7 @@ public class AR extends AppCompatActivity implements SensorsFragment.OnFragmentI
 
     @Override
     public void invalidate(String aData, String cData, String gData, String b,
-                           String g, String o, float[] or, float cb) {
+                           String g, String o, ArrayList<PointOfInterest> poiList) {
 
         if(isready==true) {
 
@@ -452,9 +459,10 @@ public class AR extends AppCompatActivity implements SensorsFragment.OnFragmentI
             //Log.d("frag",fragment+"?");
             //Log.d("man/cam",manager+"/"+cameraId+"?");
 
+            //TODO:get list of buildings to send to buildingoverlay
 
             //change this to bundle
-            fragment.update(aData, cData, gData, b, g, o, or, cb, manager, cameraId);
+            fragment.update(aData, cData, gData, b, g, o, poiList, manager, cameraId);
         }
 /*
         final String accelData = aData, compassData = cData, gyroData = gData, bearing = b, gps = g, ori = o;

@@ -36,8 +36,9 @@ dependencies {
     */
     //9.8
     //compile 'com.google.android.gms:play-services-maps:10.2.0'
-    //compile 'com.google.android.gms:play-services-location:10.2.0'
+    compile 'com.google.android.gms:play-services-location:10.2.0'
 
+    //noinspection GradleCompatible
     compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'com.android.support:design:24.2.1'
     compile 'com.android.support:support-v4:24.2.1'

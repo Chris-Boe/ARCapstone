@@ -182,10 +182,10 @@ public class BuildingOverlay extends Fragment {
         //TODO:make better check
         if(poiList.size()>=4) {
             Log.d("listsize",poiList.size()+"?");
-            for(int i=0;i<poiList.size();i++) {
+            for(int i=0;i<3;i++) {
                 final float dx = (float) ((getView().getWidth() / hFOV) * (Math.toDegrees(poiList.get(i).getOrientation()[0]) - poiList.get(i).getCurBearing()));
                 final float dy = (float) ((getView().getHeight() / vFOV) * Math.toDegrees(poiList.get(i).getOrientation()[1]));
-                final float testx = dx / (getView().getWidth()/-28);
+                final float testx = dx / (getView().getWidth()/-25);
                 final float testy = dy / -50;
                 Log.d("width", getView().getWidth() + "");
                 Log.d("hFoV", hFOV + "");
@@ -196,7 +196,7 @@ public class BuildingOverlay extends Fragment {
                 buildingButton.setText(poiList.get(i).getBuilding().Name);
                 buildingButton.setRotation((float) (0.0f - Math.toDegrees(poiList.get(i).getOrientation()[2])));
                 buildingButton.setTranslationX(testx);
-                buildingButton.setTranslationY(testy);
+                //buildingButton.setTranslationY(testy);
                 //buildingButton.setTranslationY(0.0f-testy);
 
                 RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);

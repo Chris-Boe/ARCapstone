@@ -346,12 +346,12 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
     public void onLocationChanged(Location location) {
         //  Log.d("BLIST2", buildingList.toString());
         if (buildingList.size() > 0) {
-            Log.d("BUILDING:", buildingList.get(0).Name);
+            //Log.d("BUILDING:", buildingList.get(0).Name);
 
             poiList = new ArrayList<PointOfInterest>();
-            //if (isBetterLocation(location, lastLocation)) {
-            lastLocation = location;
-            ///}
+            if (isBetterLocation(location, lastLocation)) {
+                lastLocation = location;
+            }
             Log.d("prov", lastLocation.getProvider() + "");
 
             for (int i = 0; i < buildingList.size(); i++) {
@@ -531,17 +531,22 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
+            requestPermissions(new String[]{
+                    android.Manifest.permission.ACCESS_FINE_LOCATION,
+                    android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                    android.Manifest.permission.INTERNET
+            }, 10);
             return;
         }
-        Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        lastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         startLocationUpdates();
     }
 
     protected void startLocationUpdates() {
         isRequestingLocation = true;
         mLocationRequest = LocationRequest.create()
-                .setInterval(5)
-                .setFastestInterval(5);
+                .setInterval(500)
+                .setMaxWaitTime(1000);
         if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -550,6 +555,11 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
+            requestPermissions(new String[]{
+                    android.Manifest.permission.ACCESS_FINE_LOCATION,
+                    android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                    android.Manifest.permission.INTERNET
+            }, 10);
             return;
         }
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);

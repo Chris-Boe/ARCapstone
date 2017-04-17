@@ -10,7 +10,7 @@ import android.widget.Button;
  * Created by playt on 4/5/2017.
  */
 
-public class BuildingButton extends Button {
+public class BuildingButton extends android.support.v7.widget.AppCompatButton {
     private int height,width;
     private float orientation[];
     public BuildingButton(Context context) {
@@ -27,7 +27,7 @@ public class BuildingButton extends Button {
         height=h;
         width=w;
     }
-
+    /*
     @Override
     protected void onDraw(Canvas canvas){
         //canvas.rotate((float) (0.0f - Math.toDegrees(orientation[2])));
@@ -37,5 +37,5 @@ public class BuildingButton extends Button {
         paint.setStyle(Paint.Style.FILL);
         canvas.drawCircle(canvas.getWidth()/2, canvas.getHeight()/2, canvas.getHeight()/3, paint);
         super.onDraw(canvas);
-    }
+    }*/
 }

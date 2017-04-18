@@ -8,18 +8,27 @@ public class PointOfInterest {
     private float[] orientation;
     private float curBearing;
     private Buildings building;
+    private float distance;
 
     public PointOfInterest(){
 
     }
 
-    public PointOfInterest(float[] orientation, float curBearing, Buildings building) {
+    public PointOfInterest(float[] orientation, float curBearing, Buildings building, float dis) {
 
         this.orientation = orientation;
         this.curBearing = curBearing;
         this.building = building;
+        this.distance = dis;
     }
 
+    public float getDistance() {
+        return distance;
+    }
+
+    public void setDistance(float distance) {
+        this.distance = distance;
+    }
 
     public float[] getOrientation() {
         return orientation;

@@ -180,8 +180,12 @@ public class BuildingOverlay extends Fragment {
 
         //TODO:make better check
         if(poiList.size()>=4) {
-            Log.d("listsize",poiList.size()+"?");
-            for(int i=16;i<17;i++) {
+            String temp = "";
+            for(int i=0;i< poiList.size();i++){
+                temp += i + ": " + poiList.get(i).getBuilding().Name + "\n";
+            }
+            Log.d("BuildingList",temp);
+            for(int i=0;i<poiList.size();i++) {
                 //normalize about the fov
                 float dx = (float) ((getView().getWidth() / Math.toDegrees(hFOV)) * (Math.toDegrees(poiList.get(i).getOrientation()[0]) - poiList.get(i).getCurBearing()));
                 //float dx = (float) ((getView().getWidth() / hFOV) * (Math.toDegrees(poiList.get(i).getOrientation()[0]) - poiList.get(i).getCurBearing()));
@@ -193,11 +197,10 @@ public class BuildingOverlay extends Fragment {
 
 
                 buildingButton = new BuildingButton(getContext(),getView().getWidth(),getView().getHeight(),poiList.get(i).getOrientation());
-                buildingButton.setX(100);
+                buildingButton.setX(0);
                 buildingButton.setY(0);
-                buildingButton.setWidth(200);
                 buildingButton.setTag(poiList.get(i).getBuilding().Name);
-                buildingButton.setText(poiList.get(i).getBuilding().Name);
+                buildingButton.setText(poiList.get(i).getBuilding().Name + "\n" + poiList.get(i).getDistance());
                 buildingButton.setRotation((float) (0.0f - Math.toDegrees(poiList.get(i).getOrientation()[2])));
                 buildingButton.setTranslationX(0.0f-testx);
                 //buildingButton.setTranslationY(testy);

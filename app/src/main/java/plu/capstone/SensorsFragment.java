@@ -106,10 +106,10 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
     private static final String CC_KEY = "camchar_key";
     private CameraCharacteristics camchar;
     private DatabaseReference mDatabase;
-    ArrayList<PointOfInterest> poiList;
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
     private boolean isRequestingLocation = false;
+    private float distance;
 
     /**
      * Use this factory method to create a new instance of
@@ -348,7 +348,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
         if (buildingList.size() > 0) {
             //Log.d("BUILDING:", buildingList.get(0).Name);
 
-            poiList = new ArrayList<PointOfInterest>();
+            ArrayList<PointOfInterest> poiList = new ArrayList<PointOfInterest>();
             if (isBetterLocation(location, lastLocation)) {
                 lastLocation = location;
             }
@@ -368,42 +368,50 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
                 curBearing = lastLocation.bearingTo(loc);
                 // Log.d("CURBEARING: ", curBearing + "");
                 bearing = "bearing: " + curBearing;
+                distance = lastLocation.distanceTo(loc);
                 //  Log.d("CURBEARING:", curBearing + "?");
 
+                //CHECK DISTANCE
+                if(distance < 130) {
 
-                float rotation[] = new float[9];
-                float identity[] = new float[9];
+                    float rotation[] = new float[9];
+                    float identity[] = new float[9];
 
-                if (smoothedAccel == null)
-                    Log.d(":c", "like really");
+                    if (smoothedAccel == null)
+                        Log.d(":c", "like really");
 
-                boolean gotRotation = SensorManager.getRotationMatrix(rotation, identity, smoothedAccel, smoothedCompass);
+                    boolean gotRotation = SensorManager.getRotationMatrix(rotation, identity, smoothedAccel, smoothedCompass);
 
-                if (gotRotation) {
-                    float cameraRotation[] = new float[9];
-                    //remap so camera points straight down y axis
-                    SensorManager.remapCoordinateSystem(rotation, SensorManager.AXIS_X, SensorManager.AXIS_Z, cameraRotation);
-                    //orientation vec
-                    orientation = new float[3];
-                    SensorManager.getOrientation(cameraRotation, orientation);
                     if (gotRotation) {
-                        cameraRotation = new float[9];
-                        //remap so camera points positive
+                        float cameraRotation[] = new float[9];
+                        //remap so camera points straight down y axis
                         SensorManager.remapCoordinateSystem(rotation, SensorManager.AXIS_X, SensorManager.AXIS_Z, cameraRotation);
-
+                        //orientation vec
                         orientation = new float[3];
                         SensorManager.getOrientation(cameraRotation, orientation);
-                    }
-                }
-                //Log.d("ORI:",ori+"");
-                ori = "ORI: " + orientation[0] + " " + orientation[1] + " " + orientation[2];
+                        if (gotRotation) {
+                            cameraRotation = new float[9];
+                            //remap so camera points positive
+                            SensorManager.remapCoordinateSystem(rotation, SensorManager.AXIS_X, SensorManager.AXIS_Z, cameraRotation);
 
-                PointOfInterest poi = new PointOfInterest(orientation, curBearing, buildingList.get(i));
-                poiList.add(poi);
+                            orientation = new float[3];
+                            SensorManager.getOrientation(cameraRotation, orientation);
+                        }
+                    }
+                    //Log.d("ORI:",ori+"");
+                    ori = "ORI: " + orientation[0] + " " + orientation[1] + " " + orientation[2];
+
+
+                        PointOfInterest poi = new PointOfInterest(orientation, curBearing, buildingList.get(i), distance);
+                        poiList.add(poi);
+                }
+
+                invalidate(accelData, compassData, gyroData, bearing, gps, ori, poiList);
+
             }
 
 
-            Location auc = new Location("manual");
+           /* Location auc = new Location("manual");
             auc.setLatitude(buildingList.get(0).Latitude);
             auc.setLongitude(buildingList.get(0).Longitude);
             auc.setAltitude(0);
@@ -448,10 +456,13 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
             //Log.d("ORI:",ori+"");
             ori = "ORI: " + orientation[0] + " " + orientation[1] + " " + orientation[2];
 
-            PointOfInterest poi = new PointOfInterest(orientation, curBearing, buildingList.get(0));
-            poiList.add(poi);
+            if(distance < 100) {
+                PointOfInterest poi = new PointOfInterest(orientation, curBearing, buildingList.get(0), distance);
+                poiList.add(poi);
+            }
 
             invalidate(accelData, compassData, gyroData, bearing, gps, ori, poiList);
+            */
         }
     }
 

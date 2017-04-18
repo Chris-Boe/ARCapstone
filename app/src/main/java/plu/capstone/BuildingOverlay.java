@@ -224,191 +224,19 @@ public class BuildingOverlay extends Fragment {
                 buttonsView.getChildAt(i).setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v){
                         Log.d("HI","HIHIHIH");
-                        bu.setText("HIHIH");
+                        generateBuildingInfo(bu);
                     }
                 });
             }
-
-            // arViewPane.addView(buttonsView);
-
-        /*
-            final float dx = (float) ((getView().getWidth() / hFOV) * (Math.toDegrees(poiList.get(0).getOrientation()[0]) - poiList.get(0).getCurBearing()));
-            final float dy = (float) ((getView().getHeight() / vFOV) * Math.toDegrees(poiList.get(0).getOrientation()[1]));
-            final float testx = dx / -100;
-            final float testy = dx / 200;
-            //Log.d("TESTX/Y",testx+"/"+testy);*/
-
-        /*  DELETE:
-          if(buttonsView!=null){
-                arViewPane.removeView(buttonsView);
-            }
-
-            buttonsView = (RelativeLayout)getView().findViewById(R.id.buttonsView);
-            for(int i=0;i<3;i++){
-
-            } */
-
-
-          /*  if(buildingButton!=null)
-                arViewPane.removeView(buildingButton);
-
-            buildingButton = new BuildingButton(getContext(),getView().getWidth(),getView().getHeight(),poiList.get(0).getOrientation());
-            buildingButton.setTag("Building");
-            buildingButton.setText(poiList.get(0).getBuilding().Name);
-            buildingButton.setRotation((float) (0.0f - Math.toDegrees(poiList.get(0).getOrientation()[2])));
-            buildingButton.setTranslationX(testx);
-            //buildingButton.setTranslationY(0.0f-testy);
-
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-            params.leftMargin = getView().getWidth()/2;
-            params.topMargin = getView().getHeight()/2;
-
-            arViewPane.addView(buildingButton,params);
-
-            buildingButton.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v){
-                    Log.d("HI","HIHIHIH");
-                    buildingButton.setText("Click");
-                }
-            });*/
-
-
-            //listener for onDataChange
-       /*     testQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-                //reads in data whenever changed (maybe find a more appropriate callback)
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-
-                    //send info to various views
-
-
-                    if(buildingButton!=null)
-                        arViewPane.removeView(buildingButton);
-
-                    buildingButton = new BuildingButton(getContext(),getView().getWidth(),getView().getHeight(),or);
-                    buildingButton.setTag("Building");
-                    buildingButton.setText("TEMPORARY");
-                    buildingButton.setRotation((float) (0.0f - Math.toDegrees(or[2])));
-                    buildingButton.setTranslationX(testx);
-                    //buildingButton.setTranslationY(0.0f-testy);
-
-                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                    params.leftMargin = getView().getWidth()/2;
-                    params.topMargin = getView().getHeight()/2;
-
-                    arViewPane.addView(buildingButton,params);
-
-                    buildingButton.setOnClickListener(new View.OnClickListener() {
-                        public void onClick(View v){
-                            Log.d("HI","HIHIHIH");
-                            buildingButton.setText("Click");
-                        }
-                    });
-                    // String bList = "";
-
-                   /* for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
-                        bList += singleSnapshot.getValue(DataBaseBuildings.Buildings.class).Name + " ";
-                    }
-                    Log.d("TEST", bList);
-                    //send query to customView
-                    //Toast toast = Toast.makeText(getContext().getApplicationContext(), bList, Toast.LENGTH_SHORT);
-                    //toast.show();*/
-              /*  }
-
-                //error
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Log.e("ERR", "onCancelled", databaseError.toException());
-                }
-            }); */
         }
+    }
 
-       /* CameraCharacteristics cc = null;
-        try {
-            cc = manager.getCameraCharacteristics(cameraId);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
-
-        final CameraCharacteristics fcc = cc; */
-
-        //if(tempView != null)
-        //  arViewPane.removeView(tempView);
-
-
-
-        /*
-        tempView = new View(getContext()){
-            private int canvasWidth, canvasHeight;
-
-            @Override
-            public void onDraw(Canvas canvas){
-                Paint contentPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                Paint targetPaint = new Paint(Color.CYAN);
-                contentPaint.setTextAlign(Paint.Align.CENTER);
-                contentPaint.setTextSize(20);
-                contentPaint.setColor(Color.RED);
-                canvas.drawText(accelData, canvas.getWidth()/2, canvas.getHeight()/8, contentPaint);
-                canvas.drawText(compassData, canvas.getWidth()/2, canvas.getHeight()*2/8, contentPaint);
-                canvas.drawText(gyroData, canvas.getWidth()/2, (canvas.getHeight())*3/8, contentPaint);
-                canvas.drawText(bearing,canvas.getWidth()/2, (canvas.getHeight())*4/8, contentPaint);
-                canvas.drawText(gps,canvas.getWidth()/2, (canvas.getHeight())*5/8, contentPaint);
-                canvas.drawText(ori,canvas.getWidth()/2, (canvas.getHeight())*6/8, contentPaint);
-
-                //Log.d("CC VAL", cc + " ?");
-
-                float lVFOV, lHFOV;
-
-                if(orientation!=null) {
-
-
-                    float hFOV = (float) (2 * Math.atan(
-                            (fcc.get(CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE).getWidth() /
-                                    (2 * fcc.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS)[0])
-                            )));
-                    float vFOV = (float) (2 * Math.atan(
-                            (fcc.get(CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE).getHeight() /
-                                    (2 * fcc.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS)[0])
-                            )));
-
-
-                    canvas.rotate((float) (0.0f - Math.toDegrees(orientation[2])));
-                    float dx = (float) ((canvas.getWidth() / hFOV) * (Math.toDegrees(orientation[0]) - curBearing));
-                    float dy = (float) ((canvas.getHeight() / vFOV) * Math.toDegrees(orientation[1]));
-                    // Log.d("ORI[0]/BEARING:", orientation[0]+"/"+curBearing);
-                    // Log.d("o/d", (orientation[0]-curBearing)+"");
-                    Log.d("DX/DY:", dx + "/" + dy);
-                    float testx = dx / -100;
-
-                    // wait to translate the dx so the horizon doesn't get pushed off
-                    // canvas.translate(0.0f, 0.0f - dy);
-
-                    // make our line big enough to draw regardless of rotation and translation
-                    canvas.drawLine(0f - canvas.getHeight(), canvas.getHeight() / 2, canvas.getWidth() + canvas.getHeight(), canvas.getHeight() / 2, targetPaint);
-
-
-                    // now translate the dx
-                    //canvas.translate(0.0f - dx, 0.0f);
-
-                    // draw our point -- we've rotated and translated this to the right spot already
-                    Log.d("w/h: ", canvas.getWidth() + "/" + canvas.getHeight());
-
-                    canvas.drawCircle(testx, canvas.getHeight() / 2, 100, targetPaint);
-
-
-                }
-            }
-
-            @Override
-            protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-                super.onSizeChanged(w, h, oldw, oldh);
-                canvasWidth = w;
-                canvasHeight = h;
-            }
-        };
-*/
-
-
+    /**
+     * helper method to create buildinginfoview
+     * @param bu
+     */
+    private void generateBuildingInfo(BuildingButton bu){
+        bu.setText("HIHIH");
     }
 
     /**

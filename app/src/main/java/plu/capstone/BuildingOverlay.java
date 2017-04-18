@@ -52,9 +52,7 @@ public class BuildingOverlay extends Fragment {
     private RelativeLayout arViewPane, buttonsView;
 
     private  String accelData, aData, compassData, cData, gyroData, gData, bearing, b, gps, g, ori, o;
-    private float[] orientation;
-    private float curBearing;
-   // private DatabaseReference mDatabase;
+    // private DatabaseReference mDatabase;
     private FrameLayout buildingInfo;
 
     private Button buildingButton;
@@ -94,7 +92,7 @@ public class BuildingOverlay extends Fragment {
         }
 
         //instantiate database
-       // mDatabase = FirebaseDatabase.getInstance().getReference();
+        // mDatabase = FirebaseDatabase.getInstance().getReference();
 
         //TODO: query database for possible locations
         //queries each building (should probably test for more buildings)
@@ -154,19 +152,20 @@ public class BuildingOverlay extends Fragment {
             e.printStackTrace();
         }
 
-       //Log.d("poiListSize",poiList.size()+"?");
+        //Log.d("poiListSize",poiList.size()+"?");
 
         CameraCharacteristics fcc = cc;
         //tempView.setOptions(aData, cData, gData, b, g, o, poiList.get(0).getOrientation(),
-          //      poiList.get(0).getCurBearing(), cc);
+        //      poiList.get(0).getCurBearing(), cc);
 
         //TODO:calculate query
-    //    Query testQuery = mDatabase.child("Pacific Lutheran University/Buildings");
+        //    Query testQuery = mDatabase.child("Pacific Lutheran University/Buildings");
 
         float hFOV = (float) (2 * Math.atan(
                 (fcc.get(CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE).getWidth() /
                         (2 * fcc.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS)[0])
                 )));
+
         float vFOV = (float) (2 * Math.atan(
                 (fcc.get(CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE).getHeight() /
                         (2 * fcc.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS)[0])
@@ -182,28 +181,36 @@ public class BuildingOverlay extends Fragment {
         //TODO:make better check
         if(poiList.size()>=4) {
             Log.d("listsize",poiList.size()+"?");
-            for(int i=0;i<3;i++) {
-                final float dx = (float) ((getView().getWidth() / hFOV) * (Math.toDegrees(poiList.get(i).getOrientation()[0]) - poiList.get(i).getCurBearing()));
-                final float dy = (float) ((getView().getHeight() / vFOV) * Math.toDegrees(poiList.get(i).getOrientation()[1]));
-                final float testx = dx / (getView().getWidth()/-25);
-                final float testy = dy / -50;
+            for(int i=16;i<17;i++) {
+                //normalize about the fov
+                float dx = (float) ((getView().getWidth() / Math.toDegrees(hFOV)) * (Math.toDegrees(poiList.get(i).getOrientation()[0]) - poiList.get(i).getCurBearing()));
+                //float dx = (float) ((getView().getWidth() / hFOV) * (Math.toDegrees(poiList.get(i).getOrientation()[0]) - poiList.get(i).getCurBearing()));
+                float dy = (float) ((getView().getHeight() / Math.toDegrees(vFOV)) * Math.toDegrees(poiList.get(i).getOrientation()[1]));
+                float testx = dx;
+                float testy = dy;
                 Log.d("width", getView().getWidth() + "");
-                Log.d("hFoV", hFOV + "");
+                Log.d("hFoV/dx", Math.toDegrees(hFOV) + "/"+dx);
 
 
                 buildingButton = new BuildingButton(getContext(),getView().getWidth(),getView().getHeight(),poiList.get(i).getOrientation());
-                buildingButton.setTag("Building");
+                buildingButton.setX(100);
+                buildingButton.setY(0);
+                buildingButton.setWidth(200);
+                buildingButton.setTag(poiList.get(i).getBuilding().Name);
                 buildingButton.setText(poiList.get(i).getBuilding().Name);
                 buildingButton.setRotation((float) (0.0f - Math.toDegrees(poiList.get(i).getOrientation()[2])));
-                buildingButton.setTranslationX(testx);
+                buildingButton.setTranslationX(0.0f-testx);
                 //buildingButton.setTranslationY(testy);
                 //buildingButton.setTranslationY(0.0f-testy);
 
                 RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                params.leftMargin = getView().getWidth()/2;
+                //params.leftMargin = getView().getWidth()/2;
                 params.topMargin = getView().getHeight()/2;
 
                 buttonsView.addView(buildingButton,params);
+
+                Log.d("xtran/ytran",buildingButton.getTranslationX()+"/"+buildingButton.getTranslationX());
+                Log.d("xloc/yloc",buildingButton.getX()+"/"+buildingButton.getY());
 
                 buildingButton.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v){
@@ -213,7 +220,7 @@ public class BuildingOverlay extends Fragment {
                 });
             }
 
-           // arViewPane.addView(buttonsView);
+            // arViewPane.addView(buttonsView);
 
         /*
             final float dx = (float) ((getView().getWidth() / hFOV) * (Math.toDegrees(poiList.get(0).getOrientation()[0]) - poiList.get(0).getCurBearing()));
@@ -317,7 +324,7 @@ public class BuildingOverlay extends Fragment {
         final CameraCharacteristics fcc = cc; */
 
         //if(tempView != null)
-          //  arViewPane.removeView(tempView);
+        //  arViewPane.removeView(tempView);
 
 
 

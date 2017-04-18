@@ -181,7 +181,7 @@ public class BuildingOverlay extends Fragment {
         //TODO:make better check
         if(poiList.size()>=4) {
             String temp = "";
-            for(int i=0;i< poiList.size();i++){
+            for(int i=1;i<poiList.size();i++){
                 temp += i + ": " + poiList.get(i).getBuilding().Name + "\n";
             }
             Log.d("BuildingList",temp);
@@ -192,8 +192,8 @@ public class BuildingOverlay extends Fragment {
                 float dy = (float) ((getView().getHeight() / Math.toDegrees(vFOV)) * Math.toDegrees(poiList.get(i).getOrientation()[1]));
                 float testx = dx;
                 float testy = dy;
-                Log.d("width", getView().getWidth() + "");
-                Log.d("hFoV/dx", Math.toDegrees(hFOV) + "/"+dx);
+               //Log.d("width", getView().getWidth() + "");
+                Log.d("dx", dx + "");
 
 
                 buildingButton = new BuildingButton(getContext(),getView().getWidth(),getView().getHeight(),poiList.get(i).getOrientation());
@@ -202,9 +202,9 @@ public class BuildingOverlay extends Fragment {
                 buildingButton.setTag(poiList.get(i).getBuilding().Name);
                 buildingButton.setText(poiList.get(i).getBuilding().Name + "\n" + poiList.get(i).getDistance());
                 buildingButton.setRotation((float) (0.0f - Math.toDegrees(poiList.get(i).getOrientation()[2])));
-                buildingButton.setTranslationX(0.0f-testx);
+                buildingButton.setTranslationX(testx);
                 //buildingButton.setTranslationY(testy);
-                //buildingButton.setTranslationY(0.0f-testy);
+                buildingButton.setTranslationY(testy);
 
                 RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                 //params.leftMargin = getView().getWidth()/2;
@@ -212,7 +212,7 @@ public class BuildingOverlay extends Fragment {
 
                 buttonsView.addView(buildingButton,params);
 
-                Log.d("xtran/ytran",buildingButton.getTranslationX()+"/"+buildingButton.getTranslationX());
+                Log.d("xtran/ytran",buildingButton.getTranslationX()+"/"+buildingButton.getTranslationY());
                 Log.d("xloc/yloc",buildingButton.getX()+"/"+buildingButton.getY());
 
                 buildingButton.setOnClickListener(new View.OnClickListener() {

@@ -215,10 +215,16 @@ public class BuildingOverlay extends Fragment {
                 Log.d("xtran/ytran",buildingButton.getTranslationX()+"/"+buildingButton.getTranslationY());
                 Log.d("xloc/yloc",buildingButton.getX()+"/"+buildingButton.getY());
 
-                buildingButton.setOnClickListener(new View.OnClickListener() {
+
+            }
+
+            for(int i=0;i<buttonsView.getChildCount();i++){
+                final BuildingButton bu = (BuildingButton)buttonsView.getChildAt(i);
+                String name = bu.getText().toString();
+                buttonsView.getChildAt(i).setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v){
                         Log.d("HI","HIHIHIH");
-                        buildingButton.setText("Click");
+                        bu.setText("HIHIH");
                     }
                 });
             }

@@ -62,6 +62,7 @@ public class BuildingsViewFragment extends Fragment {
                     count++;
                     name = singleSnapshot.getKey();
                     singleBuilding = singleSnapshot.getValue(Buildings.class);
+                    Log.d("Building", name);
                     addToBuildingsMap(name, singleBuilding);
                     addToHeaders(name);
                     addToBuildingChildren(name, singleBuilding);
@@ -71,6 +72,7 @@ public class BuildingsViewFragment extends Fragment {
                 //Toast toast = Toast.makeText(con, bList, Toast.LENGTH_SHORT);
                 //toast.show();
                 Log.d("list", "LH" + buildingsMap.size() + " LC: "+listChildren.size());
+
                 expListView = (ExpandableListView) view.findViewById(R.id.lvExpEvents);
                 listAdapter = new ExpandableListAdapter(con, listHeaders, listChildren);
                 expListView.setAdapter(listAdapter);
@@ -108,13 +110,14 @@ public class BuildingsViewFragment extends Fragment {
         Log.d("EH SIZE", listHeaders.size() + "");
         return listHeaders;
     }
-    public void addToBuildingChildren(String s, Buildings e){
+    public void addToBuildingChildren(String s, Buildings b){
         ArrayList<String> details = new ArrayList<>();
-        details.add(e.getDescription());
-        details.add(e.getLatitude()+"");
-        details.add(e.getLongitude()+"");
-        details.add(e.getName());
+        details.add(b.getDescription());
+        details.add(b.getLatitude()+"");
+        details.add(b.getLongitude()+"");
+        details.add(b.getName());
         listChildren.put(s, details);
+        //Log.d("Details", b.getName().toString());
     }
     public HashMap<String, ArrayList<String>> getEventChildren(){
         Log.d("EC SIZE", listChildren.size() + "");

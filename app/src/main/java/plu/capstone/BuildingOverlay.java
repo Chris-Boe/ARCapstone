@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.vision.Frame;
@@ -49,7 +50,7 @@ public class BuildingOverlay extends Fragment {
     private String mParam2;
     private Query bQuery;
     private customView tempView;
-    private RelativeLayout arViewPane, buttonsView;
+    private RelativeLayout arViewPane, buttonsView, buildingView;
 
     private  String accelData, aData, compassData, cData, gyroData, gData, bearing, b, gps, g, ori, o;
     // private DatabaseReference mDatabase;
@@ -81,6 +82,18 @@ public class BuildingOverlay extends Fragment {
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    public void pauseLoc() {
+        if (mListener != null) {
+            mListener.pauseLoc();
+        }
+    }
+
+    public void resumeLoc(){
+        if(mListener != null) {
+            mListener.resumeLoc();
+        }
     }
 
     @Override
@@ -134,6 +147,19 @@ public class BuildingOverlay extends Fragment {
         }
     }
 
+    /*
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void invalidate(String accelData,
+                    String compassData,
+                    String gyroData,
+                    String bearing,
+                    String gps,
+                    String ori,
+                    ArrayList<PointOfInterest> poiList);
+    }
+     */
+
     @Override
     public void onDetach() {
         super.onDetach();
@@ -179,7 +205,7 @@ public class BuildingOverlay extends Fragment {
         buttonsView = (RelativeLayout)getView().findViewById(R.id.bView);
 
         //TODO:make better check
-        if(poiList.size()>=4) {
+        if(poiList.size()>=0) {
             String temp = "";
             for(int i=1;i<poiList.size();i++){
                 temp += i + ": " + poiList.get(i).getBuilding().Name + "\n";
@@ -199,15 +225,15 @@ public class BuildingOverlay extends Fragment {
                 buildingButton = new BuildingButton(getContext(),getView().getWidth(),getView().getHeight(),poiList.get(i).getOrientation());
                 buildingButton.setX(0);
                 buildingButton.setY(0);
-                buildingButton.setTag(poiList.get(i).getBuilding().Name);
+                buildingButton.setTag(i);
                 buildingButton.setText(poiList.get(i).getBuilding().Name + "\n" + poiList.get(i).getDistance());
                 buildingButton.setRotation((float) (0.0f - Math.toDegrees(poiList.get(i).getOrientation()[2])));
                 buildingButton.setTranslationX(testx);
-                //buildingButton.setTranslationY(testy);
                 buildingButton.setTranslationY(testy);
+                //buildingButton.setTranslationY(testy);
 
                 RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                //params.leftMargin = getView().getWidth()/2;
+                params.leftMargin = getView().getWidth()/2;
                 params.topMargin = getView().getHeight()/2;
 
                 buttonsView.addView(buildingButton,params);
@@ -219,12 +245,12 @@ public class BuildingOverlay extends Fragment {
             }
 
             for(int i=0;i<buttonsView.getChildCount();i++){
+                final ArrayList<PointOfInterest> poi = poiList;
                 final BuildingButton bu = (BuildingButton)buttonsView.getChildAt(i);
-                String name = bu.getText().toString();
                 buttonsView.getChildAt(i).setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v){
                         Log.d("HI","HIHIHIH");
-                        generateBuildingInfo(bu);
+                        generateBuildingInfo(bu,poi);
                     }
                 });
             }
@@ -234,9 +260,51 @@ public class BuildingOverlay extends Fragment {
     /**
      * helper method to create buildinginfoview
      * @param bu
+     * @param poi (find a way to only pass that building)
      */
-    private void generateBuildingInfo(BuildingButton bu){
+    private void generateBuildingInfo(BuildingButton bu, ArrayList<PointOfInterest> poi){
         bu.setText("HIHIH");
+
+        if(buildingView!=null){
+            buildingView.removeAllViews();
+            //arViewPane.removeView(buttonsView);
+        }
+        buildingView = (RelativeLayout)getView().findViewById(R.id.iView);
+
+        Button tempButton = new Button(getContext());
+        tempButton.setText("exit");
+
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        params.leftMargin = getView().getWidth()/8;
+        params.topMargin = getView().getHeight()/8;
+
+        buildingView.addView(tempButton,params);
+        tempButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v){
+                Log.d("HI","hi from tempbutton");
+                buildingView.removeAllViews();
+                resumeLoc();
+            }
+        });
+
+        TextView buildingName = new TextView(getContext());
+        Buildings b = poi.get((int)bu.getTag()).getBuilding();
+
+        buildingName.setText(b.Name);
+
+        params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        params.leftMargin = getView().getWidth()/2;
+        params.topMargin = getView().getHeight()/8;
+
+        buildingView.addView(buildingName,params);
+
+
+
+        buttonsView.removeAllViews();
+
+
+        pauseLoc();
+
     }
 
     /**
@@ -252,5 +320,9 @@ public class BuildingOverlay extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         boolean onReady();
+
+        void pauseLoc();
+
+        void resumeLoc();
     }
 }

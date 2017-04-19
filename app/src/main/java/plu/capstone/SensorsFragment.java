@@ -587,6 +587,14 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
 
     }
 
+    public void pauseLoc(){
+        Log.d("pauseloc","location is pausing");
+    }
+
+    public void resumeLoc(){
+        Log.d("resumeLoc", "locations are resuming");
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated

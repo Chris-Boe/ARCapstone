@@ -182,7 +182,7 @@ public class BuildingOverlay extends Fragment {
         if(poiList.size()>=4) {
             String temp = "";
             for(int i=1;i<poiList.size();i++){
-                temp += i + ": " + poiList.get(i).getBuilding().Name + "\n";
+                temp += i + ": " + poiList.get(i).getBuilding().getName() + "\n";
             }
             Log.d("BuildingList",temp);
             for(int i=0;i<poiList.size();i++) {
@@ -199,8 +199,8 @@ public class BuildingOverlay extends Fragment {
                 buildingButton = new BuildingButton(getContext(),getView().getWidth(),getView().getHeight(),poiList.get(i).getOrientation());
                 buildingButton.setX(0);
                 buildingButton.setY(0);
-                buildingButton.setTag(poiList.get(i).getBuilding().Name);
-                buildingButton.setText(poiList.get(i).getBuilding().Name + "\n" + poiList.get(i).getDistance());
+                buildingButton.setTag(poiList.get(i).getBuilding().getName());
+                buildingButton.setText(poiList.get(i).getBuilding().getName() + "\n" + poiList.get(i).getDistance());
                 buildingButton.setRotation((float) (0.0f - Math.toDegrees(poiList.get(i).getOrientation()[2])));
                 buildingButton.setTranslationX(testx);
                 //buildingButton.setTranslationY(testy);

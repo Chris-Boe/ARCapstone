@@ -260,7 +260,7 @@ public class BuildingOverlay extends Fragment {
 
     /**
      * helper method to create buildinginfoview
-     * TODO:make this a class
+     * TODO:make this a class!
      * @param bu
      * @param poi (find a way to only pass that building)
      */

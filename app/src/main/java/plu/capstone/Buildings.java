@@ -5,19 +5,52 @@ package plu.capstone;
  */
 
 public class Buildings {
-    public String Name;
-    public float Latitude;
-    public float Longitude;
-    public String Description;
+
+    private String Description;
+    private float Latitude;
+    private float Longitude;
+    private String Name;
 
     public Buildings(){
 
     }
 
-    public Buildings(String name, float latitude, float longitude, String description) {
-        Name = name;
-        Latitude = latitude;
-        Longitude = longitude;
+    public Buildings(String description, float latitude, float longitude, String name) {
+        this.Description = description;
+        this.Latitude = latitude;
+        this.Longitude = longitude;
+        this.Name = name;
+    }
+
+    public String getDescription() {
+        return Description;
+    }
+
+    public float getLatitude() {
+        return Latitude;
+    }
+
+    public float getLongitude() {
+        return Longitude;
+    }
+
+    public String getName() {
+        return Name;
+    }
+
+    public void setDescription(String description) {
         Description = description;
+    }
+
+    public void setLatitude(float latitude) {
+        Latitude = latitude;
+    }
+
+    public void setLongitude(float longitude) {
+        Longitude = longitude;
+    }
+
+    public void setName(String name) {
+        Name = name;
     }
 }

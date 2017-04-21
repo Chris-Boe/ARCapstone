@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
     private void goToMyEvents(){
-        Intent intent = new Intent(this, MyEvents.class);
+        Intent intent = new Intent(this, InfoViewPager.class);
         startActivity(intent);
     }
     private void goToMap(){

@@ -357,8 +357,8 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
             //TODO:this should be buildinglist.size()
             for (int i = 0; i < 3; i++) {
                 Location loc = new Location("manual");
-                loc.setLatitude(buildingList.get(i).Latitude);
-                loc.setLongitude(buildingList.get(i).Longitude);
+                loc.setLatitude(buildingList.get(i).getLatitude());
+                loc.setLongitude(buildingList.get(i).getLongitude());
                 loc.setAltitude(0);
 
                 String printLoc = "Lat: " + location.getLatitude() + " Long: " + location.getLongitude();

@@ -354,7 +354,8 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
             }
             Log.d("prov", lastLocation.getProvider() + "");
 
-            for (int i = 0; i < buildingList.size(); i++) {
+            //TODO:this should be buildinglist.size()
+            for (int i = 0; i < 3; i++) {
                 Location loc = new Location("manual");
                 loc.setLatitude(buildingList.get(i).Latitude);
                 loc.setLongitude(buildingList.get(i).Longitude);
@@ -372,7 +373,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
                 //  Log.d("CURBEARING:", curBearing + "?");
 
                 //CHECK DISTANCE
-                if(distance < 130) {
+                if(distance > 130) {
 
                     float rotation[] = new float[9];
                     float identity[] = new float[9];
@@ -588,11 +589,15 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
     }
 
     public void pauseLoc(){
+
         Log.d("pauseloc","location is pausing");
+        stopLocationUpdates();
     }
 
     public void resumeLoc(){
+
         Log.d("resumeLoc", "locations are resuming");
+        startLocationUpdates();
     }
 
     /**

@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -228,13 +229,13 @@ public class BuildingOverlay extends Fragment {
                 buildingButton.setTag(i);
                 buildingButton.setText(poiList.get(i).getBuilding().Name + "\n" + poiList.get(i).getDistance());
                 buildingButton.setRotation((float) (0.0f - Math.toDegrees(poiList.get(i).getOrientation()[2])));
-                buildingButton.setTranslationX(testx);
-                buildingButton.setTranslationY(testy);
+                //buildingButton.setTranslationX(testx);
+                //buildingButton.setTranslationY(testy);
                 //buildingButton.setTranslationY(testy);
 
                 RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                params.leftMargin = getView().getWidth()/2;
-                params.topMargin = getView().getHeight()/2;
+               params.leftMargin = getView().getWidth()/2;
+               params.topMargin = getView().getHeight()/2;
 
                 buttonsView.addView(buildingButton,params);
 
@@ -245,7 +246,7 @@ public class BuildingOverlay extends Fragment {
             }
 
             for(int i=0;i<buttonsView.getChildCount();i++){
-                final ArrayList<PointOfInterest> poi = poiList;
+                final Buildings poi = poiList.get((int)buttonsView.getChildAt(i).getTag()).getBuilding();
                 final BuildingButton bu = (BuildingButton)buttonsView.getChildAt(i);
                 buttonsView.getChildAt(i).setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v){
@@ -259,10 +260,11 @@ public class BuildingOverlay extends Fragment {
 
     /**
      * helper method to create buildinginfoview
+     * TODO:make this a class
      * @param bu
      * @param poi (find a way to only pass that building)
      */
-    private void generateBuildingInfo(BuildingButton bu, ArrayList<PointOfInterest> poi){
+    private void generateBuildingInfo(BuildingButton bu, Buildings poi){
         bu.setText("HIHIH");
 
         if(buildingView!=null){
@@ -272,7 +274,7 @@ public class BuildingOverlay extends Fragment {
         buildingView = (RelativeLayout)getView().findViewById(R.id.iView);
 
         Button tempButton = new Button(getContext());
-        tempButton.setText("exit");
+        tempButton.setText("return");
 
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         params.leftMargin = getView().getWidth()/8;
@@ -287,16 +289,40 @@ public class BuildingOverlay extends Fragment {
             }
         });
 
+        /**
+         * generate building name
+         */
         TextView buildingName = new TextView(getContext());
-        Buildings b = poi.get((int)bu.getTag()).getBuilding();
+        buildingName.setBackgroundColor(Color.parseColor("#efbb37"));
+        buildingName.setTextSize(TypedValue.COMPLEX_UNIT_SP, 28);
+        buildingName.setHeight(100);
 
-        buildingName.setText(b.Name);
+        buildingName.setText(poi.Name);
+        Log.d("???",poi.Name);
 
-        params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        params.leftMargin = getView().getWidth()/2;
-        params.topMargin = getView().getHeight()/8;
+        params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        params.leftMargin = 0;
+        params.topMargin = 100;
 
         buildingView.addView(buildingName,params);
+
+
+        /**
+         * generate building description
+         * TODO:make this a tooltitlething
+         */
+        TextView buildingDesc = new TextView(getContext());
+        buildingDesc.setText(poi.Description);
+        buildingDesc.setBackgroundColor(Color.parseColor("#ededed"));
+
+        params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        params.leftMargin = getView().getWidth()/8;
+        params.topMargin = getView().getHeight() - getView().getHeight()/3;
+
+        buildingDesc.setHeight(getView().getHeight()/6);
+        buildingDesc.setWidth(getView().getWidth()/2);
+
+        buildingView.addView(buildingDesc,params);
 
 
 

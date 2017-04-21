@@ -169,7 +169,7 @@ public class AR extends AppCompatActivity implements SensorsFragment.OnFragmentI
 
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
-        mContentView = findViewById(R.id.fullscreen_content);
+        mContentView = findViewById(R.id.texture);
 
 
        // mDatabase = FirebaseDatabase.getInstance().getReference();

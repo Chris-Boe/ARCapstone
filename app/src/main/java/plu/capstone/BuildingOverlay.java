@@ -186,7 +186,7 @@ public class BuildingOverlay extends Fragment {
         //      poiList.get(0).getCurBearing(), cc);
 
         //TODO:calculate query
-        //    Query testQuery = mDatabase.child("Pacific Lutheran University/Buildings");
+        //     Query testQuery = mDatabase.child("Pacific Lutheran University/Buildings");
 
         float hFOV = (float) (2 * Math.atan(
                 (fcc.get(CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE).getWidth() /
@@ -226,7 +226,7 @@ public class BuildingOverlay extends Fragment {
                 buildingButton = new BuildingButton(getContext(),getView().getWidth(),getView().getHeight(),poiList.get(i).getOrientation());
                 buildingButton.setX(0);
                 buildingButton.setY(0);
-                buildingButton.setTag(poiList.get(i).getBuilding().getName());
+                buildingButton.setTag(i);
                 buildingButton.setText(poiList.get(i).getBuilding().getName() + "\n" + poiList.get(i).getDistance());
                 buildingButton.setRotation((float) (0.0f - Math.toDegrees(poiList.get(i).getOrientation()[2])));
                 //buildingButton.setTranslationX(testx);
@@ -297,8 +297,8 @@ public class BuildingOverlay extends Fragment {
         buildingName.setTextSize(TypedValue.COMPLEX_UNIT_SP, 28);
         buildingName.setHeight(100);
 
-        buildingName.setText(poi.Name);
-        Log.d("???",poi.Name);
+        buildingName.setText(poi.getName());
+        Log.d("???",poi.getName());
 
         params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         params.leftMargin = 0;
@@ -312,7 +312,7 @@ public class BuildingOverlay extends Fragment {
          * TODO:make this a tooltitlething
          */
         TextView buildingDesc = new TextView(getContext());
-        buildingDesc.setText(poi.Description);
+        buildingDesc.setText(poi.getDescription());
         buildingDesc.setBackgroundColor(Color.parseColor("#ededed"));
 
         params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);

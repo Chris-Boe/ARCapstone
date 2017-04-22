@@ -2,6 +2,7 @@ package plu.capstone;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
@@ -40,7 +41,22 @@ public class EventsViewFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_events_view, container, false);
-
+        expListView = (ExpandableListView) view.findViewById(R.id.lvExpEvents);
+        expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                //Toast.makeText(getContext(), listHeaders.get(groupPosition) + ":"
+                  //      + listChildren.get(listHeaders.get(groupPosition)).get(childPosition),
+                    //    Toast.LENGTH_SHORT).show();
+                if(childPosition == 2){
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                            Uri.parse(listChildren.get(listHeaders.get(groupPosition)).get(2)));
+                    Toast.makeText(getContext(), "Opening link in Browser...", Toast.LENGTH_SHORT);
+                    startActivity(browserIntent);
+                }
+                return false;
+            }
+        });
         listHeaders = new ArrayList<>();
         listChildren = new HashMap<>();
         eventsMap = new HashMap<>();
@@ -75,7 +91,6 @@ public class EventsViewFragment extends Fragment{
                 //Toast toast = Toast.makeText(con, eList, Toast.LENGTH_SHORT);
                 //toast.show();
                 Log.d("list", "LH" + eventsMap.size() + " LC: "+listChildren.size());
-                expListView = (ExpandableListView) view.findViewById(R.id.lvExpEvents);
                 listAdapter = new ExpandableListAdapter(con, listHeaders, listChildren);
                 expListView.setAdapter(listAdapter);
 
@@ -113,7 +128,7 @@ public class EventsViewFragment extends Fragment{
     }
     public void addToEventChildren(String s, Event e){
         ArrayList<String> details = new ArrayList<>();
-        details.add(e.getCategory());
+        details.add(e.getCategory() + "\nClick to add to calendar!");
         details.add(e.getDescription());
         details.add(e.getLink());
         details.add(e.getLoc());

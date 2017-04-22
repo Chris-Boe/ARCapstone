@@ -113,9 +113,10 @@ public class BuildingsViewFragment extends Fragment {
     public void addToBuildingChildren(String s, Buildings b){
         ArrayList<String> details = new ArrayList<>();
         details.add(b.getDescription());
-        details.add(b.getLatitude()+"");
-        details.add(b.getLongitude()+"");
-        details.add(b.getName());
+        //user only needs to see the description of the building
+        //details.add(b.getLatitude()+"");
+        //details.add(b.getLongitude()+"");
+        //details.add(b.getName());
         listChildren.put(s, details);
         //Log.d("Details", b.getName().toString());
     }

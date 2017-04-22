@@ -6,6 +6,7 @@
     tools:context="plu.capstone.AR"
     android:id="@+id/frame_parent">
 
+
     <!-- The primary full-screen view. This can be replaced with whatever view
          is needed to present your content, e.g. VideoView, SurfaceView,
          TextureView, etc. -->
@@ -13,36 +14,20 @@
         android:id="@+id/texture"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:keepScreenOn="true"
-        android:textColor="#33b5e5"
-        android:textSize="50sp"
-        android:textStyle="bold" />
+        android:layout_gravity="bottom|center_horizontal"
+        android:gravity="bottom"
+        android:keepScreenOn="true" />
 
     <!-- This FrameLayout insets its children based on system windows using
          android:fitsSystemWindows. -->
-    <FrameLayout
+
+    <LinearLayout
+        android:id="@+id/fullscreen_content_controls"
+        style="?metaButtonBarStyle"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
-
-        <LinearLayout
-            android:id="@+id/fullscreen_content_controls"
-            style="?metaButtonBarStyle"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="bottom|center_horizontal"
-            android:orientation="horizontal"
-            tools:ignore="UselessParent">
-
-         <!--<fragment android:name="plu.capstone.SensorsFragment"
-                android:id="@+id/sensors"
-                android:layout_weight="1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content" />-->
-
-        </LinearLayout>
-
-    </FrameLayout>
+        android:layout_gravity="bottom|center_horizontal"
+        android:orientation="horizontal"
+        tools:ignore="UselessParent"/>
 
 </FrameLayout>

@@ -35,6 +35,8 @@ import android.view.Surface;
 import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 import android.hardware.camera2.*;
@@ -81,7 +83,7 @@ public class AR extends AppCompatActivity implements SensorsFragment.OnFragmentI
      */
     private static final int UI_ANIMATION_DELAY = 300;
     private final Handler mHideHandler = new Handler();
-    private View mContentView;
+    private TextureView mContentView;
     private final Runnable mHidePart2Runnable = new Runnable() {
         @SuppressLint("InlinedApi")
         @Override
@@ -91,7 +93,7 @@ public class AR extends AppCompatActivity implements SensorsFragment.OnFragmentI
             // Note that some of these constants are new as of API 16 (Jelly Bean)
             // and API 19 (KitKat). It is safe to use them, as they are inlined
             // at compile-time and do nothing on earlier devices.
-            mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
+            textureView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
                     | View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
@@ -116,7 +118,7 @@ public class AR extends AppCompatActivity implements SensorsFragment.OnFragmentI
     private final Runnable mHideRunnable = new Runnable() {
         @Override
         public void run() {
-            hide();
+           hide();
         }
     };
     /**
@@ -156,58 +158,37 @@ public class AR extends AppCompatActivity implements SensorsFragment.OnFragmentI
     private HandlerThread mBackgroundThread;
     private TextureView textureView;
     private CameraManager manager;
-    private View tempView;
-    private BuildingOverlay buildingDisplay;
-    private DatabaseReference mDatabase;
     private boolean isready;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         setContentView(R.layout.activity_ar);
 
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
-        mContentView = findViewById(R.id.texture);
+        textureView = (TextureView)findViewById(R.id.texture);
 
 
        // mDatabase = FirebaseDatabase.getInstance().getReference();
 
 
         // Set up the user interaction to manually show or hide the system UI.
-        mContentView.setOnClickListener(new View.OnClickListener() {
+        textureView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
        //         toggle();
             }
         });
 
-        // Upon interacting with UI controls, delay any scheduled hide()
-        // operations to prevent the jarring behavior of controls going away
-        // while interacting with the UI.
-        //findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
-
-        //get location toasts
-       // toastLoc();
-
-           /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) !=
-                        PackageManager.PERMISSION_GRANTED &&
-                        ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) !=
-                                PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(new String[]{
-                            android.Manifest.permission.ACCESS_FINE_LOCATION,
-                            android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                            android.Manifest.permission.INTERNET
-                    }, 10);
-                }
-            }*/
 
         //get tilt
 
-        textureView = (TextureView) findViewById(R.id.texture);
-        textureView = (TextureView) findViewById(R.id.texture);
         assert textureView != null;
         textureView.setSurfaceTextureListener(textureListener);
 
@@ -276,6 +257,7 @@ public class AR extends AppCompatActivity implements SensorsFragment.OnFragmentI
     protected void createCameraPreview() {
         try {
             SurfaceTexture texture = textureView.getSurfaceTexture();
+            Log.d("T-HEIGHT",textureView.getHeight()+"");
             assert texture != null;
             texture.setDefaultBufferSize(imageDimension.getWidth(), imageDimension.getHeight());
             Surface surface = new Surface(texture);
@@ -301,6 +283,8 @@ public class AR extends AppCompatActivity implements SensorsFragment.OnFragmentI
             e.printStackTrace();
         }
     }
+
+
     private void openCamera() {
         manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
         Log.e(TAG, "is camera open");
@@ -422,7 +406,7 @@ public class AR extends AppCompatActivity implements SensorsFragment.OnFragmentI
     @SuppressLint("InlinedApi")
     private void show() {
         // Show the system bar
-        mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        textureView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
         mVisible = true;
 
@@ -436,8 +420,8 @@ public class AR extends AppCompatActivity implements SensorsFragment.OnFragmentI
      * previously scheduled calls.
      */
     private void delayedHide(int delayMillis) {
-        mHideHandler.removeCallbacks(mHideRunnable);
-        mHideHandler.postDelayed(mHideRunnable, delayMillis);
+        mHideHandler.removeCallbacks(mHidePart2Runnable);
+        mHideHandler.postDelayed(mHidePart2Runnable, delayMillis);
     }
 
     public CameraManager getCameraManager(){

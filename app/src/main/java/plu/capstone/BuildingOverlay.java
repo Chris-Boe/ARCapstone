@@ -4,25 +4,37 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.GradientDrawable;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.util.Log;
 import android.util.SizeF;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.GridLayout;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
+import android.widget.TabHost;
+import android.widget.TabWidget;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.vision.Frame;
+import com.google.android.gms.vision.text.Line;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -52,7 +64,8 @@ public class BuildingOverlay extends Fragment {
     private String mParam2;
     private Query bQuery;
     private customView tempView;
-    private RelativeLayout arViewPane, buttonsView, buildingView;
+    private RelativeLayout arViewPane, buttonsView;
+    private GridLayout buildingView;
 
     private  String accelData, aData, compassData, cData, gyroData, gData, bearing, b, gps, g, ori, o;
     // private DatabaseReference mDatabase;
@@ -258,12 +271,12 @@ public class BuildingOverlay extends Fragment {
                     buildingButton.setTag(i);
                     buildingButton.setText(poiList.get(i).getBuilding().getName() + "\n" + poiList.get(i).getDistance());
                     buildingButton.setRotation((float) (0.0f - Math.toDegrees(poiList.get(i).getOrientation()[2])));
-                    buildingButton.setTranslationX(testx / -1);
+                    //buildingButton.setTranslationX(testx / -1);
                     //buildingButton.setTranslationY(testy);
                     //buildingButton.setTranslationY(testy);
 
                     RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                    //params.leftMargin = getView().getWidth()/2;
+                    params.leftMargin = getView().getWidth()/2;
                     params.topMargin = getView().getHeight() / 2;
 
                     buttonsView.addView(buildingButton, params);
@@ -295,34 +308,109 @@ public class BuildingOverlay extends Fragment {
      * @param poi (find a way to only pass that building)
      */
     private void generateBuildingInfo(BuildingButton bu, Buildings poi){
-        bu.setText("HIHIH");
+        buttonsView.removeAllViews();
+        pauseLoc();
 
         if(buildingView!=null){
             buildingView.removeAllViews();
             //arViewPane.removeView(buttonsView);
         }
-        buildingView = (RelativeLayout)getView().findViewById(R.id.iView);
 
-        Button tempButton = new Button(getContext());
-        tempButton.setText("return");
+        //layouts
+        LinearLayout parentLayout = (LinearLayout) getView().findViewById(R.id.layoutparent);
+        final FrameLayout tabLayout = (FrameLayout) getView().findViewById(R.id.tablayout);
+        final RelativeLayout barLayout = (RelativeLayout) getView().findViewById(R.id.barlayout);
+        barLayout.setBackgroundColor(Color.parseColor("#f7c738"));
 
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        params.leftMargin = getView().getWidth()/8;
-        params.topMargin = getView().getHeight()/8;
 
-        buildingView.addView(tempButton,params);
-        tempButton.setOnClickListener(new View.OnClickListener() {
+
+
+        //Generate building info tabs
+        LinearLayout tabCenter = new LinearLayout(getContext());
+        tabCenter.setOrientation(LinearLayout.VERTICAL);
+        tabCenter.setGravity(Gravity.CENTER_VERTICAL|Gravity.CENTER_HORIZONTAL);
+        LinearLayout.LayoutParams tabParams =
+                new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+            ScrollView scrollView = new ScrollView(getContext());
+            scrollView.setBackgroundColor(Color.parseColor("#eeeeee"));
+
+                final TextView buildingInfo = new TextView(getContext());
+                buildingInfo.setText(poi.getDescription());
+                scrollView.addView(buildingInfo);
+
+            ScrollView.LayoutParams scrollParams =
+                new ScrollView.LayoutParams(getView().getWidth() - getView().getWidth()/3,getView().getWidth() - getView().getWidth()/4);
+            tabCenter.addView(scrollView,scrollParams);
+
+
+            LinearLayout tabButtons = new LinearLayout(getContext());
+
+            final Buildings fPoi = poi;
+            tabButtons.setOrientation(LinearLayout.HORIZONTAL);
+                LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(getView().getWidth() - getView().getWidth()/3, LinearLayout.LayoutParams.WRAP_CONTENT);
+                //button 1
+                Button tab1 = new Button(getContext());
+                tab1.setText("Building Information");
+                tab1.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        buildingInfo.setText(fPoi.getDescription());
+                    }
+                });
+
+                Button tab2 = new Button(getContext());
+                tab2.setText("Building Events");
+                tab2.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        buildingInfo.setText("tab2");
+                    }
+                });
+
+                tabButtons.addView(tab1, new LinearLayout.LayoutParams((getView().getWidth() - getView().getWidth()/3)/2,LinearLayout.LayoutParams.WRAP_CONTENT));
+                tabButtons.addView(tab2, new LinearLayout.LayoutParams((getView().getWidth() - getView().getWidth()/3)/2,LinearLayout.LayoutParams.WRAP_CONTENT));
+                tabButtons.setGravity(Gravity.CENTER_HORIZONTAL);
+            tabCenter.addView(tabButtons);
+        tabLayout.addView(tabCenter,tabParams);
+
+
+        //Generate building name
+        TextView name = new TextView(getContext());
+        name.setText(poi.getName());
+        name.setPadding(25,25,35,25);
+        name.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30);
+        name.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
+
+        RelativeLayout.LayoutParams params =
+                new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        barLayout.addView(name,params);
+
+        //generate exit button
+        Button exitB = new Button(getContext());
+        exitB.setText("return");
+        exitB.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v){
                 Log.d("HI","hi from tempbutton");
-                buildingView.removeAllViews();
+                if(tabLayout.getChildCount()!=0) {
+                    tabLayout.removeAllViews();
+                }
+                if(barLayout.getChildCount()!=0)
+                    barLayout.removeAllViews();
+
+
+                //detatch/remove fragment
+
                 resumeLoc();
             }
         });
 
-        Log.d("BHEIGHT",buttonsView.getHeight()+"");
-        /**
-         * generate building name
-         */
+        params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(25,25,25,25);
+        barLayout.addView(exitB,params);
+
+
+
+
+        /*
+
         TextView buildingName = new TextView(getContext());
         buildingName.setBackgroundColor(Color.parseColor("#efbb37"));
         buildingName.setTextSize(TypedValue.COMPLEX_UNIT_SP, 28);
@@ -331,17 +419,79 @@ public class BuildingOverlay extends Fragment {
         buildingName.setText(poi.getName());
         Log.d("???",poi.getName());
 
-        params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         params.leftMargin = 0;
-        params.topMargin = 100;
+        params.topMargin = 0;
+
 
         buildingView.addView(buildingName,params);
 
+        //EVENT BUTTON
+        RelativeLayout layout = (RelativeLayout)getView().findViewById(R.id.eView);
+        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) layout.getLayoutParams();
+        layoutParams.leftMargin = getView().getWidth() / 6;
+        layoutParams.topMargin = getView().getHeight() / 3;
+        layoutParams.height = 800;
+        layoutParams.width = 500;
 
-        /**
-         * generate building description
-         * TODO:make this a tooltitlething
-         */
+
+        layout.setLayoutParams(layoutParams);
+
+        final Button eventButton = new Button(getContext());
+        final EventsViewFragment event = new EventsViewFragment();
+        final FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+
+        eventButton.setText("EVENTS!");
+        eventButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                ft.replace(R.id.eView, event, "events");
+                ft.commit();
+                RelativeLayout eView = (RelativeLayout) getView().findViewById(R.id.eView);
+
+
+                Button exit = new Button(getContext());
+                exit.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        ft.detach(event);
+
+                    }
+                });
+                eView.addView(exit);
+
+            }
+        });
+
+        params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        params.leftMargin = getView().getWidth()/8;
+        params.topMargin = getView().getHeight()/6;
+
+        buildingView.addView(eventButton,params);
+
+
+        //REMOVE BUTTON
+        Button tempButton = new Button(getContext());
+        tempButton.setText("return");
+
+        params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        params.leftMargin = getView().getWidth()/8;
+        params.topMargin = getView().getHeight()/8;
+
+        buildingView.addView(tempButton,params);
+        tempButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v){
+                Log.d("HI","hi from tempbutton");
+                buildingView.removeAllViews();
+
+                if(!ft.isEmpty()) {
+                    Log.d("srsly","Srsly");
+                    ft.remove(event);
+                }
+
+                resumeLoc();
+            }
+        });
+
+        //BUILDING DESC
         TextView buildingDesc = new TextView(getContext());
         buildingDesc.setText(poi.getDescription());
         buildingDesc.setBackgroundColor(Color.parseColor("#ededed"));
@@ -355,12 +505,7 @@ public class BuildingOverlay extends Fragment {
 
         buildingView.addView(buildingDesc,params);
 
-
-
-        buttonsView.removeAllViews();
-
-
-        pauseLoc();
+**/
 
     }
 

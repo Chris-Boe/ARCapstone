@@ -23,6 +23,128 @@
             tools:ignore="UselessParent">
         </RelativeLayout>
 
+
+        <LinearLayout
+        android:id="@+id/layoutparent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:id="@+id/tablayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+         <!--   <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:orientation="vertical">
+
+                <ScrollView
+                    android:layout_width="300dp"
+                    android:layout_height="300dp"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/textView"
+                        android:layout_width="300dp"
+                        android:layout_height="300dp"
+                        android:text="TextView" />
+                </ScrollView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/button7"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Button" />
+
+                    <Button
+                        android:id="@+id/button6"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Button" />
+                </LinearLayout>
+
+            </LinearLayout> -->
+
+        </FrameLayout>
+
+            <RelativeLayout
+                android:id="@+id/barlayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom">
+
+                <!--
+
+                <EditText
+                    android:id="@+id/bName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_column="0"
+                    android:layout_row="25"
+                    android:ems="10"
+                    android:inputType="none"
+                    android:paddingEnd="35dp"
+                    android:text="Name"
+                    android:textAlignment="textEnd"
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/exit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:text="Return"
+                    android:visibility="visible" />
+
+                    -->
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+   <!--
+
+        <GridLayout
+            android:id="@+id/bLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom"
+            android:columnCount="8"
+            android:rowCount="16"
+            tools:ignore="UselessParent">
+
+            <RelativeLayout
+                android:id="@+id/infoView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:gravity="left"
+                android:orientation="horizontal"
+                android:background="@color/colorPrimary"
+                >
+                  android:layout_column="1"
+                android:layout_row="10"
+                android:layout_columnSpan="6"
+                android:layout_rowSpan="7"
+
+            </RelativeLayout>
+
+        </GridLayout>
         <RelativeLayout
             android:id="@+id/iView"
             style="?metaButtonBarStyle"
@@ -33,13 +155,24 @@
             tools:ignore="UselessParent">
         </RelativeLayout>
 
+        <RelativeLayout
+            android:id="@+id/eView"
+            style="?metaButtonBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:orientation="horizontal"
+            tools:ignore="UselessParent">
+        </RelativeLayout>
 
-        <!--<fragment android:name="plu.capstone.SensorsFragment"
+
+
+        <fragment android:name="plu.capstone.SensorsFragment"
                android:id="@+id/sensors"
                android:layout_weight="1"
                android:layout_width="0dp"
-               android:layout_height="wrap_content" />-->
+               android:layout_height="wrap_content" />
 
-    </RelativeLayout>
+    </RelativeLayout> -->
 
 </FrameLayout>

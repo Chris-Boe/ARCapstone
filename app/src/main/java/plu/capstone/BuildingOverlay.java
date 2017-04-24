@@ -120,15 +120,6 @@ public class BuildingOverlay extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
-        //instantiate database
-        // mDatabase = FirebaseDatabase.getInstance().getReference();
-
-        //TODO: query database for possible locations
-        //queries each building (should probably test for more buildings)
-
-
-
     }
 
     @Override
@@ -348,8 +339,8 @@ public class BuildingOverlay extends Fragment {
 
             LinearLayout tabButtons = new LinearLayout(getContext());
 
-        final FrameLayout eView = new FrameLayout(getContext());;
-        final EventsViewFragment event = new EventsViewFragment();
+        final RelativeLayout eView = new RelativeLayout(getContext());;
+        final EventsViewFragment event = new EventsViewFragment().newInstance("EventsViewFragment",poi.getName());
         final FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
             final Buildings fPoi = poi;
             tabButtons.setOrientation(LinearLayout.HORIZONTAL);
@@ -378,7 +369,7 @@ public class BuildingOverlay extends Fragment {
                 //events list
                 Button tab2 = new Button(getContext());
                 tab2.setText("Building Events");
-        final FrameLayout.LayoutParams param = new FrameLayout.LayoutParams(getView().getWidth() - getView().getWidth() / 3, getView().getWidth() - getView().getWidth() / 4);
+        final RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(getView().getWidth() - getView().getWidth() / 3, getView().getWidth() - getView().getWidth() / 4);
                 tab2.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
                         if(scrollView.getChildCount()!=0)
@@ -389,7 +380,7 @@ public class BuildingOverlay extends Fragment {
 
 
                             eView.setId(R.id.fragment_events_view);
-                            eView.setBackgroundColor(Color.parseColor("#0000ff"));
+                            eView.setBackgroundColor(Color.parseColor("#eeeeee"));
 
                             tabCenter.removeView(scrollView);
                             tabCenter.addView(eView, param);

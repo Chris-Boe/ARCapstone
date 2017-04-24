@@ -30,6 +30,13 @@ import java.util.HashMap;
 
 public class EventsViewFragment extends Fragment{
 
+    // TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String LOCPARAM = "param1";
+
+    // TODO: Rename and change types of parameters
+    private String locParam;
+
     ExpandableListAdapter listAdapter;
     ExpandableListView expListView;
     private ArrayList<String> listHeaders;
@@ -43,8 +50,6 @@ public class EventsViewFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_events_view, container, false);
         expListView = (ExpandableListView) view.findViewById(R.id.lvExpEvents);
-        RelativeLayout fl = (RelativeLayout) view.findViewById(R.id.eventContainer);
-        fl.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
         expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
@@ -67,8 +72,12 @@ public class EventsViewFragment extends Fragment{
 
         //gets instance/reference of database
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        Query eventQuery;
         //queries each event
-        Query eventQuery = mDatabase.child("Pacific Lutheran University/Events");
+        if(locParam!=null)
+            eventQuery = mDatabase.child("Pacific Lutheran University/Events").orderByChild("loc").equalTo(locParam);
+        else
+            eventQuery = mDatabase.child("Pacific Lutheran University/Events");
 
         //listener for onDataChange
         eventQuery.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -108,11 +117,19 @@ public class EventsViewFragment extends Fragment{
         return view;
     }
 
-    public static EventsViewFragment newInstance(String text){
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            locParam = getArguments().getString(LOCPARAM);
+        }
+    }
+
+    public static EventsViewFragment newInstance(String text, String location){
         EventsViewFragment evf = new EventsViewFragment();
         Bundle b = new Bundle();
         b.putString("msg", text);
-
+        b.putString(LOCPARAM, location);
         evf.setArguments(b);
         return evf;
     }

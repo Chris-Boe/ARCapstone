@@ -32,10 +32,12 @@ public class EventsViewFragment extends Fragment{
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String LOCPARAM = "param1";
+    private static final String PARAM_VALUE = "param1";
+    private static final String PARAM_KEY = "param2";
 
     // TODO: Rename and change types of parameters
-    private String locParam;
+    private String paramValue;
+    private String paramKey;
 
     ExpandableListAdapter listAdapter;
     ExpandableListView expListView;
@@ -74,8 +76,8 @@ public class EventsViewFragment extends Fragment{
         mDatabase = FirebaseDatabase.getInstance().getReference();
         Query eventQuery;
         //queries each event
-        if(locParam!=null)
-            eventQuery = mDatabase.child("Pacific Lutheran University/Events").orderByChild("loc").equalTo(locParam);
+        if(paramKey!=null && paramValue != null)
+            eventQuery = mDatabase.child("Pacific Lutheran University/Events").orderByChild(paramKey).equalTo(paramValue);
         else
             eventQuery = mDatabase.child("Pacific Lutheran University/Events");
 
@@ -121,15 +123,17 @@ public class EventsViewFragment extends Fragment{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            locParam = getArguments().getString(LOCPARAM);
+            paramValue = getArguments().getString(PARAM_VALUE);
+            paramKey = getArguments().getString(PARAM_KEY);
         }
     }
 
-    public static EventsViewFragment newInstance(String text, String location){
+    public static EventsViewFragment newInstance(String text, String k, String val){
         EventsViewFragment evf = new EventsViewFragment();
         Bundle b = new Bundle();
         b.putString("msg", text);
-        b.putString(LOCPARAM, location);
+        b.putString(PARAM_VALUE, val);
+        b.putString(PARAM_KEY,k);
         evf.setArguments(b);
         return evf;
     }

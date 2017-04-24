@@ -340,7 +340,7 @@ public class BuildingOverlay extends Fragment {
             LinearLayout tabButtons = new LinearLayout(getContext());
 
         final RelativeLayout eView = new RelativeLayout(getContext());;
-        final EventsViewFragment event = new EventsViewFragment().newInstance("EventsViewFragment",poi.getName());
+        final EventsViewFragment event = new EventsViewFragment().newInstance("EventsViewFragment","loc",poi.getName());
         final FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
             final Buildings fPoi = poi;
             tabButtons.setOrientation(LinearLayout.HORIZONTAL);

@@ -42,10 +42,10 @@ public class InfoViewPager extends FragmentActivity{
         public Fragment getItem(int position) {
             //Fragment fragment = fm.findFragmentByTag("android:switcher:" + )
             switch(position){
-                case 0: return EventsViewFragment.newInstance("EventsViewFragment",null);
+                case 0: return EventsViewFragment.newInstance("EventsViewFragment",null,null);
                 case 1: return CalendarViewFragment.newInstance("CalendarViewFragment");
                 case 2: return BuildingsViewFragment.newInstance("BuildingsViewFragment");
-                default: return EventsViewFragment.newInstance("Default: EventsViewFragment",null);
+                default: return EventsViewFragment.newInstance("Default: EventsViewFragment",null,null);
             }
         }
 

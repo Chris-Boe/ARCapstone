@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item type="id" name="tab1" />
+    <item type="id" name="events"/>
+    <item type="id" name="fragment_events_view"/>
 </resources>

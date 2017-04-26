@@ -179,6 +179,7 @@ public class BuildingOverlay extends Fragment {
                        String g, String o, ArrayList<PointOfInterest> poiList, CameraManager manager, String cameraId){
 
         CameraCharacteristics cc = null;
+        Log.d("hi", "NEW LOCATION\n");
 
         try {
             cc = manager.getCameraCharacteristics(cameraId);
@@ -188,12 +189,11 @@ public class BuildingOverlay extends Fragment {
 
         //Log.d("poiListSize",poiList.size()+"?");
 
+        //calculate fov with hardware
         CameraCharacteristics fcc = cc;
         //tempView.setOptions(aData, cData, gData, b, g, o, poiList.get(0).getOrientation(),
         //      poiList.get(0).getCurBearing(), cc);
 
-        //TODO:calculate query
-        //     Query testQuery = mDatabase.child("Pacific Lutheran University/Buildings");
 
        /* float hFOV = (float) (2 * Math.atan(
                 (fcc.get(CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE).getWidth() /
@@ -202,7 +202,7 @@ public class BuildingOverlay extends Fragment {
 */
         float vFOV = (float) (2 * Math.atan(
                 (fcc.get(CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE).getHeight() /
-                        (2 * fcc.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS)[0])
+                        (2 * (fcc.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS)[0] - 40))
                 )));
 
 
@@ -218,13 +218,12 @@ public class BuildingOverlay extends Fragment {
             for(int i=0;i<poiList.size();i++){
                 temp += i + ": " + poiList.get(i).getBuilding().getName() + "\n";
             }
-            Log.d("BuildingList",temp);
-
+           // Log.d("BuildingList",temp);
 
             for(int i=0;i<poiList.size();i++) {
 
                 //IF USER IS AT A BUILDING:
-                if(poiList.get(i).getDistance()<40){
+                if(poiList.get(i).getDistance()<50){
                     buildingButton = new BuildingButton(getContext(), getView().getWidth(), getView().getHeight(), poiList.get(i).getOrientation());
                     buildingButton.setX(getView().getWidth()/2);
                     buildingButton.setY(getView().getHeight() - getView().getHeight()/16);
@@ -244,15 +243,19 @@ public class BuildingOverlay extends Fragment {
 
                     //Calculate fov
                     float hFOV = (float) (2 * Math.atan(40 /
-                            2 * poiList.get(i).getDistance()
+                            ( 2 * (poiList.get(i).getDistance() - 30))
                     ));
+
+
 
 
                     //normalize about the fov
 
-                    float dx = (float) ((getView().getWidth() / Math.toDegrees(hFOV)) * (Math.toDegrees(poiList.get(i).getOrientation()[0]) - poiList.get(i).getCurBearing()));
-                    //float dx = (float) ((getView().getWidth() / hFOV) * (Math.toDegrees(poiList.get(i).getOrientation()[0]) - poiList.get(i).getCurBearing()));
-                    float dy = (float) ((getView().getHeight() / Math.toDegrees(vFOV)) * Math.toDegrees(poiList.get(i).getOrientation()[1]));
+                    float dx = (float) ((getView().getWidth() / Math.toDegrees(hFOV)) * Math.abs((poiList.get(i).getCurBearing() - -1*Math.toDegrees(poiList.get(i).getOrientation()[0]))));
+                 // float dx = (float) ((getView().getWidth() / Math.toDegrees(hFOV)) * (-1*Math.toDegrees(poiList.get(i).getOrientation()[0]) - poiList.get(i).getCurBearing()));//((Math.toDegrees(poiList.get(i).getOrientation()[0]) - poiList.get(i).getCurBearing());
+                   // float dy = (float) ((getView().getHeight() / Math.toDegrees(vFOV)) * Math.toDegrees(poiList.get(i).getOrientation()[1]));
+                    float dy = (float) ((getView().getWidth() / Math.toDegrees(hFOV)) * Math.abs((poiList.get(i).getCurBearing() - -1*Math.toDegrees(poiList.get(i).getOrientation()[1]))));
+
                     float testx = dx;
                     float testy = dy;
                     //Log.d("width", getView().getWidth() + "");
@@ -263,19 +266,30 @@ public class BuildingOverlay extends Fragment {
                     buildingButton.setY(0);
                     buildingButton.setTag(i);
                     buildingButton.setText(poiList.get(i).getBuilding().getName() + "\n" + poiList.get(i).getDistance());
+
+                    //rotate around y axis
                     buildingButton.setRotation((float) (0.0f - Math.toDegrees(poiList.get(i).getOrientation()[2])));
-                    buildingButton.setTranslationX(testx / -1);
-                    //buildingButton.setTranslationY(testy);
-                    //buildingButton.setTranslationY(testy);
+
+                    //translate around z axis
+                    buildingButton.setTranslationX(dx);
+                   // buildingButton.setTranslationY(testy);
 
                     RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                     //params.leftMargin = getView().getWidth()/2;
                     params.topMargin = getView().getHeight() / 2;
 
                     buttonsView.addView(buildingButton, params);
+                    float compass2d = poiList.get(i).getOrientation()[0] - poiList.get(i).getOrientation()[2];
 
-                    Log.d("dx/xtran/ytran", buildingButton.getText() + ": " + dx + "/" + buildingButton.getTranslationX() + "/" + buildingButton.getTranslationY());
-                    Log.d("HFOV", buildingButton.getText() + ":" + Math.toDegrees(hFOV));
+                  if(poiList.get(i).getBuilding().getName().equals("Rieke Science Center")) {
+                      Log.d("dx/xspot:",dx+"/"+buildingButton.getX());
+                      Log.d("curBearing:",poiList.get(i).getCurBearing()+"");
+                      Log.d("azimuth:",Math.toDegrees(poiList.get(i).getOrientation()[0])+"");
+                      Log.d("2d compass:",compass2d+"");
+                      Log.d("directions:", "NORTH: " + 0 + " EAST: " + Math.toDegrees(Math.PI/2) + " WEST: " + -Math.toDegrees(Math.PI/2) + " SOUTH: " + Math.toDegrees(Math.PI));
+                      Log.d("HFOV", buildingButton.getText() + ":" + Math.toDegrees(hFOV));
+                      // Log.d("dx/xtran/bearing/azi", poiList.get(i).getBuilding().getName() + ": " + dx + "/" + buildingButton.getX() + "/" + poiList.get(i).getCurBearing()+"/"+Math.toDegrees(poiList.get(i).getOrientation()[0]));
+                  }
 
                 }
 

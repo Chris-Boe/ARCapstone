@@ -375,7 +375,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
                 //  Log.d("CURBEARING:", curBearing + "?");
 
                 //CHECK DISTANCE
-                if(distance > 130) {
+                if(distance < 130) {
 
                     float rotation[] = new float[9];
                     float identity[] = new float[9];
@@ -383,7 +383,9 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
                     if (smoothedAccel == null)
                         Log.d(":c", "like really");
 
+
                     boolean gotRotation = SensorManager.getRotationMatrix(rotation, identity, smoothedAccel, smoothedCompass);
+
 
                     if (gotRotation) {
                         float cameraRotation[] = new float[9];
@@ -393,14 +395,16 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
                         orientation = new float[3];
                         SensorManager.getOrientation(cameraRotation, orientation);
                         if (gotRotation) {
-                            cameraRotation = new float[9];
+                           cameraRotation = new float[9];
                             //remap so camera points positive
-                            SensorManager.remapCoordinateSystem(rotation, SensorManager.AXIS_X, SensorManager.AXIS_Z, cameraRotation);
+                           SensorManager.remapCoordinateSystem(rotation, SensorManager.AXIS_X, SensorManager.AXIS_Z, cameraRotation);
 
                             orientation = new float[3];
-                            SensorManager.getOrientation(cameraRotation, orientation);
+                            SensorManager.getOrientation(cameraRotation,orientation);
                         }
                     }
+
+
                     //Log.d("ORI:",ori+"");
                     ori = "ORI: " + orientation[0] + " " + orientation[1] + " " + orientation[2];
 

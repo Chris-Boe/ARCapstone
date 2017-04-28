@@ -1,9 +1,11 @@
 package plu.capstone.fragments;
 
 import android.accounts.AccountManager;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
@@ -273,6 +275,62 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
         switch (item.getItemId()) {
             case R.id.queryBuilding:
                 Log.d("HI","The button works");
+
+                final Fragment fragment = this;
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+                final String building[] = getResources().getStringArray(R.array.plu_building_list);
+
+                builder.setTitle("Please choose a building")
+                    .setItems(building, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            for(int i=0;i<building.length;i++){
+
+                                //building found
+                                if(i==which){
+                                    Log.d("building:", building[i]);
+                                    //modify list
+                                    paramKey = "loc";
+                                    paramValue = building[i];
+
+                                    getActivity().getSupportFragmentManager()
+                                            .beginTransaction()
+                                            .detach(fragment)
+                                            .attach(fragment)
+                                            .commit();
+
+
+                                }
+                            }
+                        }
+                    });
+
+                builder.setPositiveButton("Show all", new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int id) {
+                        //refreshing
+                        paramKey = null;
+                        paramValue = null;
+
+                        getActivity().getSupportFragmentManager()
+                                .beginTransaction()
+                                .detach(fragment)
+                                .attach(fragment)
+                                .commit();
+
+                    }
+                });
+
+                builder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                    }
+                });
+
+                //set other properties
+
+// Create the AlertDialog
+                AlertDialog dialog = builder.create();
+                dialog.show();
                 return true;
 
             default:
@@ -282,6 +340,7 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
 
         }
     }
+
 
     public static EventsViewFragment newInstance(String text, String k, String val, String par){
         EventsViewFragment evf = new EventsViewFragment();

@@ -11,14 +11,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import org.json.JSONObject;
 
 import java.net.*;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map.Entry;
 import java.io.*;
-import plu.capstone.Event;
 
 public class RSSReader extends IntentService{
-	private static HashMap<String, Event> map;
+	private static HashMap<String, CustomEvent> map;
 	public static final String urlInMessage = "";
 	private DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("Pacific Lutheran University/Events");
 	/**
@@ -40,10 +37,10 @@ public class RSSReader extends IntentService{
 
 	}
 
-	private static HashMap<String, Event> RSSRead(String url) {
+	private static HashMap<String, CustomEvent> RSSRead(String url) {
 		Log.d("RSS Read: ", "RSSREAD Started!");
 
-		map = new HashMap<String, Event>();
+		map = new HashMap<String, CustomEvent>();
 		String title = "";
 		String description = "";
 		String location = "";
@@ -173,7 +170,7 @@ public class RSSReader extends IntentService{
 				title = title.replaceAll("\\$", "");
 				title = title.replaceAll("\\[", "");
 				title = title.replaceAll("]", "");
-				//Add the event details to the hashmap
+				//Add the customEvent details to the hashmap
 				description = description.replaceAll("&lt;", "");
 				description = description.replaceAll("br/&gt;", "");
 				description = description.replaceAll("nbsp;", "");
@@ -186,8 +183,8 @@ public class RSSReader extends IntentService{
 				description = description.replaceAll("#39;", "'");
 				description = description.replaceAll("/ Organization", "Organization");
 				description = description.replaceAll("#160;", "");
-				Event event = new Event(description, location, link, category);
-				map.put(title, event);
+				CustomEvent customEvent = new CustomEvent(description, location, link, category);
+				map.put(title, customEvent);
 
 			}
 			in.close();

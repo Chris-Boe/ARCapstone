@@ -4,16 +4,16 @@ package plu.capstone;
  * Created by cboe1 on 4/4/2017.
  */
 
-public class Event {
+public class CustomEvent {
     private String description;
     private String loc;
     private String link;
     private String category;
 
-    public Event(){
+    public CustomEvent(){
 
     }
-    public Event(String description, String loc, String link, String category){
+    public CustomEvent(String description, String loc, String link, String category){
         this.description = description;
         this.loc = loc;
         this.link = link;

@@ -95,7 +95,8 @@
     <string name="title_fragment_events_view">Events</string>
     <string name="title_fragment_buildings_view">Buildings</string>
     <string name="title_fragment_calendar_view">Calendar</string>
-
+    <string name="action_search">Search</string>
+    <string name="action_connect">Connect</string>
     <string name="action_settings">Settings</string>
     <string name="connection_error">\"Connection Error\"</string>
     <string name="title_activity_maps">Map</string>

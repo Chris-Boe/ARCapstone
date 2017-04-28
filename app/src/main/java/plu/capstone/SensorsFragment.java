@@ -113,7 +113,10 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
     private LocationRequest mLocationRequest;
     private boolean isRequestingLocation = false;
     private float distance;
-
+    private float lastRotation[];
+    private float smoothRotation[];
+    private boolean isRotationAvailable,isAccelAvailable,isCompassAvailable,isGyroAvailable,isGravityAvailable;
+    private boolean accMag;
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -182,10 +185,15 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
         Sensor accelSensor = sensors.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         Sensor compassSensor = sensors.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         Sensor gyroSensor = sensors.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        Sensor rotationSensor = sensors.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+        Sensor gravitySensor = sensors.getDefaultSensor(Sensor.TYPE_GRAVITY);
 
-        boolean isAccelAvailable = sensors.registerListener(this, accelSensor, SensorManager.SENSOR_DELAY_UI);
-        boolean isCompassAvailable = sensors.registerListener(this, compassSensor, SensorManager.SENSOR_DELAY_UI);
-        boolean isGyroAvailable = sensors.registerListener(this, gyroSensor, SensorManager.SENSOR_DELAY_UI);
+        isAccelAvailable = sensors.registerListener(this, accelSensor, SensorManager.SENSOR_DELAY_UI);
+        isCompassAvailable = sensors.registerListener(this, compassSensor, SensorManager.SENSOR_DELAY_UI);
+        isGyroAvailable = sensors.registerListener(this, gyroSensor, SensorManager.SENSOR_DELAY_UI);
+        isGravityAvailable = sensors.registerListener(this,gravitySensor,SensorManager.SENSOR_DELAY_UI);
+        isRotationAvailable = sensors.registerListener(this,rotationSensor,SensorManager.SENSOR_DELAY_UI);
+
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(getContext())
                     .addConnectionCallbacks(this)
@@ -258,10 +266,35 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
         Time time = new Time(currentTimeMillis());
 
         switch (event.sensor.getType()) {
-            case Sensor.TYPE_ACCELEROMETER:
+            case Sensor.TYPE_ROTATION_VECTOR:
+               // Log.d("using","rotationvec");
+/*
+                lastRotation = new float[16];
+                SensorManager.getRotationMatrixFromVector(lastRotation,event.values);
+
+                //Log.d("just to make usre",lastRotation.toString()+"");
+                accMag = false;*/
+                break;
+
+            case Sensor.TYPE_GRAVITY:
                 lastAccelerometer = new float[event.values.length];
                 lastAccelerometer = event.values;
-                smoothedAccel = exponentialSmoothing(lastAccelerometer,smoothedAccel,1);
+                smoothedAccel = exponentialSmoothing(lastAccelerometer, smoothedAccel, 1);
+                accMag = true;
+                break;
+           case Sensor.TYPE_ACCELEROMETER:
+               if(isGravityAvailable)
+                   //gravity > accelerometer
+                   break;
+             /*  if(isRotationAvailable)
+                   break;*/
+               else {
+                  // Log.d("using","accel");
+                   lastAccelerometer = new float[event.values.length];
+                   lastAccelerometer = event.values;
+                   smoothedAccel = exponentialSmoothing(lastAccelerometer, smoothedAccel, 1);
+                   accMag = true;
+               }
                 /*
                 float temp[] = null;
                 smoothedAccel = lastAccelerometer;
@@ -286,10 +319,16 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
                 gyroData = msg.toString();
                 break;*/
             case Sensor.TYPE_MAGNETIC_FIELD:
-                lastCompass = new float[event.values.length];
-                lastCompass = event.values;
-                smoothedCompass = exponentialSmoothing(lastCompass,smoothedCompass,1);
-                /*
+                /*if(isRotationAvailable)
+                    break;
+                else {*/
+                   // Log.d("using:", "magfield");
+                    lastCompass = new float[event.values.length];
+                    lastCompass = event.values;
+                    smoothedCompass = exponentialSmoothing(lastCompass, smoothedCompass, 1);
+                    accMag = true;
+                //}
+               /*
                 smoothedCompass = lastCompass;
                 if (smoothedCompass == null)
                     for (int i = 0; i < event.values.length; i++) {
@@ -308,7 +347,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
                     msg.append("[").append(value).append("]");
                 }
                 compassData = msg.toString();*/
-                break;
+               break;
         }
 
 
@@ -321,6 +360,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
         switch(SensorType) {
             case Sensor.TYPE_ACCELEROMETER: Log.d("ACCELEROMETER CHANGED",accuracy+""); break;
             case Sensor.TYPE_MAGNETIC_FIELD: Log.d("MAGFIELD CHANGED",accuracy+""); break;
+            case Sensor.TYPE_ROTATION_VECTOR: Log.d("ROTATION CHANGED",accuracy+"");break;
         }
 
 
@@ -359,25 +399,27 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
                 //  Log.d("CURBEARING:", curBearing + "?");
 
                 //CHECK DISTANCE
-                if(distance > 130) {
+                if(distance > 150) {
 
-                    float rotation[] = new float[9];
-                    float identity[] = new float[9];
+                    //using accel
+                    if(accMag==true) {
+                        float rotation[] = new float[9];
+                        float identity[] = new float[9];
 
-                    if (smoothedAccel == null)
-                        Log.d(":c", "like really");
+                        if (smoothedAccel == null)
+                            Log.d(":c", "like really");
 
 
-                    boolean gotRotation = SensorManager.getRotationMatrix(rotation, identity, smoothedAccel, smoothedCompass);
+                        boolean gotRotation = SensorManager.getRotationMatrix(rotation, identity, smoothedAccel, smoothedCompass);
 
 
-                    if (gotRotation) {
-                        float cameraRotation[] = new float[9];
-                        //remap so camera points straight down y axis
-                        SensorManager.remapCoordinateSystem(rotation, SensorManager.AXIS_X, SensorManager.AXIS_Z, cameraRotation);
-                        //orientation vec
-                        orientation = new float[3];
-                        SensorManager.getOrientation(cameraRotation, orientation);
+                        if (gotRotation) {
+                            float cameraRotation[] = new float[9];
+                            //remap so camera points straight down y axis
+                            SensorManager.remapCoordinateSystem(rotation, SensorManager.AXIS_X, SensorManager.AXIS_Z, cameraRotation);
+                            //orientation vec
+                            orientation = new float[3];
+                            SensorManager.getOrientation(cameraRotation, orientation);
                         /*if (gotRotation) {
                            cameraRotation = new float[9];
                             //remap so camera points positive
@@ -386,6 +428,17 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
                             orientation = new float[3];
                             SensorManager.getOrientation(cameraRotation,orientation);
                         }*/
+                        }
+                    }
+                    else {
+                        //else using matrix
+                        float[] smoothedRotation = new float[16];
+                        orientation = new float[3];
+                        SensorManager.remapCoordinateSystem(lastRotation,SensorManager.AXIS_X, SensorManager.AXIS_Z, smoothedRotation);
+                        SensorManager.getOrientation(lastRotation, smoothedRotation);
+                        Log.d("Really using matrix", "yup");
+
+                        SensorManager.getOrientation(smoothedRotation,orientation);
                     }
 
 

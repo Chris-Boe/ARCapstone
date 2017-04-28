@@ -3,13 +3,11 @@ package plu.capstone;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -32,7 +30,6 @@ public class BuildingsViewFragment extends Fragment {
     private ArrayList<String> listHeaders;
     private HashMap<String, ArrayList<String>> listChildren;
     private HashMap<String, Buildings> buildingsMap;
-    //private DatabaseEvents dbe;
     private DatabaseReference mDatabase;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
@@ -52,27 +49,16 @@ public class BuildingsViewFragment extends Fragment {
             //reads in data whenever changed (maybe find a more appropriate callback)
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String bList;
                 Buildings singleBuilding;
                 String name;
-                int count = 0;
                 for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
                     //buildingsMap.put(singleSnapshot.getKey(),singleSnapshot.getValue(Buildings.class));
-                    Log.d("Count: ", count+"");
-                    count++;
                     name = singleSnapshot.getKey();
                     singleBuilding = singleSnapshot.getValue(Buildings.class);
-                    Log.d("Building", name);
                     addToBuildingsMap(name, singleBuilding);
                     addToHeaders(name);
                     addToBuildingChildren(name, singleBuilding);
                 }
-                bList = listHeaders.toString();
-                Log.d("Sizes H:", listHeaders.size() + " C: " + listChildren.size());
-                //Toast toast = Toast.makeText(con, bList, Toast.LENGTH_SHORT);
-                //toast.show();
-                Log.d("list", "LH" + buildingsMap.size() + " LC: "+listChildren.size());
-
                 expListView = (ExpandableListView) view.findViewById(R.id.lvExpEvents);
                 listAdapter = new ExpandableListAdapter(con, listHeaders, listChildren);
                 expListView.setAdapter(listAdapter);
@@ -118,7 +104,6 @@ public class BuildingsViewFragment extends Fragment {
         //details.add(b.getLongitude()+"");
         //details.add(b.getName());
         listChildren.put(s, details);
-        //Log.d("Details", b.getName().toString());
     }
     public HashMap<String, ArrayList<String>> getEventChildren(){
         Log.d("EC SIZE", listChildren.size() + "");

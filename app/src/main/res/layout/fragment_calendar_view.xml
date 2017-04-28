@@ -11,6 +11,19 @@
         android:id="@+id/calendarView"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
+        android:layout_alignParentStart="true"
+        android:gravity="top"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/calTextView"
+        android:layout_below="@id/calendarView"
+        android:visibility="invisible"/>
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/calListView"
+        android:background="#d3d3d3"
+        android:layout_below="@id/calTextView">
+    </ListView>
 </RelativeLayout>

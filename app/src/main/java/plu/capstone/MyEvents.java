@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -27,7 +26,7 @@ public class MyEvents extends AppCompatActivity {
     ExpandableListView expListView;
     private ArrayList<String> listHeaders;
     private HashMap<String, ArrayList<String>> listChildren;
-    private HashMap<String, Event> eventsMap;
+    private HashMap<String, CustomEvent> eventsMap;
     //private DatabaseEvents dbe;
     private DatabaseReference mDatabase;
 
@@ -63,18 +62,18 @@ public class MyEvents extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String eList;
-                Event singleEvent;
+                CustomEvent singleCustomEvent;
                 String title;
                 int count = 0;
                 for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
-                    eventsMap.put(singleSnapshot.getKey(),singleSnapshot.getValue(Event.class));
+                    eventsMap.put(singleSnapshot.getKey(),singleSnapshot.getValue(CustomEvent.class));
                     Log.d("Count: ", count+"");
                     count++;
                     title = singleSnapshot.getKey();
-                    singleEvent = singleSnapshot.getValue(Event.class);
-                    addToEventsMap(title, singleEvent);
+                    singleCustomEvent = singleSnapshot.getValue(CustomEvent.class);
+                    addToEventsMap(title, singleCustomEvent);
                     addToHeaders(title);
-                    addToEventChildren(title, singleEvent);
+                    addToEventChildren(title, singleCustomEvent);
                 }
                 eList = listHeaders.toString();
                 Log.d("Sizes H:", listHeaders.size() + " C: " + listChildren.size());
@@ -99,10 +98,10 @@ public class MyEvents extends AppCompatActivity {
         Intent intent = new Intent(this, CalendarActivity.class);
         startActivity(intent);
     }
-    public void addToEventsMap(String key, Event obj){
+    public void addToEventsMap(String key, CustomEvent obj){
         eventsMap.put(key, obj);
     }
-    public HashMap<String, Event> getEventsMap(){
+    public HashMap<String, CustomEvent> getEventsMap(){
         return eventsMap;
     }
     public void addToHeaders(String title){
@@ -112,7 +111,7 @@ public class MyEvents extends AppCompatActivity {
         Log.d("EH SIZE", listHeaders.size() + "");
         return listHeaders;
     }
-    public void addToEventChildren(String s, Event e){
+    public void addToEventChildren(String s, CustomEvent e){
         ArrayList<String> details = new ArrayList<>();
         details.add(e.getCategory());
         details.add(e.getDescription());

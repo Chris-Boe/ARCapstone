@@ -10,15 +10,20 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 
+import com.google.api.services.calendar.model.Event;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by cboe1 on 4/18/2017.
  */
 
-public class InfoViewPager extends FragmentActivity{
+public class InfoViewPager extends FragmentActivity {
 
     InfoPagerAdapter infoPagerAdapter;
     ViewPager vP;
-
+    ArrayList<Event> eventsToCal;
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -26,17 +31,26 @@ public class InfoViewPager extends FragmentActivity{
         infoPagerAdapter = new InfoPagerAdapter(getSupportFragmentManager());
         vP = (ViewPager) findViewById(R.id.pager);
         vP.setAdapter(infoPagerAdapter);
+        //Toolbar toolbar = (Toolbar)findViewById(R.id.myToolbar);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(vP);
     }
 
+    /*@Override
+    public void onEventAdded(Event e) {
+        eventsToCal = new ArrayList<Event>();
+        eventsToCal.add(e);
+        CalendarViewFragment.newInstance("CalendarViewFragment", eventsToCal);
+    }*/
+
 
     private class InfoPagerAdapter extends FragmentStatePagerAdapter {
+        CustomEvent event;
         //private FragmentManager fm;
         public InfoPagerAdapter(FragmentManager fragMan){
             super(fragMan);
-            //this.fm = fragMan;
+
         }
         @Override
         public Fragment getItem(int position) {

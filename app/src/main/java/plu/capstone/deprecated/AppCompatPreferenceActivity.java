@@ -1,4 +1,4 @@
-package plu.capstone;
+package plu.capstone.deprecated;
 
 import android.content.res.Configuration;
 import android.os.Bundle;

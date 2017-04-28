@@ -1,4 +1,4 @@
-package plu.capstone;
+package plu.capstone.fragments;
 
 import android.accounts.AccountManager;
 import android.app.Dialog;
@@ -13,8 +13,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -52,6 +57,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import plu.capstone.Models.CustomEvent;
+import plu.capstone.ExpandableListAdapter;
+import plu.capstone.R;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -68,10 +76,12 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String PARAM_VALUE = "param1";
     private static final String PARAM_KEY = "param2";
+    private static final String PARAM_PARENT = "param3";
 
     // TODO: Rename and change types of parameters
     private String paramValue;
     private String paramKey;
+    private String paramParent;
 
     ExpandableListAdapter listAdapter;
     ExpandableListView expListView;
@@ -95,6 +105,8 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
     ArrayList<Event> savedEvents;
     SharedPreferences prefs;
     SharedPreferences.Editor editor;
+    private ActionBar actionBar;
+
 
     /*
     OnEventAddedListener mCallback;
@@ -114,11 +126,11 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_events_view, container, false);
-        //Toolbar myToolbar = (Toolbar) view.findViewById(R.id.myToolbar);
-        //((AppCompatActivity)getActivity()).setSupportActionBar(myToolbar);
-        //setHasOptionsMenu(true);
-        tipsTextView = (TextView)view.findViewById(R.id.eventsTextView);
+        tipsTextView = (TextView) view.findViewById(R.id.eventsTextView);
         textView = (TextView) view.findViewById(R.id.apiTextView);
+
+
+
         prefs = getActivity().getPreferences(0);
         editor = prefs.edit();
         final EventReminder[] reminderOverrides = new EventReminder[]{
@@ -237,15 +249,47 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
         if (getArguments() != null) {
             paramValue = getArguments().getString(PARAM_VALUE);
             paramKey = getArguments().getString(PARAM_KEY);
+            paramParent = getArguments().getString(PARAM_PARENT);
+        }
+         actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        Log.d("ACTION BAR", "[ " + actionBar+" ]????");
+        if(actionBar !=null){
+            setHasOptionsMenu(true);
+            actionBar.setTitle("Events");
+        }
+
+    }
+
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.add(R.id.event_menu_buttons, R.id.queryBuilding, 0, "Building").setIcon(R.drawable.ic_play_dark)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.queryBuilding:
+                Log.d("HI","The button works");
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
         }
     }
 
-    public static EventsViewFragment newInstance(String text, String k, String val){
+    public static EventsViewFragment newInstance(String text, String k, String val, String par){
         EventsViewFragment evf = new EventsViewFragment();
         Bundle b = new Bundle();
         b.putString("msg", text);
         b.putString(PARAM_VALUE, val);
         b.putString(PARAM_KEY,k);
+        b.putString(PARAM_PARENT,par);
         evf.setArguments(b);
         return evf;
     }

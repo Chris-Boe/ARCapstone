@@ -21,6 +21,9 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import plu.capstone.Models.CustomEvent;
+import plu.capstone.activities.CalendarActivity;
+
 public class MyEvents extends AppCompatActivity {
     ExpandableListAdapter listAdapter;
     ExpandableListView expListView;

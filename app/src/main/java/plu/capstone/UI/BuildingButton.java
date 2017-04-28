@@ -1,4 +1,4 @@
-package plu.capstone;
+package plu.capstone.UI;
 
 import android.content.Context;
 import android.graphics.Canvas;

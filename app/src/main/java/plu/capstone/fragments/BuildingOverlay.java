@@ -1,25 +1,18 @@
-package plu.capstone;
+package plu.capstone.fragments;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.drawable.GradientDrawable;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.util.Log;
-import android.util.SizeF;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -28,23 +21,17 @@ import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
-import android.widget.TabHost;
-import android.widget.TabWidget;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.vision.Frame;
-import com.google.android.gms.vision.text.Line;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 
-import java.io.IOError;
-import java.io.IOException;
 import java.util.ArrayList;
+
+import plu.capstone.UI.BuildingButton;
+import plu.capstone.Models.Buildings;
+import plu.capstone.Models.PointOfInterest;
+import plu.capstone.R;
+import plu.capstone.deprecated.customView;
 
 
 /**
@@ -223,7 +210,7 @@ public class BuildingOverlay extends Fragment {
             for(int i=0;i<poiList.size();i++) {
 
                 //IF USER IS AT A BUILDING:
-                if(poiList.get(i).getDistance()<50){
+                if(poiList.get(i).getDistance()<55){
                     buildingButton = new BuildingButton(getContext(), getView().getWidth(), getView().getHeight(), poiList.get(i).getOrientation());
                     buildingButton.setX(getView().getWidth()/2);
                     buildingButton.setY(getView().getHeight() - getView().getHeight()/16);
@@ -251,7 +238,8 @@ public class BuildingOverlay extends Fragment {
 
                     //normalize about the fov
 
-                    float dx = (float) ((getView().getWidth() / Math.toDegrees(hFOV)) * Math.abs((poiList.get(i).getCurBearing() - -1*Math.toDegrees(poiList.get(i).getOrientation()[0]))));
+                    //float dx = (float) ((getView().getWidth() / Math.toDegrees(hFOV)) * Math.abs((poiList.get(i).getCurBearing() - -1*Math.toDegrees(poiList.get(i).getOrientation()[0]))));
+                    float dx = (float) ((getView().getWidth() / Math.toDegrees(hFOV)) * (Math.toDegrees(poiList.get(i).getOrientation()[0]) - poiList.get(i).getCurBearing()));
                  // float dx = (float) ((getView().getWidth() / Math.toDegrees(hFOV)) * (-1*Math.toDegrees(poiList.get(i).getOrientation()[0]) - poiList.get(i).getCurBearing()));//((Math.toDegrees(poiList.get(i).getOrientation()[0]) - poiList.get(i).getCurBearing());
                    // float dy = (float) ((getView().getHeight() / Math.toDegrees(vFOV)) * Math.toDegrees(poiList.get(i).getOrientation()[1]));
                     float dy = (float) ((getView().getWidth() / Math.toDegrees(hFOV)) * Math.abs((poiList.get(i).getCurBearing() - -1*Math.toDegrees(poiList.get(i).getOrientation()[1]))));
@@ -271,25 +259,29 @@ public class BuildingOverlay extends Fragment {
                     buildingButton.setRotation((float) (0.0f - Math.toDegrees(poiList.get(i).getOrientation()[2])));
 
                     //translate around z axis
-                    buildingButton.setTranslationX(dx);
+                    //buildingButton.setTranslationX(dx);
                    // buildingButton.setTranslationY(testy);
 
                     RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                    //params.leftMargin = getView().getWidth()/2;
+                    params.leftMargin = getView().getWidth()/2;
                     params.topMargin = getView().getHeight() / 2;
 
                     buttonsView.addView(buildingButton, params);
-                    float compass2d = poiList.get(i).getOrientation()[0] - poiList.get(i).getOrientation()[2];
+                    float compass2d = poiList.get(i).getOrientation()[0] - poiList.get(i).getOrientation()[2]; //trying to account for pitch
 
-                  if(poiList.get(i).getBuilding().getName().equals("Rieke Science Center")) {
-                      Log.d("dx/xspot:",dx+"/"+buildingButton.getX());
-                      Log.d("curBearing:",poiList.get(i).getCurBearing()+"");
-                      Log.d("azimuth:",Math.toDegrees(poiList.get(i).getOrientation()[0])+"");
-                      Log.d("2d compass:",compass2d+"");
-                      Log.d("directions:", "NORTH: " + 0 + " EAST: " + Math.toDegrees(Math.PI/2) + " WEST: " + -Math.toDegrees(Math.PI/2) + " SOUTH: " + Math.toDegrees(Math.PI));
-                      Log.d("HFOV", buildingButton.getText() + ":" + Math.toDegrees(hFOV));
-                      // Log.d("dx/xtran/bearing/azi", poiList.get(i).getBuilding().getName() + ": " + dx + "/" + buildingButton.getX() + "/" + poiList.get(i).getCurBearing()+"/"+Math.toDegrees(poiList.get(i).getOrientation()[0]));
-                  }
+                  //  if(poiList.get(i).getBuilding().getName().equals("Rieke Science Center")) {
+                        Log.d("dx/xspot:", dx + "/" + buildingButton.getX());
+                        Log.d("curBearing:", poiList.get(i).getCurBearing() + "");
+                        double printAz = poiList.get(i).getOrientation()[0];
+                        if(printAz<0)
+                            printAz = 180-Math.toDegrees(printAz);
+                        Log.d("azimuth:", Math.toDegrees(poiList.get(i).getOrientation()[0]) + "");
+                        Log.d("Heading:", printAz + "");
+                        Log.d("2d compass:", Math.toDegrees(compass2d) + "");
+                        Log.d("directions:", "NORTH: " + 0 + " EAST: " + Math.toDegrees(Math.PI / 2) + " WEST: " + Math.toDegrees(Math.PI / 2)+90 + " SOUTH: " + Math.toDegrees(Math.PI));
+                        Log.d("HFOV", buildingButton.getText() + ":" + Math.toDegrees(hFOV));
+                        // Log.d("dx/xtran/bearing/azi", poiList.get(i).getBuilding().getName() + ": " + dx + "/" + buildingButton.getX() + "/" + poiList.get(i).getCurBearing()+"/"+Math.toDegrees(poiList.get(i).getOrientation()[0]));
+                    //}
 
                 }
 
@@ -354,7 +346,7 @@ public class BuildingOverlay extends Fragment {
             LinearLayout tabButtons = new LinearLayout(getContext());
 
         final RelativeLayout eView = new RelativeLayout(getContext());;
-        final EventsViewFragment event = new EventsViewFragment().newInstance("EventsViewFragment","loc",poi.getName());
+        final EventsViewFragment event = new EventsViewFragment().newInstance("EventsViewFragment","loc",poi.getName(),"ar");
         final FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
             final Buildings fPoi = poi;
             tabButtons.setOrientation(LinearLayout.HORIZONTAL);

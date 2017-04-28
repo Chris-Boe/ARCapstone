@@ -3,4 +3,6 @@
     <item type="id" name="tab1" />
     <item type="id" name="events"/>
     <item type="id" name="fragment_events_view"/>
+    <item type="id" name="event_menu_buttons"/>
+    <item type="id" name="queryBuilding"/>
 </resources>

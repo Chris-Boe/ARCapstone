@@ -1,4 +1,4 @@
-package plu.capstone;
+package plu.capstone.Models;
 
 /**
  * Created by cboe1 on 4/4/2017.

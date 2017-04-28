@@ -1,4 +1,4 @@
-package plu.capstone;
+package plu.capstone.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -19,6 +19,10 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import plu.capstone.Models.Buildings;
+import plu.capstone.ExpandableListAdapter;
+import plu.capstone.R;
+
 /**
  * Created by cboe1 on 4/19/2017.
  */
@@ -38,6 +42,8 @@ public class BuildingsViewFragment extends Fragment {
         listChildren = new HashMap<>();
         buildingsMap = new HashMap<>();
         final Context con = this.getContext();
+        setHasOptionsMenu(false);
+
 
         //gets instance/reference of database
         mDatabase = FirebaseDatabase.getInstance().getReference();

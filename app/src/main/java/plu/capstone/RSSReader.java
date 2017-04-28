@@ -14,6 +14,8 @@ import java.net.*;
 import java.util.HashMap;
 import java.io.*;
 
+import plu.capstone.Models.CustomEvent;
+
 public class RSSReader extends IntentService{
 	private static HashMap<String, CustomEvent> map;
 	public static final String urlInMessage = "";

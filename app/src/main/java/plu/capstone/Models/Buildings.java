@@ -1,4 +1,4 @@
-package plu.capstone;
+package plu.capstone.Models;
 
 /**
  * Created by playt on 4/14/2017.

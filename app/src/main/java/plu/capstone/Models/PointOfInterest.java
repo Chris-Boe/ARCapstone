@@ -1,4 +1,6 @@
-package plu.capstone;
+package plu.capstone.Models;
+
+import plu.capstone.Models.Buildings;
 
 /**
  * Created by playt on 4/14/2017.

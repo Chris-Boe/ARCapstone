@@ -1,4 +1,4 @@
-package plu.capstone;
+package plu.capstone.deprecated;
 
 import java.lang.Math.*;
 import java.sql.Time;
@@ -28,6 +28,8 @@ import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Toast;
+
+import plu.capstone.DataBaseBuildings;
 
 import static android.R.attr.value;
 import static java.lang.System.currentTimeMillis;
@@ -125,7 +127,7 @@ public class InfoOverlay extends View implements SensorEventListener, LocationLi
 
         //Log.d("cc return:", cc + " ?");
 
-        dbb = new DataBaseBuildings(context);
+        //dbb = new DataBaseBuildings(context);
         dName = "";
 
     }

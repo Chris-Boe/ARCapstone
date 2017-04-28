@@ -1,24 +1,13 @@
-package plu.capstone;
+package plu.capstone.activities;
 
-import android.*;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.graphics.Camera;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.SurfaceTexture;
-import android.hardware.Sensor;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.hardware.camera2.params.StreamConfigurationMap;
-import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.ImageReader;
-import android.net.Uri;
-import android.os.Build;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -32,7 +21,6 @@ import android.util.Size;
 import android.util.SparseIntArray;
 import android.view.MotionEvent;
 import android.view.Surface;
-import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
 import android.view.Window;
@@ -41,13 +29,14 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 import android.hardware.camera2.*;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
 import java.io.File;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import plu.capstone.Models.PointOfInterest;
+import plu.capstone.R;
+import plu.capstone.SensorsFragment;
+import plu.capstone.fragments.BuildingOverlay;
 
 /**
  * GET LOCATION

@@ -1,4 +1,4 @@
-package plu.capstone;
+package plu.capstone.adapters;
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -11,6 +11,8 @@ import android.widget.TextView;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import plu.capstone.R;
 
 /**
  * Created by cboe1 on 4/14/2017.

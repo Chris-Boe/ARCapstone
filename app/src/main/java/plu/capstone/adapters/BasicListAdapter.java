@@ -1,4 +1,4 @@
-package plu.capstone;
+package plu.capstone.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -9,6 +9,8 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import java.util.List;
+
+import plu.capstone.R;
 
 /**
  * Created by cboe1 on 4/27/2017.

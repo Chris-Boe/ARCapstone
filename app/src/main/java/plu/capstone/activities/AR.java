@@ -1,6 +1,9 @@
 package plu.capstone.activities;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.SurfaceTexture;
@@ -11,6 +14,7 @@ import android.media.ImageReader;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -35,8 +39,10 @@ import java.util.Arrays;
 
 import plu.capstone.Models.PointOfInterest;
 import plu.capstone.R;
-import plu.capstone.SensorsFragment;
+import plu.capstone.dialogs.ARDialog;
+import plu.capstone.fragments.SensorsFragment;
 import plu.capstone.fragments.BuildingOverlay;
+
 
 /**
  * GET LOCATION
@@ -87,7 +93,14 @@ public class AR extends AppCompatActivity implements SensorsFragment.OnFragmentI
                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                     | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+
+
+            // Schedule a runnable to remove the status and navigation bar after a delay
+            mHideHandler.removeCallbacks(mShowPart2Runnable);
+            mHideHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY);
+
         }
     };
     private View mControlsView;
@@ -292,6 +305,7 @@ public class AR extends AppCompatActivity implements SensorsFragment.OnFragmentI
 
             // Begin the transaction
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            FragmentManager man = getSupportFragmentManager();
 // Replace the contents of the container with the new fragment
             ft.replace(R.id.frame_parent, new SensorsFragment(), "sensors");
 // or ft.add(R.id.your_placeholder, new FooFragment());
@@ -301,6 +315,12 @@ public class AR extends AppCompatActivity implements SensorsFragment.OnFragmentI
            arViewPane = (FrameLayout) findViewById(R.id.frame_parent);
            // arViewPane.addView(gyrodata);
             ft.add(R.id.frame_parent, new BuildingOverlay(), "building");
+
+            FragmentManager fm = getSupportFragmentManager();
+            ARDialog dialog = new ARDialog();
+
+            dialog.show(fm,"welcome");
+
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }

@@ -1,4 +1,4 @@
-package plu.capstone;
+package plu.capstone.fragments;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -36,7 +36,9 @@ import java.util.ArrayList;
 
 import plu.capstone.Models.Buildings;
 import plu.capstone.Models.PointOfInterest;
+import plu.capstone.R;
 import plu.capstone.activities.AR;
+import plu.capstone.deprecated.DataBaseBuildings;
 
 import static java.lang.System.currentTimeMillis;
 

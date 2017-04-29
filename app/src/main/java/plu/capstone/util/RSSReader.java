@@ -1,4 +1,4 @@
-package plu.capstone;
+package plu.capstone.util;
 
 import android.app.IntentService;
 import android.content.Intent;

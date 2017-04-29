@@ -1,4 +1,4 @@
-package plu.capstone;
+package plu.capstone.deprecated;
 
 import android.content.Context;
 import android.content.Intent;
@@ -22,7 +22,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import plu.capstone.Models.CustomEvent;
+import plu.capstone.R;
 import plu.capstone.activities.CalendarActivity;
+import plu.capstone.adapters.ExpandableListAdapter;
 
 public class MyEvents extends AppCompatActivity {
     ExpandableListAdapter listAdapter;

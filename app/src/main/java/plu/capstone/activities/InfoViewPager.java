@@ -13,7 +13,7 @@ import com.google.api.services.calendar.model.Event;
 
 import java.util.ArrayList;
 
-import plu.capstone.CalendarViewFragment;
+import plu.capstone.fragments.CalendarViewFragment;
 import plu.capstone.Models.CustomEvent;
 import plu.capstone.R;
 import plu.capstone.fragments.BuildingsViewFragment;

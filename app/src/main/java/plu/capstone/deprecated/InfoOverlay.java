@@ -1,11 +1,9 @@
 package plu.capstone.deprecated;
 
-import java.lang.Math.*;
 import java.sql.Time;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.graphics.Camera;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -25,13 +23,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
-import android.view.SurfaceView;
 import android.view.View;
-import android.widget.Toast;
 
-import plu.capstone.DataBaseBuildings;
-
-import static android.R.attr.value;
 import static java.lang.System.currentTimeMillis;
 
 /**

@@ -57,7 +57,7 @@
         </activity>
         <activity android:name=".activities.CalendarActivity" />
         <activity
-            android:name=".MyEvents"
+            android:name=".deprecated.MyEvents"
             android:label="@string/title_activity_my_events"
             android:parentActivityName=".activities.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
@@ -87,14 +87,14 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".MapsActivity"
+            android:name=".activities.MapsActivity"
             android:label="@string/title_activity_maps" />
         <activity
             android:name=".activities.AR"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_ar"
             android:theme="@style/FullscreenTheme"></activity>
-        <service android:name=".RSSReader" android:exported="false"/>
+        <service android:name=".util.RSSReader" android:exported="false"/>
     </application>
 
 </manifest>

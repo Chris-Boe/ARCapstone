@@ -1,4 +1,4 @@
-package plu.capstone;
+package plu.capstone.fragments;
 
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -17,6 +17,9 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import plu.capstone.R;
+import plu.capstone.adapters.BasicListAdapter;
 
 /**
  * Created by cboe1 on 4/19/2017.

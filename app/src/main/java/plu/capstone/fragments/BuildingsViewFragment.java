@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import plu.capstone.Models.Buildings;
-import plu.capstone.ExpandableListAdapter;
+import plu.capstone.adapters.ExpandableListAdapter;
 import plu.capstone.R;
 
 /**

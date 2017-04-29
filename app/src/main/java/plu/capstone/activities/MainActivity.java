@@ -2,7 +2,6 @@ package plu.capstone.activities;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,9 +18,8 @@ import com.goka.blurredgridmenu.GridMenuFragment;
 
 import java.util.ArrayList;
 
-import plu.capstone.MapsActivity;
 import plu.capstone.R;
-import plu.capstone.RSSReader;
+import plu.capstone.util.RSSReader;
 
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{

@@ -335,10 +335,9 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
 
                                         updateList(heading,eMap);
 
-                                        break;
+                                        return;
                                     case 1:
                                         Log.d("1","Loc");
-                                        Log.d("0","Date");
                                         sortBy(eventsList,"loc");
 
                                         heading = new ArrayList<String>();
@@ -352,9 +351,23 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
                                         Log.d("MAP",eMap.toString());
 
                                         updateList(heading,eMap);
-                                        break;
+                                        return;
                                     case 2:
                                         Log.d("2","Name");
+                                        sortBy(eventsList,"name");
+
+                                        heading = new ArrayList<String>();
+                                        eMap = new HashMap<String, ArrayList<String>>();
+
+                                        for(int i=0;i<eventsList.size();i++) {
+                                            heading.add(eventsList.get(i).get(0));
+                                            eMap.put(eventsList.get(i).get(0),eventsList.get(i));
+                                        }
+
+                                        Log.d("MAP",eMap.toString());
+
+                                        updateList(heading,eMap);
+                                        return;
                                 }
 
                             }

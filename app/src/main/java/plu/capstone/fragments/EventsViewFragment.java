@@ -41,6 +41,7 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.DateTime;
 import com.google.api.client.util.ExponentialBackOff;
 import com.google.api.services.calendar.CalendarScopes;
+import com.google.api.services.calendar.model.Calendar;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.EventReminder;
@@ -108,7 +109,7 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
     SharedPreferences prefs;
     SharedPreferences.Editor editor;
     private ActionBar actionBar;
-
+    boolean hasCalendar;
 
     /*
     OnEventAddedListener mCallback;
@@ -130,11 +131,11 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
         final View view = inflater.inflate(R.layout.fragment_events_view, container, false);
         tipsTextView = (TextView) view.findViewById(R.id.eventsTextView);
         textView = (TextView) view.findViewById(R.id.apiTextView);
-
-
-
         prefs = getActivity().getPreferences(0);
         editor = prefs.edit();
+        hasCalendar = false;
+        if(prefs.contains("CalID"))
+            hasCalendar = true;
         final EventReminder[] reminderOverrides = new EventReminder[]{
                 new EventReminder().setMethod("popup").setMinutes(30)
         };
@@ -192,11 +193,13 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
                                 .setLocation(listChildren.get(listHeaders.get(groupPosition)).get(3))
                                 .setStart(start)
                                 .setEnd(end));
-                        getResultsFromApi();
+                        Log.d("HIOO", savedEvents.toString());
                     }else{
                         Toast toast = Toast.makeText(getContext(), "Event already in Calendar", Toast.LENGTH_SHORT);
                         toast.show();
                     }
+                    getResultsFromApi();
+
 
                 }
                 if(childPosition == 2){
@@ -253,7 +256,7 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
             paramKey = getArguments().getString(PARAM_KEY);
             paramParent = getArguments().getString(PARAM_PARENT);
         }
-         actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
         Log.d("ACTION BAR", "[ " + actionBar+" ]????");
         if(actionBar !=null){
             setHasOptionsMenu(true);
@@ -282,28 +285,28 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
                 final String building[] = getResources().getStringArray(R.array.plu_building_list);
 
                 builder.setTitle("Please choose a building")
-                    .setItems(building, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            for(int i=0;i<building.length;i++){
+                        .setItems(building, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                for(int i=0;i<building.length;i++){
 
-                                //building found
-                                if(i==which){
-                                    Log.d("building:", building[i]);
-                                    //modify list
-                                    paramKey = "loc";
-                                    paramValue = building[i];
+                                    //building found
+                                    if(i==which){
+                                        Log.d("building:", building[i]);
+                                        //modify list
+                                        paramKey = "loc";
+                                        paramValue = building[i];
 
-                                    getActivity().getSupportFragmentManager()
-                                            .beginTransaction()
-                                            .detach(fragment)
-                                            .attach(fragment)
-                                            .commit();
+                                        getActivity().getSupportFragmentManager()
+                                                .beginTransaction()
+                                                .detach(fragment)
+                                                .attach(fragment)
+                                                .commit();
 
 
+                                    }
                                 }
                             }
-                        }
-                    });
+                        });
 
                 builder.setPositiveButton("Show all", new DialogInterface.OnClickListener(){
                     public void onClick(DialogInterface dialog, int id) {
@@ -352,23 +355,6 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
         evf.setArguments(b);
         return evf;
     }
-    /*@Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
-        inflater.inflate(R.menu.menu_events_view, menu);
-    }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        switch(item.getItemId()){
-            case R.id.connectToGCal:
-                getResultsFromApi();
-                return true;
-            case R.id.search:
-                addEventsToCal();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }*/
 
     public void addToEventsMap(String key, CustomEvent obj){
         eventsMap.put(key, obj);
@@ -561,7 +547,7 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
             JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
             mService = new com.google.api.services.calendar.Calendar.Builder(
                     transport, jsonFactory, credential)
-                    .setApplicationName("Google Calendar API Android Quickstart")
+                    .setApplicationName("Google Calendar API Java Quickstart")
                     .build();
         }
 
@@ -581,18 +567,33 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
             }
         }
         /**
-         * Fetch a list of the next 10 events from the primary calendar.
+         * Fetch a list of the next 10 events from the PLU Events calendar.
          * @return List of Strings describing returned events.
          * @throws IOException
          */
         private List<String> getDataFromApi() throws IOException {
-            
-            // List the next 10 events from the primary calendar.
+            Calendar pluEvents;
+            String id;
+            Log.d("Bookmark", "Starting getDataFromAPI");
+            if(!hasCalendar){
+                Calendar calendar = new Calendar();
+                calendar.setSummary("PLU Events");
+                calendar.setTimeZone("America/Los_Angeles");
+                pluEvents = mService.calendars().insert(calendar).execute();
+                id = pluEvents.getId();
+                if(editor != null){
+                    editor.putString("CalID", id);
+                }
+            }else{
+                id = prefs.getAll().get("CalID").toString();
+            }
+            Log.d("Bookmark", "Got ID: " +id);
+            // List the next 10 events from the PLU Events calendar.
             Log.d("HIHI", savedEvents.size()+"");
             DateTime now = new DateTime(System.currentTimeMillis());
             List<String> eventStrings = new ArrayList<String>();
-            Events events = mService.events().list("primary")
-                    .setMaxResults(50)
+            Events events = mService.events().list(id)
+                    .setMaxResults(30)
                     .setTimeMin(now)
                     .setOrderBy("startTime")
                     .setSingleEvents(true)
@@ -602,19 +603,20 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
             String check = "";
             String target = "";
             Log.d("Prefs:", prefs.getAll().toString());
+            Log.d("Events", events.size()+"");
             for (Event Event : items) {
-                /*check = Event.getSummary();
-                target = prefs.getString("Remove")
-                Log.d("HEREEE", check + " "+prefs.getString("Remove", check));
-                if(prefs != null && editor != null) {
-                    Log.d("REMOVE THIS ONE", check + "||" + (prefs.getString("Remove", check)).equals(check) + "");
-                    if ((prefs.getString("Remove", check)).equals(check)) {
+                check = Event.getSummary();
+                Log.d("HEREEE", check + "||"+target);
+                if(prefs != null && editor != null && prefs.contains("Remove")) {
+                    target = prefs.getAll().get("Remove").toString();
+                    Log.d("REMOVE THIS ONE", check + "||" + target + " || " + target.equals(check));
+                    if (target.equals(check)) {
                         Log.d("Attempting to Delete", check);
-                        //mService.events().delete("primary", Event.getId()).execute();
-                        //editor.remove("Remove");
-                        //editor.commit();
+                        mService.events().delete(id, Event.getId()).execute();
+                        editor.remove("Remove");
+                        editor.commit();
                     }
-                }*/
+                }
                 DateTime start = Event.getStart().getDateTime();
                 if (start == null) {
                     // All-day events don't have start times, so just use
@@ -629,7 +631,7 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
                 while(listIterator.hasNext()){
                     Event e = listIterator.next();
                     try{
-                        added = mService.events().insert("primary", e).execute();
+                        added = mService.events().insert(id, e).execute();
                         Log.d("Added to Cal", added.getHtmlLink());
                     }catch(IOException ioe){
                         Log.d("IOE", ioe.toString());
@@ -653,7 +655,7 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
         protected void onPostExecute(List<String> output) {
             mProgress.hide();
             if (output == null || output.size() == 0) {
-                textView.setText("No results returned.");
+                //textView.setText("No results returned.");
             } else {
                 //output.add(0, "Data retrieved using the Google Calendar API:");
                 //textView.setText(TextUtils.join("\n", output));

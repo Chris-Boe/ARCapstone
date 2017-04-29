@@ -37,15 +37,10 @@ public class CalendarViewFragment extends Fragment {
 
         prefs = getActivity().getPreferences(0);
         editor = prefs.edit();
-
+        listView = (ListView)view.findViewById(R.id.calListView);
         mOutputText = (TextView)view.findViewById(R.id.calTextView);
         mOutputText.setText("Click an Event to delete it from your calendar");
         getEvents();
-        listView = (ListView)view.findViewById(R.id.calListView);
-        adapter = new BasicListAdapter(getContext(), eventList);
-        listView.setAdapter(adapter);
-
-
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -63,10 +58,11 @@ public class CalendarViewFragment extends Fragment {
             eventList.remove("accountName");
         }if(eventList.contains("Remove")){
             eventList.remove("Remove");
-        }
-        if(adapter != null) {
-            adapter.notifyDataSetChanged();
-        }
+        }if(eventList.contains("CalID"))
+            eventList.remove("CalID");
+        adapter = new BasicListAdapter(getContext(), eventList);
+        listView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
     }
     private void confirm(final String key){
         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
@@ -80,10 +76,7 @@ public class CalendarViewFragment extends Fragment {
                         editor.putString("Remove", key);
                         editor.commit();
                         Log.d("Editor", "After Confirm: "+prefs.contains(key));
-                        adapter.notifyDataSetChanged();
-
                         break;
-
                     case DialogInterface.BUTTON_NEGATIVE:
                         //No button clicked
                         break;

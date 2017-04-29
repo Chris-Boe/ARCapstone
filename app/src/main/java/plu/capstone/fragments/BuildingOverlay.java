@@ -200,17 +200,18 @@ public class BuildingOverlay extends Fragment {
         buttonsView = (RelativeLayout)getView().findViewById(R.id.bView);
 
         //TODO:make better check
-        if(poiList.size()>=0) {
-            String temp = "";
+        if(poiList.size()>=1) {
+            PointOfInterest closestBuilding = poiList.get(0);
             for(int i=0;i<poiList.size();i++){
-                temp += i + ": " + poiList.get(i).getBuilding().getName() + "\n";
+                if(poiList.get(i).getDistance()<closestBuilding.getDistance())
+                    closestBuilding = poiList.get(i);
             }
-           // Log.d("BuildingList",temp);
+           Log.d("closest",closestBuilding.getBuilding().getName()+","+closestBuilding.getDistance());
 
             for(int i=0;i<poiList.size();i++) {
 
                 //IF USER IS AT A BUILDING:
-                if(poiList.get(i).getDistance()<55){
+                if(poiList.get(i).getDistance() == closestBuilding.getDistance() && poiList.get(i).getDistance()<55){
                     buildingButton = new BuildingButton(getContext(), getView().getWidth(), getView().getHeight(), poiList.get(i).getOrientation());
                     buildingButton.setX(getView().getWidth()/2);
                     buildingButton.setY(getView().getHeight() - getView().getHeight()/16);
@@ -234,51 +235,61 @@ public class BuildingOverlay extends Fragment {
                     ));
 
 
+                    double bearingTo = poiList.get(i).getCurBearing();
+                    //convert az to (0,360 d]
+                    double azDeg = Math.toDegrees(poiList.get(i).getOrientation()[0]);
 
+                    if(azDeg<0)
+                        azDeg = 180 - azDeg;
+                    if(bearingTo<0)
+                        bearingTo = 180 - bearingTo;
+
+                    double degreeDifference = bearingTo-azDeg;
 
                     //normalize about the fov
+                   float dx = (float) ((getView().getWidth()/Math.toDegrees(hFOV)) * degreeDifference);
+                //    float dx = (float) ( (getView().getWidth()/ hFOV) * (Math.toDegrees(poiList.get(i).getOrientation()[0])- poiList.get(i).getCurBearing()));
 
                     //float dx = (float) ((getView().getWidth() / Math.toDegrees(hFOV)) * Math.abs((poiList.get(i).getCurBearing() - -1*Math.toDegrees(poiList.get(i).getOrientation()[0]))));
-                    float dx = (float) ((getView().getWidth() / Math.toDegrees(hFOV)) * (Math.toDegrees(poiList.get(i).getOrientation()[0]) - poiList.get(i).getCurBearing()));
+                   // float dx = (float) ((getView().getWidth() / Math.toDegrees(hFOV)) * (Math.toDegrees(poiList.get(i).getOrientation()[0]) - poiList.get(i).getCurBearing()));
                  // float dx = (float) ((getView().getWidth() / Math.toDegrees(hFOV)) * (-1*Math.toDegrees(poiList.get(i).getOrientation()[0]) - poiList.get(i).getCurBearing()));//((Math.toDegrees(poiList.get(i).getOrientation()[0]) - poiList.get(i).getCurBearing());
                    // float dy = (float) ((getView().getHeight() / Math.toDegrees(vFOV)) * Math.toDegrees(poiList.get(i).getOrientation()[1]));
                     float dy = (float) ((getView().getWidth() / Math.toDegrees(hFOV)) * Math.abs((poiList.get(i).getCurBearing() - -1*Math.toDegrees(poiList.get(i).getOrientation()[1]))));
 
-                    float testx = dx;
-                    float testy = dy;
                     //Log.d("width", getView().getWidth() + "");
 
 
                     buildingButton = new BuildingButton(getContext(), getView().getWidth(), getView().getHeight(), poiList.get(i).getOrientation());
+
                     buildingButton.setX(0);
                     buildingButton.setY(0);
                     buildingButton.setTag(i);
-                    buildingButton.setText(poiList.get(i).getBuilding().getName() + "\n" + poiList.get(i).getDistance());
+                    buildingButton.setText(poiList.get(i).getBuilding().getName() + "\nb" + bearingTo + "\na" + azDeg);
 
                     //rotate around y axis
                     buildingButton.setRotation((float) (0.0f - Math.toDegrees(poiList.get(i).getOrientation()[2])));
 
                     //translate around z axis
-                    //buildingButton.setTranslationX(dx);
+                    //if building is to left
+                    if(degreeDifference>=0)
+                        buildingButton.setTranslationX(dx);
+                    else
+                        buildingButton.setTranslationX(getView().getWidth()- -1*dx);
                    // buildingButton.setTranslationY(testy);
 
                     RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                    params.leftMargin = getView().getWidth()/2;
+                    //params.leftMargin = getView().getWidth()/2;
                     params.topMargin = getView().getHeight() / 2;
 
                     buttonsView.addView(buildingButton, params);
-                    float compass2d = poiList.get(i).getOrientation()[0] - poiList.get(i).getOrientation()[2]; //trying to account for pitch
 
                   //  if(poiList.get(i).getBuilding().getName().equals("Rieke Science Center")) {
-                        Log.d("dx/xspot:", dx + "/" + buildingButton.getX());
-                        Log.d("curBearing:", poiList.get(i).getCurBearing() + "");
-                        double printAz = poiList.get(i).getOrientation()[0];
-                        if(printAz<0)
-                            printAz = 180-Math.toDegrees(printAz);
-                        Log.d("azimuth:", Math.toDegrees(poiList.get(i).getOrientation()[0]) + "");
-                        Log.d("Heading:", printAz + "");
-                        Log.d("2d compass:", Math.toDegrees(compass2d) + "");
-                        Log.d("directions:", "NORTH: " + 0 + " EAST: " + Math.toDegrees(Math.PI / 2) + " WEST: " + Math.toDegrees(Math.PI / 2)+90 + " SOUTH: " + Math.toDegrees(Math.PI));
+                        Log.d("dx/xpos:", dx+"/"+buildingButton.getX());
+                        Log.d("oriBearing:",poiList.get(i).getCurBearing()+"");
+                        Log.d("curBearing:", bearingTo + "");
+                        Log.d("azimuth:", azDeg + "");
+                        Log.d("difference:", degreeDifference + "");
+                        //Log.d("directions:", "NORTH: " + 0 + " EAST: " + Math.toDegrees(Math.PI / 2) + " WEST: " + Math.toDegrees(Math.PI+Math.PI/2) + " SOUTH: " + Math.toDegrees(Math.PI));
                         Log.d("HFOV", buildingButton.getText() + ":" + Math.toDegrees(hFOV));
                         // Log.d("dx/xtran/bearing/azi", poiList.get(i).getBuilding().getName() + ": " + dx + "/" + buildingButton.getX() + "/" + poiList.get(i).getCurBearing()+"/"+Math.toDegrees(poiList.get(i).getOrientation()[0]));
                     //}

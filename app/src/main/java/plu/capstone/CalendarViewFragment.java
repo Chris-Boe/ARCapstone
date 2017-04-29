@@ -60,9 +60,9 @@ public class CalendarViewFragment extends Fragment {
             eventList.remove("Remove");
         }if(eventList.contains("CalID"))
             eventList.remove("CalID");
-        adapter.notifyDataSetChanged();
         adapter = new BasicListAdapter(getContext(), eventList);
         listView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
     }
     private void confirm(final String key){
         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
@@ -76,10 +76,7 @@ public class CalendarViewFragment extends Fragment {
                         editor.putString("Remove", key);
                         editor.commit();
                         Log.d("Editor", "After Confirm: "+prefs.contains(key));
-                        adapter.notifyDataSetChanged();
-
                         break;
-
                     case DialogInterface.BUTTON_NEGATIVE:
                         //No button clicked
                         break;

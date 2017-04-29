@@ -279,7 +279,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
             case Sensor.TYPE_GRAVITY:
                 lastAccelerometer = new float[event.values.length];
                 lastAccelerometer = event.values;
-                smoothedAccel = exponentialSmoothing(lastAccelerometer, smoothedAccel, 1);
+                smoothedAccel = exponentialSmoothing(lastAccelerometer, smoothedAccel, (float) 0.2);
                 accMag = true;
                 break;
            case Sensor.TYPE_ACCELEROMETER:
@@ -292,7 +292,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
                   // Log.d("using","accel");
                    lastAccelerometer = new float[event.values.length];
                    lastAccelerometer = event.values;
-                   smoothedAccel = exponentialSmoothing(lastAccelerometer, smoothedAccel, 1);
+                   smoothedAccel = exponentialSmoothing(lastAccelerometer, smoothedAccel, (float) 0.2);
                    accMag = true;
                }
                 /*
@@ -325,7 +325,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
                    // Log.d("using:", "magfield");
                     lastCompass = new float[event.values.length];
                     lastCompass = event.values;
-                    smoothedCompass = exponentialSmoothing(lastCompass, smoothedCompass, 1);
+                    smoothedCompass = exponentialSmoothing(lastCompass, smoothedCompass, (float) .8);
                     accMag = true;
                 //}
                /*
@@ -381,7 +381,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
 
             //TODO:this should be buildinglist.size()
             //buildinglist.size
-            for (int i = 0; i < 3; i++) {
+            for (int i = 0; i < buildingList.size(); i++) {
                 Location loc = new Location("manual");
                 loc.setLatitude(buildingList.get(i).getLatitude());
                 loc.setLongitude(buildingList.get(i).getLongitude());
@@ -391,7 +391,6 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
                 //Toast toast = Toast.makeText(superContext.getApplicationContext(), printLoc, Toast.LENGTH_SHORT);
                 // toast.show();
                 gps = "GPS: " + printLoc;
-
                 curBearing = lastLocation.bearingTo(loc);
                 // Log.d("CURBEARING: ", curBearing + "");
                 bearing = "bearing: " + curBearing;
@@ -399,8 +398,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
                 //  Log.d("CURBEARING:", curBearing + "?");
 
                 //CHECK DISTANCE
-                if(distance > 150) {
-
+                if(distance < 150) {
                     //using accel
                     if(accMag==true) {
                         float rotation[] = new float[9];
@@ -440,6 +438,36 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
 
                         SensorManager.getOrientation(smoothedRotation,orientation);
                     }
+
+                    double lon1 = lastLocation.getLongitude();
+                    double lon2 = loc.getLongitude();
+                    double lat1 = lastLocation.getLatitude();
+                    double lat2 = lastLocation.getLongitude();
+
+
+
+                    double phi1 = Math.toRadians(lat1);
+                    double phi2 = Math.toRadians(lat2);
+                    double lam1 = Math.toRadians(lon1);
+                    double lam2 = Math.toRadians(lon2);
+
+                    double mathBearing = Math.atan2(Math.sin(lam2-lam1)*Math.cos(phi2),
+                            Math.cos(phi1)*Math.sin(phi2) - Math.sin(phi1)*Math.cos(phi2)*Math.cos(lam2-lam1)
+                    ) * 180/Math.PI;
+
+
+                    double latDelta = (lat2 - lat1);
+                    double lonDelta = (lon2 - lon1);
+                    double y = Math.sin(lonDelta)  * Math.cos(lat2);
+                    double x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2)* Math.cos(lonDelta);
+                    double angle = Math.atan2(y, x); //not finished here yet
+                   double headingDeg = orientation[0];
+                    double angleDeg = angle * 180/Math.PI;
+                    double heading = headingDeg*Math.PI/180;
+                    angle = ((angleDeg + 360) % 360) * Math.PI/180; //normalize to 0 to 360 (instead of -180 to 180), then convert back to radians
+                    angleDeg = angle * 180/Math.PI;
+
+
 
 
                     //Log.d("ORI:",ori+"");

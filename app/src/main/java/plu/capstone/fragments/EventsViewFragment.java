@@ -17,6 +17,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.text.method.SingleLineTransformationMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -54,15 +55,22 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import plu.capstone.Models.CustomEvent;
 import plu.capstone.ExpandableListAdapter;
 import plu.capstone.R;
+import plu.capstone.activities.AR;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -110,6 +118,8 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
     SharedPreferences.Editor editor;
     private ActionBar actionBar;
     boolean hasCalendar;
+
+    private ArrayList<ArrayList<String>> eventsList; //name, date, desc, link, loc
 
     /*
     OnEventAddedListener mCallback;
@@ -162,6 +172,7 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
 
         listHeaders = new ArrayList<>();
         listChildren = new HashMap<>();
+        eventsList = new ArrayList<ArrayList<String>>();
         eventsMap = new HashMap<>();
         final Context con = this.getContext();
         savedEvents = new ArrayList<Event>();
@@ -234,9 +245,18 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
                     singleEvent = singleSnapshot.getValue(CustomEvent.class);
                     //addToEventsMap(title, singleEvent);
                     addToEventChildren(title, singleEvent);
+                    ArrayList<String> holderList = new ArrayList<String>();
+
+                    holderList.add(title);
+                    holderList.add(singleEvent.getCategory());
+                    holderList.add(singleEvent.getDescription());
+                    holderList.add(singleEvent.getLink());
+                    holderList.add(singleEvent.getLoc());
+
+                    eventsList.add(holderList);
                 }
-                listAdapter = new ExpandableListAdapter(con, listHeaders, listChildren);
-                expListView.setAdapter(listAdapter);
+                updateList(listHeaders,listChildren);
+
             }
 
             //error
@@ -246,6 +266,16 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
             }
         });
         return view;
+    }
+
+
+
+
+    private void updateList(ArrayList list,HashMap map){
+
+
+        listAdapter = new ExpandableListAdapter(getContext(), list, map);
+        expListView.setAdapter(listAdapter);
     }
 
     @Override
@@ -270,17 +300,82 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.add(R.id.event_menu_buttons, R.id.queryBuilding, 0, "Building").setIcon(R.drawable.ic_play_dark)
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        menu.add(R.id.event_menu_buttons,R.id.sortby,0,"sort").setIcon(R.drawable.places_ic_search);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        final Fragment fragment = this;
         switch (item.getItemId()) {
+            case R.id.sortby:
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+                final String sortby[] = getResources().getStringArray(R.array.sort_options);
+
+                builder.setTitle("What do you want to sort by?")
+                        .setItems(sortby, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                ArrayList<String> heading;
+                                HashMap<String, ArrayList<String>> eMap;
+                                switch(which) {
+                                    case 0:
+                                        Log.d("0","Date");
+                                        sortBy(eventsList,"date");
+
+                                        heading = new ArrayList<String>();
+                                        eMap = new HashMap<String, ArrayList<String>>();
+
+                                        for(int i=0;i<eventsList.size();i++) {
+                                            heading.add(eventsList.get(i).get(0));
+                                            eMap.put(eventsList.get(i).get(0),eventsList.get(i));
+                                        }
+
+                                        Log.d("MAP",eMap.toString());
+
+                                        updateList(heading,eMap);
+
+                                        break;
+                                    case 1:
+                                        Log.d("1","Loc");
+                                        Log.d("0","Date");
+                                        sortBy(eventsList,"loc");
+
+                                        heading = new ArrayList<String>();
+                                        eMap = new HashMap<String, ArrayList<String>>();
+
+                                        for(int i=0;i<eventsList.size();i++) {
+                                            heading.add(eventsList.get(i).get(0));
+                                            eMap.put(eventsList.get(i).get(0),eventsList.get(i));
+                                        }
+
+                                        Log.d("MAP",eMap.toString());
+
+                                        updateList(heading,eMap);
+                                        break;
+                                    case 2:
+                                        Log.d("2","Name");
+                                }
+
+                            }
+                        });
+
+                builder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                    }
+                });
+
+                //set other properties
+
+// Create the AlertDialog
+                AlertDialog dialog = builder.create();
+                dialog.show();
+                return true;
             case R.id.queryBuilding:
                 Log.d("HI","The button works");
 
-                final Fragment fragment = this;
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder = new AlertDialog.Builder(getActivity());
 
                 final String building[] = getResources().getStringArray(R.array.plu_building_list);
 
@@ -332,8 +427,8 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
                 //set other properties
 
 // Create the AlertDialog
-                AlertDialog dialog = builder.create();
-                dialog.show();
+                AlertDialog dialog2 = builder.create();
+                dialog2.show();
                 return true;
 
             default:
@@ -504,6 +599,72 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
                 break;
         }
     }
+
+    private void sortBy(ArrayList<ArrayList<String>> list, String sort){
+        switch(sort){
+                case "date":
+                    Collections.sort(list, new Comparator<List<String>>() {
+                        @Override
+                        public int compare(List<String> o1, List<String> o2) {
+                            String date1 = o1.get(1);
+                            String date2 = o2.get(1);
+
+                            String year1 = date1.substring(0,4);
+                            String year2 = date2.substring(0,4);
+
+                            String month1 = date1.substring(5,7);
+                            String month2 = date2.substring(5,7);
+
+                            String day1 = date1.substring(8,10);
+                            String day2 = date2.substring(8,10);
+
+                            if(year1.compareTo(year2)==0) {
+                                Log.d("same year","yay");
+                                if (month1.compareTo(month2) == 0) {
+                                    Log.d("same month,", "yay");
+                                    if(day1.compareTo(day2)==0)
+                                        Log.d("???","wtf");
+                                    return day1.compareTo(day2);
+                                }
+                                else {
+                                    return month1.compareTo(month2);
+                                }
+                            }
+                            else return year1.compareTo(year2);
+                        }
+
+                    });
+                    Log.d("newlist",list.toString());
+                    return;
+                case "loc":
+                    Collections.sort(list, new Comparator<List<String>>() {
+                        @Override
+                        public int compare(List<String> o1, List<String> o2) {
+                            String loc1 = o1.get(4);
+                            String loc2 = o2.get(4);
+
+                            return loc1.compareTo(loc2);
+                        }
+
+                    });
+                    Log.d("newlist",list.toString());
+                    return;
+                case "name":
+                    Collections.sort(list, new Comparator<List<String>>() {
+                        @Override
+                        public int compare(List<String> o1, List<String> o2) {
+                            String name1 = o1.get(0);
+                            String name2 = o2.get(0);
+
+                            return name1.compareTo(name2);
+                        }
+
+                    });
+                    Log.d("newlist",list.toString());
+                    return;
+            }
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -573,18 +734,25 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
          */
         private List<String> getDataFromApi() throws IOException {
             Calendar pluEvents;
-            String id;
+            String id = "";
             Log.d("Bookmark", "Starting getDataFromAPI");
             if(!hasCalendar){
-                Calendar calendar = new Calendar();
-                calendar.setSummary("PLU Events");
-                calendar.setTimeZone("America/Los_Angeles");
-                pluEvents = mService.calendars().insert(calendar).execute();
-                id = pluEvents.getId();
+                Log.d("Bookmark", "Creating new Calendar");
+                try {
+                    Calendar calendar = new Calendar();
+                    calendar.setSummary("PLU Events");
+                    calendar.setTimeZone("America/Los_Angeles");
+                    pluEvents = mService.calendars().insert(calendar).execute();
+                    id = pluEvents.getId();
+                }catch(Exception e){
+                    Log.d("Exception: ", e.toString());
+                }
                 if(editor != null){
                     editor.putString("CalID", id);
                 }
+                Log.d("HEYO", id);
             }else{
+                Log.d("HEYO", "found calendar");
                 id = prefs.getAll().get("CalID").toString();
             }
             Log.d("Bookmark", "Got ID: " +id);

@@ -1,27 +1,85 @@
 package plu.capstone.activities;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.Toast;
+
+import com.goka.blurredgridmenu.GridMenu;
+import com.goka.blurredgridmenu.GridMenuFragment;
+
+import java.util.ArrayList;
 
 import plu.capstone.MapsActivity;
 import plu.capstone.R;
 import plu.capstone.RSSReader;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
     private Button mapButton;
-
+    private GridMenuFragment mGridMenuFragment;
+    int item;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FloatingActionButton camButton = (FloatingActionButton) findViewById(R.id.camButton);
+        //grid fragment
+        mGridMenuFragment = GridMenuFragment.newInstance(R.drawable.sun_khp);
+
+        setupGridMenu();
+
+        Spinner spinner = (Spinner)findViewById(R.id.spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.schools, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(this);
+
+        Button show_menu = (Button)findViewById(R.id.show_menu_button);
+        show_menu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+                tx.replace(R.id.main_frame, mGridMenuFragment);
+                tx.addToBackStack(null);
+                tx.commit();
+            }
+        });
+        mGridMenuFragment.setOnClickMenuListener(new GridMenuFragment.OnClickMenuListener(){
+            @Override
+            public void onClickMenu(GridMenu gridMenu, int position){
+                switch(position) {
+                    case 0:
+                        goToAR();
+                        break;
+                    case 1:
+                        goToMyEvents();
+                        break;
+                    case 2:
+                        goToMap();
+                        break;
+                    case 3:
+                        //TODO: settings?
+                        break;
+                    case 4:
+                        goto25Live();
+                        break;
+                    case 5:
+                        openAbout();
+                        break;
+                }            }
+        });
+        /*FloatingActionButton camButton = (FloatingActionButton) findViewById(R.id.camButton);
         camButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,11 +116,24 @@ public class MainActivity extends AppCompatActivity {
                 //toast.show();
                 // goToMap();
             }
-        });
+        });*/
 
 
 
     }
+
+    private void setupGridMenu() {
+        ArrayList<GridMenu> menus = new ArrayList<>();
+        menus.add(new GridMenu("Explore", R.drawable.cast_ic_mini_controller_play));
+        menus.add(new GridMenu("Events", R.drawable.cast_ic_mini_controller_play));
+        menus.add(new GridMenu("Map", R.drawable.cast_ic_mini_controller_play));
+        menus.add(new GridMenu("Settings", R.drawable.cast_ic_mini_controller_play));
+        menus.add(new GridMenu("25Live", R.drawable.cast_ic_mini_controller_play));
+        menus.add(new GridMenu("About", R.drawable.cast_ic_mini_controller_play));
+
+        mGridMenuFragment.setupMenu(menus);
+    }
+
     private void updateDB(){
         //Intent intent = new Intent(this, CameraActivity.class);
         //startActivity(intent);
@@ -83,12 +154,33 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
     private void goToMap(){
-        Intent intent = new Intent(this, MapsActivity.class);
-        startActivity(intent);
+        //Intent intent = new Intent(this, MapsActivity.class);
+        //startActivity(intent);
     }
     private void goToAR(){
         Intent intent = new Intent(this, AR.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        Log.d("School: ", parent.getItemAtPosition(position).toString());
+
+        }
+
+    private void goto25Live() {
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse("https://r25web.plu.edu/25live/#home_my25live[0]"));
+        Toast.makeText(this, "Opening link in Browser...", Toast.LENGTH_SHORT);
+        startActivity(browserIntent);
+    }
+    private void openAbout() {
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
     //public HashMap getMap(){
     //    return map;

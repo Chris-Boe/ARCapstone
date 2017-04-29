@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Capstone</string>
+    <string name="app_name">Knight Vision</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
@@ -100,8 +100,11 @@
     <string name="action_settings">Settings</string>
     <string name="connection_error">\"Connection Error\"</string>
     <string name="title_activity_maps">Map</string>
-
     <string name="title_activity_ar">AR</string>
+    <string-array name="schools">
+        <item>Pacific Lutheran University</item>
+        <item>University of Washington</item>
+    </string-array>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

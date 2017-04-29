@@ -232,7 +232,7 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
                     addToHeaders(title);
 
                     singleEvent = singleSnapshot.getValue(CustomEvent.class);
-                    addToEventsMap(title, singleEvent);
+                    //addToEventsMap(title, singleEvent);
                     addToEventChildren(title, singleEvent);
                 }
                 listAdapter = new ExpandableListAdapter(con, listHeaders, listChildren);
@@ -356,12 +356,12 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
         return evf;
     }
 
-    public void addToEventsMap(String key, CustomEvent obj){
+    /*public void addToEventsMap(String key, CustomEvent obj){
         eventsMap.put(key, obj);
     }
     public HashMap<String, CustomEvent> getEventsMap(){
         return eventsMap;
-    }
+    }*/
     public void addToHeaders(String title){
         listHeaders.add(title);
     }
@@ -547,7 +547,7 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
             JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
             mService = new com.google.api.services.calendar.Calendar.Builder(
                     transport, jsonFactory, credential)
-                    .setApplicationName("Google Calendar API Java Quickstart")
+                    .setApplicationName("Capstone")
                     .build();
         }
 

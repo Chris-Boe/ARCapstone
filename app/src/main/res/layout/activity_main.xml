@@ -1,5 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="plu.capstone.activities.MainActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/sun_khp"
+        >
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="38dp"
+            android:layout_centerInParent="true"
+            android:background="@android:color/white"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:layout_margin="8dp"
+            android:textColor="@android:color/black"
+            android:textAlignment="center"
+            android:alpha="0.8"/>
+        <Button
+            android:id="@+id/show_menu_button"
+            android:layout_centerInParent="true"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@android:color/white"
+            android:text="Go!"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:layout_margin="16dp"
+            android:textColor="@android:color/black"
+            android:alpha="0.8"
+            android:layout_below="@id/spinner"/>
+
+    </RelativeLayout>
+
+
+    <FrameLayout
+        android:id="@+id/main_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+<!--
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
@@ -59,5 +105,5 @@
         android:id="@+id/arButton"
         android:layout_alignStart="@+id/mapButton"
         android:layout_below="@+id/mapButton" />
-
+-->
 </RelativeLayout>

@@ -24,4 +24,9 @@
         <item>Wang Center</item>
         <item>Xavier</item>
     </string-array>
+    <string-array name="sort_options">
+        <item>Date</item>
+        <item>Location</item>
+        <item>Title</item>
+    </string-array>
 </resources>

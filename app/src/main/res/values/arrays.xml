@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="plu_building_list">
-        <item>MBR</item>
-        <item>Olson Auditorium</item>
         <item>Anderson University Center</item>
         <item>Harstad</item>
         <item>Hauge Admin Building</item>
@@ -11,9 +9,11 @@
         <item>Ingram</item>
         <item>Karen Hille Phillips</item>
         <item>Kreidler</item>
+        <item>MBR</item>
         <item>Morken Center</item>
         <item>Mortvedt Library</item>
         <item>Names Fitness Center</item>
+        <item>Olson Auditorium</item>
         <item>Ordal</item>
         <item>Pflueger</item>
         <item>Ramstad</item>

@@ -281,7 +281,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
             case Sensor.TYPE_GRAVITY:
                 lastAccelerometer = new float[event.values.length];
                 lastAccelerometer = event.values;
-                smoothedAccel = exponentialSmoothing(lastAccelerometer, smoothedAccel, (float) 0.2);
+                smoothedAccel = exponentialSmoothing(lastAccelerometer, smoothedAccel, (float) 0.1);
                 accMag = true;
                 break;
            case Sensor.TYPE_ACCELEROMETER:
@@ -294,7 +294,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
                   // Log.d("using","accel");
                    lastAccelerometer = new float[event.values.length];
                    lastAccelerometer = event.values;
-                   smoothedAccel = exponentialSmoothing(lastAccelerometer, smoothedAccel, (float) 0.2);
+                   smoothedAccel = exponentialSmoothing(lastAccelerometer, smoothedAccel, (float) 0.1);
                    accMag = true;
                }
                 /*

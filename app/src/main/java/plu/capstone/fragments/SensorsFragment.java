@@ -362,6 +362,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
         switch(SensorType) {
             case Sensor.TYPE_ACCELEROMETER: Log.d("ACCELEROMETER CHANGED",accuracy+""); break;
             case Sensor.TYPE_MAGNETIC_FIELD: Log.d("MAGFIELD CHANGED",accuracy+""); break;
+            case Sensor.TYPE_GRAVITY: Log.d("GRAVITY CHANGED",accuracy+""); break;
             case Sensor.TYPE_ROTATION_VECTOR: Log.d("ROTATION CHANGED",accuracy+"");break;
         }
 
@@ -370,7 +371,6 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.d("IS THIS BROKEN TOO???","???");
         //  Log.d("BLIST2", buildingList.toString());
         if (buildingList.size() > 0) {
             //Log.d("BUILDING:", buildingList.get(0).Name);
@@ -631,7 +631,8 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
         isRequestingLocation = true;
         mLocationRequest = LocationRequest.create()
                 .setInterval(500)
-                .setMaxWaitTime(1000);
+              .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions

@@ -240,12 +240,12 @@ public class BuildingOverlay extends Fragment {
                     //convert az to (0,360 d]
                     double azDeg = Math.toDegrees(poiList.get(i).getOrientation()[0]);
 
-                    if(azDeg<0)
+                   /* if(azDeg<0)
                         azDeg = 180 - azDeg;
                     if(bearingTo<0)
                         bearingTo = 180 - bearingTo;
-
-                    double degreeDifference = bearingTo-azDeg;
+*/
+                    double degreeDifference = Math.abs(bearingTo-azDeg);
 
                     //normalize about the fov
                    float dx = (float) ((getView().getWidth()/Math.toDegrees(hFOV)) * degreeDifference);
@@ -272,7 +272,7 @@ public class BuildingOverlay extends Fragment {
 
                     //translate around z axis
                     //if building is to left
-                    if(degreeDifference>=0)
+                    if(bearingTo>azDeg)
                         buildingButton.setTranslationX(dx);
                     else
                         buildingButton.setTranslationX(getView().getWidth()- -1*dx);

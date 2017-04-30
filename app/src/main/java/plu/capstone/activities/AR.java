@@ -161,9 +161,12 @@ public class AR extends AppCompatActivity implements SensorsFragment.OnFragmentI
     private TextureView textureView;
     private CameraManager manager;
     private boolean isready;
+    private boolean firstUse;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        firstUse = true;
         super.onCreate(savedInstanceState);
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -317,9 +320,11 @@ public class AR extends AppCompatActivity implements SensorsFragment.OnFragmentI
             ft.add(R.id.frame_parent, new BuildingOverlay(), "building");
 
             FragmentManager fm = getSupportFragmentManager();
-            ARDialog dialog = new ARDialog();
-
-            dialog.show(fm,"welcome");
+            if(firstUse) {
+                ARDialog dialog = new ARDialog();
+                firstUse = false;
+                dialog.show(fm, "welcome");
+            }
 
         } catch (CameraAccessException e) {
             e.printStackTrace();

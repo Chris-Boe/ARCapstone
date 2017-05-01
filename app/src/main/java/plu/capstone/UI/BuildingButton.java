@@ -33,8 +33,6 @@ public class BuildingButton extends android.support.v7.widget.AppCompatButton {
 
     @Override
     public void setTranslationX(float x){
-        this.measure(View.MeasureSpec.EXACTLY, View.MeasureSpec.EXACTLY);
-        Log.d("WIDTH",this.getWidth()+"?");
 
         final float fX = x;
 
@@ -58,7 +56,24 @@ public class BuildingButton extends android.support.v7.widget.AppCompatButton {
 
     @Override
     public void setTranslationY(float y){
-        super.setTranslationY(y-(this.getHeight()/2));
+
+        final float fY = y;
+
+        final BuildingButton thisButton = this;
+        this.getViewTreeObserver().addOnGlobalLayoutListener(
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+
+
+                    @Override
+                    public void onGlobalLayout() {
+                        thisButton.setTranslationhelperY(fY-(thisButton.getWidth()/2));
+                        thisButton.setVisibility(VISIBLE);
+                    }
+                });
+    }
+
+    private void setTranslationhelperY(float y){
+        super.setTranslationY(y);
     }
 
     @Override

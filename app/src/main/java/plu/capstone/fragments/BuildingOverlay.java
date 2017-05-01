@@ -51,7 +51,7 @@ public class BuildingOverlay extends Fragment {
 
     private customView tempView;
     private RelativeLayout arViewPane, buttonsView;
-    private BuildingButton buildingButton;
+    private BuildingButton buildingButton,compass;
     private OnFragmentInteractionListener mListener;
     private ViewGroup buildingView;
 
@@ -136,6 +136,7 @@ public class BuildingOverlay extends Fragment {
     public void update(String aData, String cData, String gData, String b,
                        String g, String o, ArrayList<PointOfInterest> poiList, CameraManager manager, String cameraId){
 
+
         CameraCharacteristics cc = null;
         Log.d("hi", "NEW LOCATION\n");
 
@@ -172,6 +173,25 @@ public class BuildingOverlay extends Fragment {
 
         //TODO:make better check
         if(poiList.size()>=1) {
+            if(compass!=null){
+                arViewPane.removeView(compass);
+            }
+            compass = new BuildingButton(getContext());
+            compass.setVisibility(View.INVISIBLE);
+            arViewPane.addView(compass);
+            compass.setBackgroundColor(Color.TRANSPARENT);
+            compass.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.compass,0,0);
+            compass.setText("");
+            compass.setTranslationX(getView().getWidth()-(getView().getWidth()/10));
+            compass.setTranslationY(getView().getHeight()-getView().getHeight()/16);
+
+            float rotDeg = (float)Math.toDegrees(poiList.get(0).getOrientation()[0]);
+
+                 //   if(rotDeg<0)
+                   //     rotDeg = 180 - rotDeg;
+
+            compass.setRotation(rotDeg);
+
             PointOfInterest closestBuilding = poiList.get(0);
             for(int i=0;i<poiList.size();i++){
                 if(poiList.get(i).getDistance()<closestBuilding.getDistance())
@@ -324,6 +344,10 @@ public class BuildingOverlay extends Fragment {
     private void generateBuildingInfo(BuildingButton bu, Buildings poi){
         buttonsView.removeAllViews();
         pauseLoc();
+
+        if(compass!=null){
+            arViewPane.removeView(compass);
+        }
 
         if(buildingView!=null){
             buildingView.removeAllViews();

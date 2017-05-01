@@ -486,6 +486,8 @@ public class BuildingOverlay extends Fragment {
     }
 
 
+
+
     /**
      * Interface to interact with activity
      */

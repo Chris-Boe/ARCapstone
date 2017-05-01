@@ -1,11 +1,14 @@
 package plu.capstone.activities;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.location.LocationListener;
@@ -24,6 +27,7 @@ import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
 import android.view.MotionEvent;
+import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
@@ -36,6 +40,7 @@ import android.hardware.camera2.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import plu.capstone.Models.PointOfInterest;
 import plu.capstone.R;
@@ -481,6 +486,25 @@ public class AR extends AppCompatActivity implements SensorsFragment.OnFragmentI
         SensorsFragment fragment = (SensorsFragment) getSupportFragmentManager().findFragmentByTag("sensors");
         fragment.resumeLoc();
     }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        // Checks the orientation of the screen
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Explore mode is meant to be used in Portrait mode, please hold your device in an upright, portrait position").setNegativeButton("ok!", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // User cancelled the dialog
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+        }
+    }
+
 }
 
 

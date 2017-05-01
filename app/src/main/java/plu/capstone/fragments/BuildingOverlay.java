@@ -182,7 +182,19 @@ public class BuildingOverlay extends Fragment {
 
                 buildingButton = new BuildingButton(getContext(), getView().getWidth(), getView().getHeight(), poiList.get(i).getOrientation());
                 buildingButton.setTag(i);
-                buildingButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.home_icon_silhouette,0,0);
+                String idString = poiList.get(i).getBuilding().getIcon();
+                if(idString==null) {
+                    idString = "building";
+                    Log.d("uhuh","null");
+                }
+                int imgId = getResources().getIdentifier(idString , "drawable", getActivity().getPackageName());
+                if(imgId==0){
+                    Log.d("oops","need to fix icon name "+poiList.get(i).getBuilding().getName());
+                    imgId = getResources().getIdentifier("building" , "drawable", getActivity().getPackageName());
+                }
+
+                buildingButton.setCompoundDrawablesWithIntrinsicBounds(0,imgId,0,0);
+                //buildingButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.home_icon_silhouette,0,0);
                 buildingButton.setCompoundDrawablePadding(15);
                 buildingButton.setAllCaps(false);
 
@@ -291,6 +303,10 @@ public class BuildingOverlay extends Fragment {
                 });
             }
         }
+    }
+
+    private String getImage(Buildings poi) {
+       return "building";
     }
 
     /**

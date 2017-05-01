@@ -11,17 +11,19 @@ public class CustomEvent {
     private String category;
     private String startTime;
     private String endTime;
+    private String icon;
 
     public CustomEvent(){
 
     }
-    public CustomEvent(String description, String loc, String link, String category, String startTime, String endTime){
+    public CustomEvent(String description, String loc, String link, String category, String startTime, String endTime, String icon){
         this.description = description;
         this.loc = loc;
         this.link = link;
         this.category = category;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.icon = icon;
     }
 
     public String getDescription() {
@@ -70,5 +72,13 @@ public class CustomEvent {
 
     public void setEndTime(String endTime) {
         this.endTime = endTime;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
     }
 }

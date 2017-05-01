@@ -50,6 +50,7 @@ public class RSSReader extends IntentService{
 		String location = "";
 		String link = "";
 		String category = "";
+		String icon = "building";
 		int end;
 		try{
 			URL rssUrl = new URL(url);
@@ -85,48 +86,70 @@ public class RSSReader extends IntentService{
 							//check for location
 							if(temp.contains("Lagerquist") || temp.contains("MBR") || temp.contains("Mary Baker Russell")){
 								location = "Mary Baker Russell";
+								icon="music";
 							}else if(temp.contains("Olson")){
 								location = "Olson Auditorium";
+                                icon="olson";
 							}else if(temp.contains("Anderson University Center") || temp.contains("Scandinavian") || temp.contains("AUC")){
 								location = "University Center";
+                                icon="uc";
 							}else if(temp.contains("Harstad")){
 								location = "Harstad";
+                                icon="dorm";
 							}else if(temp.contains("Hauge") || temp.contains("Admin")){
 								location = "Hauge Admin Building";
+                                icon="building";
 							}else if(temp.contains("Hinderlie")){
 								location = "Hinderlie";
+                                icon="dorm";
 							}else if(temp.contains("Hong")){
 								location = "Hong Hall";
+                                icon="dorm";
 							}else if(temp.contains("Ingram")){
 								location = "Ingram";
+                                icon="ingram";
 							}else if(temp.contains("Karen Hille Phillips") || temp.contains("KHP")){
 								location = "Karen Hille Phillips";
+                                icon="khpbuilding";
 							}else if(temp.contains("Kreidler")){
 								location = "Kreidler";
+                                icon="dorm";
 							}else if(temp.contains("Morken")){
 								location = "Morken Center";
+                                icon="morken";
 							}else if(temp.contains("Library") || temp.contains("library")){
 								location = "Mortvedt Library";
+                                icon="library";
 							}else if(temp.contains("Names")){
 								location = "Names Fitness Center";
+                                icon="gym";
 							}else if(temp.contains("Ordal")){
 								location = "Ordal";
+                                icon="dorm";
 							}else if(temp.contains("Pflueger")){
 								location = "Pflueger";
+                                icon="dorm";
 							}else if(temp.contains("Ramstad")){
 								location = "Ramstad";
+                                icon="building";
 							}else if(temp.contains("Rieke")){
 								location = "Rieke Science Center";
+                                icon="rieke";
 							}else if(temp.contains("South")){
 								location = "South Hall";
+                                icon="dorm";
 							}else if(temp.contains("Stuen")){
 								location = "Stuen";
+                                icon="dorm";
 							}else if(temp.contains("Tingelstad")){
 								location = "Tingelstad";
+                                icon="dorm";
 							}else if(temp.contains("Wang")){
 								location = "Wang Center";
+                                icon="wang";
 							}else if(temp.contains("Xavier")){
 								location = "Xavier";
+                                icon="library";
 							}
 							description = temp + "\n";
 						}catch(IndexOutOfBoundsException indexE){
@@ -268,7 +291,7 @@ public class RSSReader extends IntentService{
 					Log.d("NewTime", startTime + "-" + endTime);
 				}
 				//end find the time
-				CustomEvent customEvent = new CustomEvent(description, location, link, category, startTime, endTime);
+				CustomEvent customEvent = new CustomEvent(description, location, link, category, startTime, endTime, icon);
 				map.put(title, customEvent);
 				//Log.d("RSS", description);
 			}

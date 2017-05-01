@@ -4,7 +4,12 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
+import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
+
+import plu.capstone.Models.PointOfInterest;
 
 /**
  * Created by playt on 4/5/2017.
@@ -24,9 +29,31 @@ public class BuildingButton extends android.support.v7.widget.AppCompatButton {
     }
 
 
+
+
     @Override
     public void setTranslationX(float x){
-        super.setTranslationX(x-(this.getWidth()/2));
+        this.measure(View.MeasureSpec.EXACTLY, View.MeasureSpec.EXACTLY);
+        Log.d("WIDTH",this.getWidth()+"?");
+
+        final float fX = x;
+
+        final BuildingButton thisButton = this;
+        this.getViewTreeObserver().addOnGlobalLayoutListener(
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+
+
+                    @Override
+                    public void onGlobalLayout() {
+                        thisButton.setTranslationhelperX(fX-(thisButton.getWidth()/2));
+                        thisButton.setVisibility(VISIBLE);
+                    }
+                });
+
+    }
+
+    private void setTranslationhelperX(float x){
+        super.setTranslationX(x);
     }
 
     @Override

@@ -21,6 +21,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
@@ -197,6 +198,7 @@ public class BuildingOverlay extends Fragment {
                 //buildingButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.home_icon_silhouette,0,0);
                 buildingButton.setCompoundDrawablePadding(15);
                 buildingButton.setAllCaps(false);
+                buildingButton.setVisibility(View.INVISIBLE);
 
                 //IF USER IS AT A BUILDING:
                 if(i==0) {
@@ -212,7 +214,7 @@ public class BuildingOverlay extends Fragment {
                     RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                     //params.leftMargin = getView().getWidth()/2;
                     //params.topMargin = getView().getHeight() / 2;
-
+                    buildingButton.setVisibility(View.VISIBLE);
                     buttonsView.addView(buildingButton, params);
 
 
@@ -224,7 +226,6 @@ public class BuildingOverlay extends Fragment {
                     float hFOV = (float) (2 * Math.atan(40 /
                             ( 2 * (poiList.get(i).getDistance() - 30))
                     ));
-
 
                     double bearingTo = poiList.get(i).getCurBearing();
                     //convert az to (0,360 d]
@@ -249,13 +250,13 @@ public class BuildingOverlay extends Fragment {
 
                     //Log.d("width", getView().getWidth() + "");
 
-                    buildingButton.setX(0);
-                    buildingButton.setY(0);
-                    Spannable str = new SpannableStringBuilder("   "+poiList.get(i).getBuilding().getName()+"   ");
-                    str.setSpan(new BackgroundColorSpan(Color.parseColor("#eeeeee")), 0,
-                            (str.length()), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                    //params.leftMargin = getView().getWidth()/2;
+                    params.topMargin = getView().getHeight() / 2;
 
-                    buildingButton.setText(str);
+                    buttonsView.addView(buildingButton, params);
+
+
 
                     //rotate around y axis
                     buildingButton.setRotation((float) (0.0f - Math.toDegrees(poiList.get(i).getOrientation()[2])));
@@ -263,29 +264,37 @@ public class BuildingOverlay extends Fragment {
                     //translate around z axis
                     //if building is to left
 
+                                    // gets called after layout has been done but before display
+                                    // so we can get the height then hide the view
+
+                                    Spannable str = new SpannableStringBuilder("   "+poiList.get(i).getBuilding().getName()+"   ");
+
+                                    buildingButton.setTranslationX(getView().getWidth()/2);
+                                    str.setSpan(new BackgroundColorSpan(Color.parseColor("#eeeeee")), 0,
+                                            (str.length()), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                                    buildingButton.setText(str);
+
+                                   // buildingButton.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+                                    //  if(poiList.get(i).getBuilding().getName().equals("Rieke Science Center")) {
+                                 /*   Log.d("dx/xpos:", dx+"/"+buildingButton.getX());
+                                    Log.d("oriBearing:",poiList.get(i).getCurBearing()+"");
+                                    Log.d("curBearing:", bearingTo + "");
+                                    Log.d("azimuth:", azDeg + "");
+                                    Log.d("difference:", degreeDifference + "");
+                                    //Log.d("directions:", "NORTH: " + 0 + " EAST: " + Math.toDegrees(Math.PI / 2) + " WEST: " + Math.toDegrees(Math.PI+Math.PI/2) + " SOUTH: " + Math.toDegrees(Math.PI));
+                                    Log.d("HFOV", buildingButton.getText() + ":" + Math.toDegrees(hFOV));
+                                    // Log.d("dx/xtran/bearing/azi", poiList.get(i).getBuilding().getName() + ": " + dx + "/" + buildingButton.getX() + "/" + poiList.get(i).getCurBearing()+"/"+Math.toDegrees(poiList.get(i).getOrientation()[0]));
+                                    //}*/
+                                    buildingButton.setVisibility(View.VISIBLE);
+
+
                    /*TEMPORARY if(bearingTo>azDeg)
                         buildingButton.setTranslationX(dx);
                     else
                         buildingButton.setTranslationX(getView().getWidth()- -1*dx);
                         */
-                   // buildingButton.setTranslationY(testy);
-
-                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                    params.leftMargin = getView().getWidth()/2;
-                    params.topMargin = getView().getHeight() / 2;
-
-                    buttonsView.addView(buildingButton, params);
-
-                  //  if(poiList.get(i).getBuilding().getName().equals("Rieke Science Center")) {
-                        Log.d("dx/xpos:", dx+"/"+buildingButton.getX());
-                        Log.d("oriBearing:",poiList.get(i).getCurBearing()+"");
-                        Log.d("curBearing:", bearingTo + "");
-                        Log.d("azimuth:", azDeg + "");
-                        Log.d("difference:", degreeDifference + "");
-                        //Log.d("directions:", "NORTH: " + 0 + " EAST: " + Math.toDegrees(Math.PI / 2) + " WEST: " + Math.toDegrees(Math.PI+Math.PI/2) + " SOUTH: " + Math.toDegrees(Math.PI));
-                        Log.d("HFOV", buildingButton.getText() + ":" + Math.toDegrees(hFOV));
-                        // Log.d("dx/xtran/bearing/azi", poiList.get(i).getBuilding().getName() + ": " + dx + "/" + buildingButton.getX() + "/" + poiList.get(i).getCurBearing()+"/"+Math.toDegrees(poiList.get(i).getOrientation()[0]));
-                    //}
 
                 }
 
@@ -303,10 +312,6 @@ public class BuildingOverlay extends Fragment {
                 });
             }
         }
-    }
-
-    private String getImage(Buildings poi) {
-       return "building";
     }
 
     /**

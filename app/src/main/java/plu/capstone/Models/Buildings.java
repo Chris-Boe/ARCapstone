@@ -10,6 +10,7 @@ public class Buildings {
     private float Latitude;
     private float Longitude;
     private String Name;
+    private String icon;
 
     public Buildings(){
 
@@ -52,5 +53,13 @@ public class Buildings {
 
     public void setName(String name) {
         Name = name;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
     }
 }

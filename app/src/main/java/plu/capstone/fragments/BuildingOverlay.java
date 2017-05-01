@@ -310,101 +310,123 @@ public class BuildingOverlay extends Fragment {
         //layouts
         LinearLayout parentLayout = (LinearLayout) getView().findViewById(R.id.layoutparent);
         final FrameLayout tabLayout = (FrameLayout) getView().findViewById(R.id.tablayout);
-        final LinearLayout barLayout = (LinearLayout) getView().findViewById(R.id.barlayout);
-        barLayout.setBackgroundColor(Color.parseColor("#f7c738"));
+        final FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        final EventsViewFragment event = new EventsViewFragment().newInstance("EventsViewFragment","loc",poi.getName(),"ar");
 
 
+        generateTabs(poi,ft,tabLayout, event);
+
+        generateBuildingName(poi, event,tabLayout, ft);
 
 
-        //Generate building info tabs
+    }
+
+    /**
+     * Generate the tablayout for building information and events
+     * @param poi building information
+     * @param ft fragmenttransaction
+     * @param tabLayout holder for the tablayout
+     * @param event holder for the eventsviewfragment
+     */
+    public void generateTabs(Buildings poi, final FragmentTransaction ft, final FrameLayout tabLayout, final EventsViewFragment event){
         final LinearLayout tabCenter = new LinearLayout(getContext());
+
         tabCenter.setOrientation(LinearLayout.VERTICAL);
         tabCenter.setGravity(Gravity.CENTER_VERTICAL|Gravity.CENTER_HORIZONTAL);
         LinearLayout.LayoutParams tabParams =
                 new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-            final ScrollView scrollView = new ScrollView(getContext());
-            scrollView.setBackgroundColor(Color.parseColor("#eeeeee"));
+        final ScrollView scrollView = new ScrollView(getContext());
+        scrollView.setBackgroundColor(Color.parseColor("#eeeeee"));
 
-                final TextView buildingInfo = new TextView(getContext());
-                buildingInfo.setText(poi.getDescription());
-                scrollView.addView(buildingInfo);
-                scrollView.setId(R.id.tab1);
+        final TextView buildingInfo = new TextView(getContext());
+        buildingInfo.setText(poi.getDescription());
+        scrollView.addView(buildingInfo);
+        scrollView.setId(R.id.tab1);
 
 
-            final ScrollView.LayoutParams scrollParams =
+        final ScrollView.LayoutParams scrollParams =
                 new ScrollView.LayoutParams(getView().getWidth() - getView().getWidth()/3,getView().getWidth() - getView().getWidth()/4);
 
 
-            LinearLayout tabButtons = new LinearLayout(getContext());
+        LinearLayout tabButtons = new LinearLayout(getContext());
 
         final RelativeLayout eView = new RelativeLayout(getContext());;
-        final EventsViewFragment event = new EventsViewFragment().newInstance("EventsViewFragment","loc",poi.getName(),"ar");
-        final FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-            final Buildings fPoi = poi;
-            tabButtons.setOrientation(LinearLayout.HORIZONTAL);
-                LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(getView().getWidth() - getView().getWidth()/3, LinearLayout.LayoutParams.WRAP_CONTENT);
-                //building info
-                final Button tab1 = new Button(getContext());
-                tab1.setText("Building Information");
-                tab1.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        if(!ft.isEmpty()) {
-                            try {
-                                tabCenter.removeView(eView);
-                            } catch (NullPointerException e) {
+        final Buildings fPoi = poi;
+        tabButtons.setOrientation(LinearLayout.HORIZONTAL);
+        LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(getView().getWidth() - getView().getWidth()/3, LinearLayout.LayoutParams.WRAP_CONTENT);
+        //building info
+        final Button tab1 = new Button(getContext());
+        tab1.setText("Building Information");
+        tab1.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if(!ft.isEmpty()) {
+                    try {
+                        tabCenter.removeView(eView);
+                    } catch (NullPointerException e) {
 
-                            }
-                            buildingInfo.setText(fPoi.getDescription());
-                            if(tabCenter.findViewById(R.id.tab1)==null)
-                                scrollView.addView(buildingInfo);
-
-                            if(tabCenter.findViewById(R.id.tab1)==null)
-                                tabCenter.addView(scrollView,scrollParams);
-                        }
                     }
-                });
+                    buildingInfo.setText(fPoi.getDescription());
+                    if(tabCenter.findViewById(R.id.tab1)==null)
+                        scrollView.addView(buildingInfo);
 
-                //events list
-                Button tab2 = new Button(getContext());
-                tab2.setText("Building Events");
+                    if(tabCenter.findViewById(R.id.tab1)==null)
+                        tabCenter.addView(scrollView,scrollParams);
+                }
+            }
+        });
+
+        //events list
+        Button tab2 = new Button(getContext());
+        tab2.setText("Building Events");
         final RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(getView().getWidth() - getView().getWidth() / 3, getView().getWidth() - getView().getWidth() / 4);
-                tab2.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        if(scrollView.getChildCount()!=0)
-                            scrollView.removeAllViews();
+        tab2.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if(scrollView.getChildCount()!=0)
+                    scrollView.removeAllViews();
 
-                        if(ft.isEmpty()) {
-
-
-
-                            eView.setId(R.id.fragment_events_view);
-                            eView.setBackgroundColor(Color.parseColor("#eeeeee"));
-
-                            tabCenter.removeView(scrollView);
-                            tabCenter.addView(eView, param);
-
-                            ft.replace(eView.getId(), event, "events");
-                            ft.commit();
-
-                        }
-                        else {
-                            tabCenter.removeView(scrollView);
-                            if(tabCenter.findViewById(R.id.fragment_events_view)==null)
-                            tabCenter.addView(eView, param);
-                        }
+                if(ft.isEmpty()) {
 
 
-                    }
-                });
 
-                tabButtons.addView(tab1, new LinearLayout.LayoutParams((getView().getWidth() - getView().getWidth()/3)/2,LinearLayout.LayoutParams.WRAP_CONTENT));
-                tabButtons.addView(tab2, new LinearLayout.LayoutParams((getView().getWidth() - getView().getWidth()/3)/2,LinearLayout.LayoutParams.WRAP_CONTENT));
-                tabButtons.setGravity(Gravity.CENTER_HORIZONTAL);
-            tabCenter.addView(tabButtons);
-            if(tabCenter.findViewById(scrollView.getId())==null)
-                tabCenter.addView(scrollView,scrollParams);
+                    eView.setId(R.id.fragment_events_view);
+                    eView.setBackgroundColor(Color.parseColor("#eeeeee"));
+
+                    tabCenter.removeView(scrollView);
+                    tabCenter.addView(eView, param);
+
+                    ft.replace(eView.getId(), event, "events");
+                    ft.commit();
+
+                }
+                else {
+                    tabCenter.removeView(scrollView);
+                    if(tabCenter.findViewById(R.id.fragment_events_view)==null)
+                        tabCenter.addView(eView, param);
+                }
+
+
+            }
+        });
+
+        tabButtons.addView(tab1, new LinearLayout.LayoutParams((getView().getWidth() - getView().getWidth()/3)/2,LinearLayout.LayoutParams.WRAP_CONTENT));
+        tabButtons.addView(tab2, new LinearLayout.LayoutParams((getView().getWidth() - getView().getWidth()/3)/2,LinearLayout.LayoutParams.WRAP_CONTENT));
+        tabButtons.setGravity(Gravity.CENTER_HORIZONTAL);
+        tabCenter.addView(tabButtons);
+        if(tabCenter.findViewById(scrollView.getId())==null)
+            tabCenter.addView(scrollView,scrollParams);
         tabLayout.addView(tabCenter,tabParams);
+    }
 
+    /**
+     * generates building names
+     * @param poi building info
+     * @param event eventsfragment
+     * @param tabLayout layout for tabs
+     * @param ft fragmenttransaction
+     */
+    public void generateBuildingName(Buildings poi, final EventsViewFragment event, final FrameLayout tabLayout, final FragmentTransaction ft){
+        final LinearLayout barLayout = (LinearLayout) getView().findViewById(R.id.barlayout);
+        barLayout.setBackgroundColor(Color.parseColor("#f7c738"));
 
         //Generate building name
 
@@ -443,11 +465,6 @@ public class BuildingOverlay extends Fragment {
         params.gravity=Gravity.RIGHT;
         params.setMargins(0,0,35,25);
         barLayout.addView(exitB,params);
-
-    }
-
-    public void generateBuildingName(){
-
 
     }
 

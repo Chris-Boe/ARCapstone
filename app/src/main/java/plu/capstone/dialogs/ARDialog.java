@@ -35,7 +35,7 @@ public class ARDialog extends android.support.v4.app.DialogFragment {
 
         final String msg1 = "If the buildings don't seem accurate you might need to recallibrate your gyroscope: Move your device in a figure-8 movement as shown below";
 
-        final String msg2 = "If you want to learn more about a building, click on the button displayed over it! When you're within proximity of a building it will appear on the bottom of your screen.";
+        final String msg2 = "If you want to learn more about a building, click on the button displayed over it! When you're within proximity of a building it will appear at the top of your screen.";
 
         final LinearLayout layout = new LinearLayout(getContext());
         layout.setPadding(20,20,20,20);

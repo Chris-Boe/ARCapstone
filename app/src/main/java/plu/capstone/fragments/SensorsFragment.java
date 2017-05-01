@@ -383,7 +383,8 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
 
             //TODO:this should be buildinglist.size()
             //buildinglist.size
-            for (int i = 0; i < buildingList.size(); i++) {
+          //  for (int i = 0; i < buildingList.size(); i++) {
+            for(int i=0;i<4;i++){
                 Location loc = new Location("manual");
                 loc.setLatitude(buildingList.get(i).getLatitude());
                 loc.setLongitude(buildingList.get(i).getLongitude());
@@ -400,7 +401,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
                 //  Log.d("CURBEARING:", curBearing + "?");
 
                 //CHECK DISTANCE
-                if(distance < 150) {
+                if(distance > 150) {
                     //using accel
                     if(accMag==true) {
                         float rotation[] = new float[9];

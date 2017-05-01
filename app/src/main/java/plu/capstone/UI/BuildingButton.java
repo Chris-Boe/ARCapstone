@@ -11,7 +11,7 @@ import android.widget.Button;
  */
 
 public class BuildingButton extends android.support.v7.widget.AppCompatButton {
-    private int height,width;
+
     private float orientation[];
     public BuildingButton(Context context) {
         super(context);
@@ -19,14 +19,31 @@ public class BuildingButton extends android.support.v7.widget.AppCompatButton {
 
     public BuildingButton(Context context, int w, int h, float[] ori){
         super(context);
-        height = h;
-        width = w;
         orientation = ori;
+        setBackgroundColor(Color.TRANSPARENT);
     }
-    public void setHeightWidth(int w, int h){
-        height=h;
-        width=w;
+
+
+    @Override
+    public void setTranslationX(float x){
+        super.setTranslationX(x-(this.getWidth()/2));
     }
+
+    @Override
+    public void setTranslationY(float y){
+        super.setTranslationY(y-(this.getHeight()/2));
+    }
+
+    @Override
+    public void setX(float x){
+        super.setX(x-this.getWidth()/2);
+    }
+
+    @Override
+    public void setY(float y){
+        super.setY(y-(this.getHeight()/2));
+    }
+
     /*
     @Override
     protected void onDraw(Canvas canvas){

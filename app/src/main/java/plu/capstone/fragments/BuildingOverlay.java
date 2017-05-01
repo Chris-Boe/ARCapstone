@@ -9,6 +9,10 @@ import android.hardware.camera2.CameraManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.BackgroundColorSpan;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -31,6 +35,7 @@ import plu.capstone.UI.BuildingButton;
 import plu.capstone.Models.Buildings;
 import plu.capstone.Models.PointOfInterest;
 import plu.capstone.R;
+import plu.capstone.UI.ButtonSpan;
 import plu.capstone.deprecated.customView;
 
 
@@ -60,7 +65,7 @@ public class BuildingOverlay extends Fragment {
     // private DatabaseReference mDatabase;
     private FrameLayout buildingInfo;
 
-    private Button buildingButton;
+    private BuildingButton buildingButton;
     private int count = 1;
 
     private OnFragmentInteractionListener mListener;
@@ -212,12 +217,24 @@ public class BuildingOverlay extends Fragment {
             for(int i=0;i<poiList.size();i++) {
 
                 //IF USER IS AT A BUILDING:
-                if(poiList.get(i).getDistance() == closestBuilding.getDistance() && poiList.get(i).getDistance()<55){
+                if(i==0) {
+             //   if(poiList.get(i).getDistance() == closestBuilding.getDistance() && poiList.get(i).getDistance()<55){
                     buildingButton = new BuildingButton(getContext(), getView().getWidth(), getView().getHeight(), poiList.get(i).getOrientation());
-                    buildingButton.setX(getView().getWidth()/2);
-                    buildingButton.setY(getView().getHeight() - getView().getHeight()/16);
+                    buildingButton.setPadding(25,25,25,25);
+                   // buildingButton.setY(getView().getHeight() - getView().getHeight()/15 - 150);
                     buildingButton.setTag(i);
-                    buildingButton.setText("You are at \n" + poiList.get(i).getBuilding().getName());
+                    buildingButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.home_icon_silhouette,0,0);
+                    buildingButton.setCompoundDrawablePadding(15);
+                    buildingButton.setAllCaps(false);
+
+                    Spannable str = new SpannableStringBuilder("   You are at: "+poiList.get(i).getBuilding().getName()+"   ");
+                    str.setSpan(new BackgroundColorSpan(Color.parseColor("#eeeeee")), 0,
+                                (str.length()), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+
+                    buildingButton.setText(str);
+
+                    buildingButton.setText(str);
 
                     RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                     //params.leftMargin = getView().getWidth()/2;
@@ -261,25 +278,40 @@ public class BuildingOverlay extends Fragment {
 
 
                     buildingButton = new BuildingButton(getContext(), getView().getWidth(), getView().getHeight(), poiList.get(i).getOrientation());
-
+                   //buildingButton.setHeight(150);
+                    //buildingButton.setWidth(500);
+                    buildingButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.home_icon_silhouette,0,0);
+                    buildingButton.setCompoundDrawablePadding(15);
                     buildingButton.setX(0);
                     buildingButton.setY(0);
                     buildingButton.setTag(i);
-                    buildingButton.setText(poiList.get(i).getBuilding().getName() + "\nb" + bearingTo + "\na" + azDeg);
+                    buildingButton.setAllCaps(false);
+
+                    Spannable str = new SpannableStringBuilder("   "+poiList.get(i).getBuilding().getName()+"   ");
+                    str.setSpan(new BackgroundColorSpan(Color.parseColor("#eeeeee")), 0,
+                            (str.length()), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+
+
+
+                    buildingButton.setText(str);
+                    //buildingButton.setText(poiList.get(i).getBuilding().getName() + "\nb" + bearingTo + "\na" + azDeg);
 
                     //rotate around y axis
                     buildingButton.setRotation((float) (0.0f - Math.toDegrees(poiList.get(i).getOrientation()[2])));
 
                     //translate around z axis
                     //if building is to left
-                    if(bearingTo>azDeg)
+
+                   /*TEMPORARY if(bearingTo>azDeg)
                         buildingButton.setTranslationX(dx);
                     else
                         buildingButton.setTranslationX(getView().getWidth()- -1*dx);
+                        */
                    // buildingButton.setTranslationY(testy);
 
                     RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                    //params.leftMargin = getView().getWidth()/2;
+                    params.leftMargin = getView().getWidth()/2;
                     params.topMargin = getView().getHeight() / 2;
 
                     buttonsView.addView(buildingButton, params);

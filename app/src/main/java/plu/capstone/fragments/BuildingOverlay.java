@@ -40,78 +40,55 @@ import plu.capstone.deprecated.customView;
 
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link BuildingOverlay.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link BuildingOverlay#newInstance} factory method to
- * create an instance of this fragment.
+ * A Fragment to display where the buildings are on the screen and information about said building
  */
 public class BuildingOverlay extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+ 
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-    private Query bQuery;
+
     private customView tempView;
     private RelativeLayout arViewPane, buttonsView;
-    private GridLayout buildingView;
-
-    private  String accelData, aData, compassData, cData, gyroData, gData, bearing, b, gps, g, ori, o;
-    // private DatabaseReference mDatabase;
-    private FrameLayout buildingInfo;
-
     private BuildingButton buildingButton;
-    private int count = 1;
-
     private OnFragmentInteractionListener mListener;
-
+    private ViewGroup buildingView;
 
     public BuildingOverlay() {
         // Required empty public constructor
     }
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment BuildingOverlay.
+     * instantiates a new BuildingOverlay, no parameter needed
      */
     // TODO: Rename and change types and number of parameters
-    public static BuildingOverlay newInstance(String param1, String param2) {
+    public static BuildingOverlay newInstance() {
         BuildingOverlay fragment = new BuildingOverlay();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
+
         return fragment;
     }
 
+    /**
+     * Tells ar (and then sensorsfragment) to pause location
+     */
     public void pauseLoc() {
         if (mListener != null) {
             mListener.pauseLoc();
         }
     }
 
+    /**
+     * Tells ar (and then sensorsfragment) to resume location
+     */
     public void resumeLoc(){
         if(mListener != null) {
             mListener.resumeLoc();
         }
     }
 
+   
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
 
     }
 
@@ -129,7 +106,6 @@ public class BuildingOverlay extends Fragment {
         return in;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onReady() {
         if (mListener != null) {
             mListener.onReady();
@@ -148,18 +124,6 @@ public class BuildingOverlay extends Fragment {
         }
     }
 
-    /*
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void invalidate(String accelData,
-                    String compassData,
-                    String gyroData,
-                    String bearing,
-                    String gps,
-                    String ori,
-                    ArrayList<PointOfInterest> poiList);
-    }
-     */
 
     @Override
     public void onDetach() {
@@ -216,23 +180,20 @@ public class BuildingOverlay extends Fragment {
 
             for(int i=0;i<poiList.size();i++) {
 
+                buildingButton = new BuildingButton(getContext(), getView().getWidth(), getView().getHeight(), poiList.get(i).getOrientation());
+                buildingButton.setTag(i);
+                buildingButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.home_icon_silhouette,0,0);
+                buildingButton.setCompoundDrawablePadding(15);
+                buildingButton.setAllCaps(false);
+
                 //IF USER IS AT A BUILDING:
                 if(i==0) {
              //   if(poiList.get(i).getDistance() == closestBuilding.getDistance() && poiList.get(i).getDistance()<55){
-                    buildingButton = new BuildingButton(getContext(), getView().getWidth(), getView().getHeight(), poiList.get(i).getOrientation());
-                    buildingButton.setPadding(25,25,25,25);
-                   // buildingButton.setY(getView().getHeight() - getView().getHeight()/15 - 150);
-                    buildingButton.setTag(i);
-                    buildingButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.home_icon_silhouette,0,0);
-                    buildingButton.setCompoundDrawablePadding(15);
-                    buildingButton.setAllCaps(false);
 
+                    buildingButton.setPadding(25,25,25,25);
                     Spannable str = new SpannableStringBuilder("   You are at: "+poiList.get(i).getBuilding().getName()+"   ");
                     str.setSpan(new BackgroundColorSpan(Color.parseColor("#eeeeee")), 0,
                                 (str.length()), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-
-                    buildingButton.setText(str);
 
                     buildingButton.setText(str);
 
@@ -276,26 +237,13 @@ public class BuildingOverlay extends Fragment {
 
                     //Log.d("width", getView().getWidth() + "");
 
-
-                    buildingButton = new BuildingButton(getContext(), getView().getWidth(), getView().getHeight(), poiList.get(i).getOrientation());
-                   //buildingButton.setHeight(150);
-                    //buildingButton.setWidth(500);
-                    buildingButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.home_icon_silhouette,0,0);
-                    buildingButton.setCompoundDrawablePadding(15);
                     buildingButton.setX(0);
                     buildingButton.setY(0);
-                    buildingButton.setTag(i);
-                    buildingButton.setAllCaps(false);
-
                     Spannable str = new SpannableStringBuilder("   "+poiList.get(i).getBuilding().getName()+"   ");
                     str.setSpan(new BackgroundColorSpan(Color.parseColor("#eeeeee")), 0,
                             (str.length()), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-
-
-
                     buildingButton.setText(str);
-                    //buildingButton.setText(poiList.get(i).getBuilding().getName() + "\nb" + bearingTo + "\na" + azDeg);
 
                     //rotate around y axis
                     buildingButton.setRotation((float) (0.0f - Math.toDegrees(poiList.get(i).getOrientation()[2])));
@@ -362,7 +310,7 @@ public class BuildingOverlay extends Fragment {
         //layouts
         LinearLayout parentLayout = (LinearLayout) getView().findViewById(R.id.layoutparent);
         final FrameLayout tabLayout = (FrameLayout) getView().findViewById(R.id.tablayout);
-        final RelativeLayout barLayout = (RelativeLayout) getView().findViewById(R.id.barlayout);
+        final LinearLayout barLayout = (LinearLayout) getView().findViewById(R.id.barlayout);
         barLayout.setBackgroundColor(Color.parseColor("#f7c738"));
 
 
@@ -458,18 +406,18 @@ public class BuildingOverlay extends Fragment {
         tabLayout.addView(tabCenter,tabParams);
 
 
-
-
-
         //Generate building name
+
+        LinearLayout nameBar = new LinearLayout(getContext());
+
         TextView name = new TextView(getContext());
         name.setText(poi.getName());
         name.setPadding(25,25,35,25);
         name.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30);
         name.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
 
-        RelativeLayout.LayoutParams params =
-                new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams params =
+                new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         barLayout.addView(name,params);
 
         //generate exit button
@@ -491,129 +439,35 @@ public class BuildingOverlay extends Fragment {
             }
         });
 
-        params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
-        params.setMargins(25,25,25,25);
+        params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.gravity=Gravity.RIGHT;
+        params.setMargins(0,0,35,25);
         barLayout.addView(exitB,params);
-
-
-
-
-        /*
-
-        TextView buildingName = new TextView(getContext());
-        buildingName.setBackgroundColor(Color.parseColor("#efbb37"));
-        buildingName.setTextSize(TypedValue.COMPLEX_UNIT_SP, 28);
-        buildingName.setHeight(100);
-
-        buildingName.setText(poi.getName());
-        Log.d("???",poi.getName());
-
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        params.leftMargin = 0;
-        params.topMargin = 0;
-
-
-        buildingView.addView(buildingName,params);
-
-        //EVENT BUTTON
-        RelativeLayout layout = (RelativeLayout)getView().findViewById(R.id.eView);
-        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) layout.getLayoutParams();
-        layoutParams.leftMargin = getView().getWidth() / 6;
-        layoutParams.topMargin = getView().getHeight() / 3;
-        layoutParams.height = 800;
-        layoutParams.width = 500;
-
-
-        layout.setLayoutParams(layoutParams);
-
-        final Button eventButton = new Button(getContext());
-        final EventsViewFragment event = new EventsViewFragment();
-        final FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-
-        eventButton.setText("EVENTS!");
-        eventButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                ft.replace(R.id.eView, event, "events");
-                ft.commit();
-                RelativeLayout eView = (RelativeLayout) getView().findViewById(R.id.eView);
-
-
-                Button exit = new Button(getContext());
-                exit.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        ft.detach(event);
-
-                    }
-                });
-                eView.addView(exit);
-
-            }
-        });
-
-        params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        params.leftMargin = getView().getWidth()/8;
-        params.topMargin = getView().getHeight()/6;
-
-        buildingView.addView(eventButton,params);
-
-
-        //REMOVE BUTTON
-        Button tempButton = new Button(getContext());
-        tempButton.setText("return");
-
-        params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        params.leftMargin = getView().getWidth()/8;
-        params.topMargin = getView().getHeight()/8;
-
-        buildingView.addView(tempButton,params);
-        tempButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v){
-                Log.d("HI","hi from tempbutton");
-                buildingView.removeAllViews();
-
-                if(!ft.isEmpty()) {
-                    Log.d("srsly","Srsly");
-                    ft.remove(event);
-                }
-
-                resumeLoc();
-            }
-        });
-
-        //BUILDING DESC
-        TextView buildingDesc = new TextView(getContext());
-        buildingDesc.setText(poi.getDescription());
-        buildingDesc.setBackgroundColor(Color.parseColor("#ededed"));
-
-        params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        params.leftMargin = getView().getWidth()/8;
-        params.topMargin = getView().getHeight() - getView().getHeight()/3;
-
-        buildingDesc.setHeight(getView().getHeight()/6);
-        buildingDesc.setWidth(getView().getWidth()/2);
-
-        buildingView.addView(buildingDesc,params);
-
-**/
 
     }
 
+    public void generateBuildingName(){
+
+
+    }
+
+
     /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
+     * Interface to interact with activity
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
+
         boolean onReady();
 
+        /**
+         * pauses location services
+         */
         void pauseLoc();
 
+        /**
+         * resumes location services
+         */
         void resumeLoc();
     }
 }

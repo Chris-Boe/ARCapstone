@@ -93,15 +93,15 @@
 
         </FrameLayout>
 
-            <RelativeLayout
+            <LinearLayout
                 android:id="@+id/barlayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom">
+                android:layout_gravity="bottom|right"
+                android:orientation="vertical">
 
-<!--
 
-                <EditText
+   <!--             <EditText
                     android:id="@+id/bName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -119,12 +119,12 @@
                     android:id="@+id/exit"
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
+                    android:layout_gravity="right"
                     android:text="Return"
                     android:visibility="visible" />
 
-
 -->
-            </RelativeLayout>
+            </LinearLayout>
 
         </LinearLayout>
 

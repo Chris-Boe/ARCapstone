@@ -174,16 +174,43 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
         expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                if(childPosition == 0){
+                if(childPosition == 0) {
                     String date = listChildren.get(listHeaders.get(groupPosition)).get(0);
-                    date = date.replaceAll("/", "-");
-                    date = date.substring(0, 10);
-                    Log.d("Date", date);
-                    date = date+"T08:00:00-07:00";
-                    DateTime startDateTime = new DateTime(date);
-                    date = date.substring(0, 10);
-                    date = date+"T09:00:00-07:00";
-                    DateTime endDateTime = new DateTime(date);
+                    DateTime startDateTime;
+                    DateTime endDateTime;
+                    if(date.length() > 36){ //if time was found, length will be 40
+                        date = date.replaceAll("Date: ", "");
+                        String startTime = date.substring(date.indexOf("Time: "));
+                        int dash = startTime.indexOf("-");
+                        String endTime = startTime.substring(dash);
+                        startTime = startTime.substring(0, dash);
+                        date = date.replaceAll("/", "-");
+                        date = date.substring(0, 10);
+                        if (startTime.contains("-"))
+                            startTime = startTime.replaceAll("-", "");
+                        if (endTime.contains("-"))
+                            endTime = endTime.replaceAll("-", "");
+                        date = date + "T" + startTime + "-07:00";
+                        date = date.replaceAll("Time: ", "");
+                        date = date.replaceAll(" ", "");
+                        startDateTime = new DateTime(date);
+                        date = date.substring(0, 10);
+                        date = date + "T" + endTime + "-07:00";
+                        date = date.replaceAll("Time: ", "");
+                        date = date.replaceAll(" ", "");
+                        endDateTime = new DateTime(date);
+                    }else{ //add fake time since nothing was found in RSS Reader description
+                        date = date.replaceAll("Date: ", "");
+                        date = date.replaceAll("/", "-");
+                        date = date.replaceAll(" ", "");
+                        date = date.substring(0, 10);
+                        date = date + "T08:00:00-07:00";
+                        startDateTime = new DateTime(date);
+                        date = date.substring(0, 10);
+                        date = date + "T09:00:00-07:00";
+                        endDateTime = new DateTime(date);
+                    }
+                    Log.d("DateFinal", date);
                     EventDateTime start = new EventDateTime()
                             .setDateTime(startDateTime)
                             .setTimeZone("America/Los_Angeles");
@@ -208,8 +235,9 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
 
                 }
                 if(childPosition == 2){
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW,
-                            Uri.parse(listChildren.get(listHeaders.get(groupPosition)).get(2)));
+                    String url = listChildren.get(listHeaders.get(groupPosition)).get(2);
+                    url = url.replaceAll("Link: ","");
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                     Toast.makeText(getContext(), "Opening link in Browser...", Toast.LENGTH_SHORT);
                     startActivity(browserIntent);
                 }
@@ -246,6 +274,8 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
                     holderList.add(singleEvent.getDescription());
                     holderList.add(singleEvent.getLink());
                     holderList.add(singleEvent.getLoc());
+                    holderList.add(singleEvent.getStartTime());
+                    holderList.add(singleEvent.getEndTime());
 
                     eventsList.add(holderList);
                 }
@@ -292,9 +322,9 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        menu.add(R.id.event_menu_buttons, R.id.queryBuilding, 0, "Building").setIcon(R.drawable.ic_play_dark)
+        menu.add(R.id.event_menu_buttons, R.id.queryBuilding, 0, "Building").setIcon(R.drawable.ic_search_black_24dp)
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-        menu.add(R.id.event_menu_buttons,R.id.sortby,0,"sort").setIcon(R.drawable.places_ic_search);
+        menu.add(R.id.event_menu_buttons,R.id.sortby,0,"sort").setIcon(R.drawable.ic_search_black_24dp);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -473,10 +503,10 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
     }
     public void addToEventChildren(String s, CustomEvent e){
         ArrayList<String> details = new ArrayList<>();
-        details.add(e.getCategory());
+        details.add("Date: " + e.getCategory() + "Time: "+e.getStartTime()+" - "+e.getEndTime());
         details.add(e.getDescription());
-        details.add(e.getLink());
-        details.add(e.getLoc());
+        details.add("Link: " + e.getLink());
+        details.add("Where: " + e.getLoc());
         listChildren.put(s, details);
     }
     public HashMap<String, ArrayList<String>> getEventChildren(){

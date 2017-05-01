@@ -13,6 +13,8 @@ import org.json.JSONObject;
 import java.net.*;
 import java.util.HashMap;
 import java.io.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import plu.capstone.Models.CustomEvent;
 
@@ -48,6 +50,7 @@ public class RSSReader extends IntentService{
 		String location = "";
 		String link = "";
 		String category = "";
+		int end;
 		try{
 			URL rssUrl = new URL(url);
 			BufferedReader in = new BufferedReader(new InputStreamReader(rssUrl.openStream()));
@@ -81,11 +84,11 @@ public class RSSReader extends IntentService{
 							temp = temp.substring(0, lastPos);
 							//check for location
 							if(temp.contains("Lagerquist") || temp.contains("MBR") || temp.contains("Mary Baker Russell")){
-								location = "MBR";
+								location = "Mary Baker Russell";
 							}else if(temp.contains("Olson")){
 								location = "Olson Auditorium";
 							}else if(temp.contains("Anderson University Center") || temp.contains("Scandinavian") || temp.contains("AUC")){
-								location = "Anderson University Center";
+								location = "University Center";
 							}else if(temp.contains("Harstad")){
 								location = "Harstad";
 							}else if(temp.contains("Hauge") || temp.contains("Admin")){
@@ -163,7 +166,6 @@ public class RSSReader extends IntentService{
 						description += line;
 					}
 
-
 				}
 				//Keys must not contain '/', '.', '#', '$', '[', or ']'
 				title = title.replaceAll("/", "");
@@ -172,7 +174,20 @@ public class RSSReader extends IntentService{
 				title = title.replaceAll("\\$", "");
 				title = title.replaceAll("\\[", "");
 				title = title.replaceAll("]", "");
+				title = title.replaceAll("&38;", "&");
 				//Add the customEvent details to the hashmap
+				if(description.contains("a href")){
+					description = description.replaceAll("a href=","");
+					description = description.replaceAll("mailto:", "");
+					int beg = description.indexOf("target=");
+					end = description.indexOf("/a&gt;");
+					String remove = description.substring(beg, end);
+					description = description.replaceAll(remove, "");
+				}
+				if(description.contains("Organization")) {
+					end = description.indexOf("Organization")-2;
+					description = description.substring(0, end);
+				}
 				description = description.replaceAll("&lt;", "");
 				description = description.replaceAll("br/&gt;", "");
 				description = description.replaceAll("nbsp;", "");
@@ -183,11 +198,79 @@ public class RSSReader extends IntentService{
 				description = description.replaceAll("/:", ":");
 				description = description.replaceAll("br /&gt;", "");
 				description = description.replaceAll("#39;", "'");
-				description = description.replaceAll("/ Organization", "Organization");
 				description = description.replaceAll("#160;", "");
-				CustomEvent customEvent = new CustomEvent(description, location, link, category);
-				map.put(title, customEvent);
+				description = description.replaceAll("b&g", "");
+				description = description.replaceAll("/a&gt;", "");
+				description = description.replaceAll("/ ", "");
+				description = description.replaceAll("quot;", "\"");
+				//description = description.replaceAll("&gt;", "&");
 
+				//Find the time
+				Pattern pattern1 = Pattern.compile("[1]?[0-9](:[0-9][0-9])?([am]|[pm])?-[1]?[0-9](:[0-9][0-9])?([am]|[pm])?");
+				Matcher matcher = pattern1.matcher(description);
+				String time = "";
+				boolean foundTime = false;
+				if(matcher.find()){
+					time = matcher.group();
+					Log.d("Time", title + " " + time);
+					foundTime = true;
+				}
+				String startTime = "";
+				String endTime = "";
+				if(foundTime) {
+					int stop = time.indexOf("-");
+					startTime = time.substring(0, stop);
+					endTime = time.substring(stop);
+					if (startTime.contains(":")) {
+						startTime += ":00";
+					} else {
+						startTime += ":00:00";
+					}
+					if (endTime.contains(":")) {
+						endTime += ":00";
+					} else {
+						endTime += ":00:00";
+					}
+					if(startTime.contains("-"))
+						startTime = startTime.replaceAll("-", "");
+					if(endTime.contains("-"))
+						endTime = endTime.replaceAll("-", "");
+					if(!startTime.contains("a") && !startTime.contains("12") && endTime.contains("p")){
+						if(startTime.contains("a"))
+							startTime = startTime.replaceAll("a", "");
+						if(startTime.contains("p"))
+							startTime = startTime.replaceAll("p", "");
+						int colon = startTime.indexOf(":");
+						int change = (Integer.parseInt(startTime.substring(0, colon)));
+						change += 12;
+						startTime = change + "" + startTime.substring(colon);
+					}
+					if(endTime.contains("p") && !endTime.contains("12")){
+						if(endTime.contains("a"))
+							endTime = endTime.replaceAll("a", "");
+						if(endTime.contains("p"))
+							endTime = endTime.replaceAll("p", "");
+						int colon = endTime.indexOf(":");
+						int change = (Integer.parseInt(endTime.substring(0, colon)));
+						change += 12;
+						endTime = change + "" + endTime.substring(colon);
+					}
+					if(endTime.contains("a"))
+						endTime = endTime.replaceAll("a", "");
+					int colon = startTime.indexOf(":");
+					if((Integer.parseInt(startTime.substring(0, colon)))<10){
+						startTime = "0"+startTime;
+					}
+					colon = endTime.indexOf(":");
+					if((Integer.parseInt(endTime.substring(0, colon)))<10){
+						endTime = "0"+endTime;
+					}
+					Log.d("NewTime", startTime + "-" + endTime);
+				}
+				//end find the time
+				CustomEvent customEvent = new CustomEvent(description, location, link, category, startTime, endTime);
+				map.put(title, customEvent);
+				//Log.d("RSS", description);
 			}
 			in.close();
 		}catch(MalformedURLException ue){

@@ -6,7 +6,9 @@ import android.graphics.Color;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Spannable;
@@ -45,7 +47,6 @@ import plu.capstone.deprecated.customView;
 public class BuildingOverlay extends Fragment {
  
 
-    // TODO: Rename and change types of parameters
 
     private customView tempView;
     private RelativeLayout arViewPane, buttonsView;
@@ -60,7 +61,6 @@ public class BuildingOverlay extends Fragment {
     /**
      * instantiates a new BuildingOverlay, no parameter needed
      */
-    // TODO: Rename and change types and number of parameters
     public static BuildingOverlay newInstance() {
         BuildingOverlay fragment = new BuildingOverlay();
 
@@ -283,6 +283,7 @@ public class BuildingOverlay extends Fragment {
                 final Buildings poi = poiList.get((int)buttonsView.getChildAt(i).getTag()).getBuilding();
                 final BuildingButton bu = (BuildingButton)buttonsView.getChildAt(i);
                 buttonsView.getChildAt(i).setOnClickListener(new View.OnClickListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.M)
                     public void onClick(View v){
                         Log.d("HI","HIHIHIH");
                         generateBuildingInfo(bu,poi);
@@ -298,6 +299,7 @@ public class BuildingOverlay extends Fragment {
      * @param bu
      * @param poi (find a way to only pass that building)
      */
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void generateBuildingInfo(BuildingButton bu, Buildings poi){
         buttonsView.removeAllViews();
         pauseLoc();
@@ -328,6 +330,7 @@ public class BuildingOverlay extends Fragment {
      * @param tabLayout holder for the tablayout
      * @param event holder for the eventsviewfragment
      */
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public void generateTabs(Buildings poi, final FragmentTransaction ft, final FrameLayout tabLayout, final EventsViewFragment event){
         final LinearLayout tabCenter = new LinearLayout(getContext());
 
@@ -356,7 +359,20 @@ public class BuildingOverlay extends Fragment {
         LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(getView().getWidth() - getView().getWidth()/3, LinearLayout.LayoutParams.WRAP_CONTENT);
         //building info
         final Button tab1 = new Button(getContext());
+        tab1.setBackgroundColor(getResources().getColor(R.color.colorPrimary,null));
         tab1.setText("Building Information");
+        tab1.setTextColor(getResources().getColor(R.color.colorBaseWhite,null));
+        tab1.setHeight(25);
+        tab1.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
+        tab1.setGravity(Gravity.CENTER);
+        Button tab2 = new Button(getContext());
+        tab2.setText("Building Events");
+        tab2.setHeight(25);
+        tab2.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
+        tab2.setGravity(Gravity.CENTER);
+        tab2.setTextColor(getResources().getColor(R.color.colorBaseWhite,null));
+        tab2.setBackgroundColor(getResources().getColor(R.color.colorPrimary,null));
+
         tab1.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if(!ft.isEmpty()) {
@@ -376,8 +392,7 @@ public class BuildingOverlay extends Fragment {
         });
 
         //events list
-        Button tab2 = new Button(getContext());
-        tab2.setText("Building Events");
+
         final RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(getView().getWidth() - getView().getWidth() / 3, getView().getWidth() - getView().getWidth() / 4);
         tab2.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -424,9 +439,10 @@ public class BuildingOverlay extends Fragment {
      * @param tabLayout layout for tabs
      * @param ft fragmenttransaction
      */
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public void generateBuildingName(Buildings poi, final EventsViewFragment event, final FrameLayout tabLayout, final FragmentTransaction ft){
         final LinearLayout barLayout = (LinearLayout) getView().findViewById(R.id.barlayout);
-        barLayout.setBackgroundColor(Color.parseColor("#f7c738"));
+        barLayout.setBackgroundColor(getResources().getColor(R.color.colorAccent,null));
 
         //Generate building name
 
@@ -445,6 +461,7 @@ public class BuildingOverlay extends Fragment {
         //generate exit button
         Button exitB = new Button(getContext());
         exitB.setText("return");
+        exitB.setBackgroundColor(getResources().getColor(R.color.lightAccent,null));
         exitB.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v){
                 Log.d("HI","hi from tempbutton");

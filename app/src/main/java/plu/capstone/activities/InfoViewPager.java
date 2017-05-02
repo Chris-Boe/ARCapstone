@@ -13,6 +13,7 @@ import com.google.api.services.calendar.model.Event;
 
 import java.util.ArrayList;
 
+import plu.capstone.dialogs.EventsSearchDialog;
 import plu.capstone.fragments.CalendarViewFragment;
 import plu.capstone.Models.CustomEvent;
 import plu.capstone.R;
@@ -23,7 +24,7 @@ import plu.capstone.fragments.EventsViewFragment;
  * Created by cboe1 on 4/18/2017.
  */
 
-public class InfoViewPager extends AppCompatActivity {
+public class InfoViewPager extends AppCompatActivity implements EventsSearchDialog.EventsSearchListener{
 
     InfoPagerAdapter infoPagerAdapter;
     ViewPager vP;
@@ -39,6 +40,16 @@ public class InfoViewPager extends AppCompatActivity {
         infoPagerAdapter = new InfoPagerAdapter(getSupportFragmentManager());
         vP = (ViewPager) findViewById(R.id.pager);
         vP.setAdapter(infoPagerAdapter);
+    }
+
+    @Override
+    public void onSelect(String key, String val) {
+
+    }
+
+    @Override
+    public void reDraw() {
+
     }
 
 

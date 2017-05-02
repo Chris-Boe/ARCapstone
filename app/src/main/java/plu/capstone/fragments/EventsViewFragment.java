@@ -65,6 +65,7 @@ import java.util.List;
 import plu.capstone.Models.CustomEvent;
 import plu.capstone.adapters.ExpandableListAdapter;
 import plu.capstone.R;
+import plu.capstone.dialogs.EventsSearchDialog;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -75,7 +76,7 @@ import static android.app.Activity.RESULT_OK;
  * Created by cboe1 on 4/19/2017.
  */
 
-public class EventsViewFragment extends Fragment implements EasyPermissions.PermissionCallbacks{
+public class EventsViewFragment extends Fragment implements EasyPermissions.PermissionCallbacks, EventsSearchDialog.EventsSearchListener{
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -333,6 +334,7 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
         final Fragment fragment = this;
         switch (item.getItemId()) {
             case R.id.sortby:
+
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
                 final String sortby[] = getResources().getStringArray(R.array.sort_options);
@@ -410,6 +412,10 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
                 dialog.show();
                 return true;
             case R.id.queryBuilding:
+                EventsSearchDialog eDialog = new EventsSearchDialog();
+                eDialog.show(getActivity().getSupportFragmentManager(), "search");
+
+                /*
                 Log.d("HI","The button works");
 
                 builder = new AlertDialog.Builder(getActivity());
@@ -465,7 +471,7 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
 
 // Create the AlertDialog
                 AlertDialog dialog2 = builder.create();
-                dialog2.show();
+                dialog2.show();*/
                 return true;
 
             default:
@@ -735,6 +741,25 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
         Dialog dialog = apiAvailability.getErrorDialog(getActivity(), connectionCode, REQUEST_GOOGLE_PLAY_SERVICES);
         dialog.show();
     }
+
+    @Override
+    public void onSelect(String key, String val) {
+        paramKey = key;
+        paramValue = val;
+
+        getActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .detach(this)
+                .attach(this)
+                .commit();
+
+    }
+
+    @Override
+    public void reDraw() {
+
+    }
+
     //Use an asynchronous task to handle Google API call and keep UI responsive
     private class MakeRequestTask extends AsyncTask<Void, Void, List<String>> {
         private com.google.api.services.calendar.Calendar mService = null;

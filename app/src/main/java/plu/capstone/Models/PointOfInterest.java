@@ -15,17 +15,19 @@ public class PointOfInterest {
     public float curBearing;
     public Buildings building;
     public float distance;
+    public double hFov;
 
     public PointOfInterest(){
 
     }
 
-    public PointOfInterest(float[] orientation, float curBearing, Buildings building, float dis) {
+    public PointOfInterest(float[] orientation, float curBearing, Buildings building, float dis, double fov) {
 
         this.orientation = orientation;
         this.curBearing = curBearing;
         this.building = building;
         this.distance = dis;
+        this.hFov = fov;
     }
 
     /*

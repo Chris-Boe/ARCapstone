@@ -6,11 +6,11 @@ package plu.capstone.Models;
 
 public class Buildings {
 
-    private String Description;
-    private float Latitude;
-    private float Longitude;
-    private String Name;
-    private String icon;
+    public String Description;
+    public float Latitude;
+    public float Longitude;
+    public String Name;
+    public String icon;
 
     public Buildings(){
 
@@ -23,6 +23,7 @@ public class Buildings {
         this.Name = name;
     }
 
+    /*
     public String getDescription() {
         return Description;
     }
@@ -62,4 +63,5 @@ public class Buildings {
     public void setIcon(String icon) {
         this.icon = icon;
     }
+    */
 }

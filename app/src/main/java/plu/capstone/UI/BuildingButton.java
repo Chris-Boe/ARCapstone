@@ -20,6 +20,7 @@ public class BuildingButton extends android.support.v7.widget.AppCompatButton {
     private float orientation[];
     public BuildingButton(Context context) {
         super(context);
+        setBackgroundColor(Color.TRANSPARENT);
     }
 
     public BuildingButton(Context context, int w, int h, float[] ori){
@@ -35,8 +36,8 @@ public class BuildingButton extends android.support.v7.widget.AppCompatButton {
     public void setTranslationX(float x){
 
         final float fX = x;
-
         final BuildingButton thisButton = this;
+
         this.getViewTreeObserver().addOnGlobalLayoutListener(
                 new ViewTreeObserver.OnGlobalLayoutListener() {
 

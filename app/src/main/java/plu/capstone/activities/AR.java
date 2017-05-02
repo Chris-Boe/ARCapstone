@@ -109,6 +109,7 @@ public class AR extends AppCompatActivity implements SensorsFragment.OnFragmentI
         }
     };
     private View mControlsView;
+    private CameraCharacteristics characteristics;
     private final Runnable mShowPart2Runnable = new Runnable() {
         @Override
         public void run() {
@@ -300,7 +301,7 @@ public class AR extends AppCompatActivity implements SensorsFragment.OnFragmentI
         Log.e(TAG, "is camera open");
         try {
             cameraId = manager.getCameraIdList()[0];
-            CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
+            characteristics = manager.getCameraCharacteristics(cameraId);
             StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
             assert map != null;
             imageDimension = map.getOutputSizes(SurfaceTexture.class)[0];

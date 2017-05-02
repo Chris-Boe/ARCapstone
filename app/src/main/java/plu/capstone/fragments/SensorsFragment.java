@@ -383,10 +383,11 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
 
             //TODO:this should be buildinglist.size()
             //buildinglist.size
-            for (int i = 0; i < 3; i++) {
+            for(Buildings buildI : buildingList){
+           // for (int i = 0; i < buildingList.size(); i++) {
                 Location loc = new Location("manual");
-                loc.setLatitude(buildingList.get(i).getLatitude());
-                loc.setLongitude(buildingList.get(i).getLongitude());
+                loc.setLatitude(buildI.Latitude);
+                loc.setLongitude(buildI.Longitude);
                 loc.setAltitude(0);
 
                 String printLoc = "Lat: " + location.getLatitude() + " Long: " + location.getLongitude();
@@ -400,7 +401,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
                 //  Log.d("CURBEARING:", curBearing + "?");
 
                 //CHECK DISTANCE
-                if(distance > 150) {
+                if(distance < 150) {
                     //using accel
                     if(accMag==true) {
                         float rotation[] = new float[9];
@@ -476,7 +477,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
                     ori = "ORI: " + orientation[0] + " " + orientation[1] + " " + orientation[2];
 
 
-                        PointOfInterest poi = new PointOfInterest(orientation, curBearing, buildingList.get(i), distance);
+                        PointOfInterest poi = new PointOfInterest(orientation, curBearing, buildI, distance);
                         poiList.add(poi);
                 }
 

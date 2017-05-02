@@ -7,23 +7,30 @@ import plu.capstone.Models.Buildings;
  */
 
 public class PointOfInterest {
-    private float[] orientation;
-    private float curBearing;
-    private Buildings building;
-    private float distance;
+
+    /*
+    though typically bestpractice to use private fields for classes, in android development its strongly encouraged to access fields directly as its up to 3x faster
+     */
+    public float[] orientation;
+    public float curBearing;
+    public Buildings building;
+    public float distance;
+    public double hFov;
 
     public PointOfInterest(){
 
     }
 
-    public PointOfInterest(float[] orientation, float curBearing, Buildings building, float dis) {
+    public PointOfInterest(float[] orientation, float curBearing, Buildings building, float dis, double fov) {
 
         this.orientation = orientation;
         this.curBearing = curBearing;
         this.building = building;
         this.distance = dis;
+        this.hFov = fov;
     }
 
+    /*
     public float getDistance() {
         return distance;
     }
@@ -55,5 +62,5 @@ public class PointOfInterest {
     public void setBuilding(Buildings building) {
         this.building = building;
     }
-
+*/
 }

@@ -89,7 +89,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
         testLoc2.setAltitude(0);
     }
 
-    private float vFOV, hFOV;
+    //private float vFOV, hFOV;
     private float orientation[] = null;
     private float curBearing;
     private Time lastTime;
@@ -225,21 +225,9 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
 
 
     // TODO: Rename method, update argument and hook method into UI event
-    public void invalidate(String accelData,
-                           String compassData,
-                           String gyroData,
-                           String bearing,
-                           String gps,
-                           String ori,
-                           ArrayList<PointOfInterest> poiList) {
+    public void invalidate(ArrayList<PointOfInterest> poiList) {
         if (mListener != null) {
-            mListener.invalidate(accelData,
-                    compassData,
-                    gyroData,
-                    bearing,
-                    gps,
-                    ori,
-                    poiList);
+            mListener.invalidate(poiList);
         }
     }
 
@@ -383,10 +371,11 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
 
             //TODO:this should be buildinglist.size()
             //buildinglist.size
-            for (int i = 0; i < 3; i++) {
+            for(Buildings buildI : buildingList){
+           // for (int i = 0; i < buildingList.size(); i++) {
                 Location loc = new Location("manual");
-                loc.setLatitude(buildingList.get(i).getLatitude());
-                loc.setLongitude(buildingList.get(i).getLongitude());
+                loc.setLatitude(buildI.Latitude);
+                loc.setLongitude(buildI.Longitude);
                 loc.setAltitude(0);
 
                 String printLoc = "Lat: " + location.getLatitude() + " Long: " + location.getLongitude();
@@ -400,7 +389,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
                 //  Log.d("CURBEARING:", curBearing + "?");
 
                 //CHECK DISTANCE
-                if(distance > 150) {
+                if(distance < 150) {
                     //using accel
                     if(accMag==true) {
                         float rotation[] = new float[9];
@@ -474,13 +463,31 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
 
                     //Log.d("ORI:",ori+"");
                     ori = "ORI: " + orientation[0] + " " + orientation[1] + " " + orientation[2];
+                    double hfov = (2 * Math.atan(40 /
+                                    ( 2 * (distance - 30))));
 
 
-                        PointOfInterest poi = new PointOfInterest(orientation, curBearing, buildingList.get(i), distance);
+                    double bearingTo = curBearing;
+                    //convert az to (0,360 d]
+                    double azDeg = Math.toDegrees(orientation[0]);
+
+                   /* if(azDeg<0)
+                        azDeg = 180 - azDeg;
+                    if(bearingTo<0)
+                        bearingTo = 180 - bearingTo;
+*/
+                    double degreeDifference = Math.abs(bearingTo-azDeg);
+
+                    //normalize about the fov
+                    float dx = (float) ((getView().getWidth()/Math.toDegrees(hfov)) * degreeDifference);
+
+
+
+                    PointOfInterest poi = new PointOfInterest(orientation, curBearing, buildI, distance, dx);
                         poiList.add(poi);
                 }
 
-                invalidate(accelData, compassData, gyroData, bearing, gps, ori, poiList);
+                invalidate(poiList);
 
             }
 
@@ -695,13 +702,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void invalidate(String accelData,
-                    String compassData,
-                    String gyroData,
-                    String bearing,
-                    String gps,
-                    String ori,
-                    ArrayList<PointOfInterest> poiList);
+        void invalidate(ArrayList<PointOfInterest> poiList);
     }
     @Override
     public void onPause(){

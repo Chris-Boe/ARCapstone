@@ -8,8 +8,28 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:id="@+id/mainBackgroundImg"
         android:background="@drawable/sun_khp"
         >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:text="Welcome to"
+            android:id="@+id/welcomeText"
+            android:textSize="25dp"
+            android:textColor="#FFFF"
+            android:textAlignment="center"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:id="@+id/titleText"
+            android:text="KNIGHT VISION"
+            android:textAlignment="center"
+            android:textSize="50dp"
+            android:textColor="#FFFF"
+            android:textStyle="italic"
+            android:layout_below="@id/welcomeText"/>
+
         <Spinner
             android:id="@+id/spinner"
             android:layout_width="wrap_content"
@@ -21,7 +41,18 @@
             android:layout_margin="8dp"
             android:textColor="@android:color/black"
             android:textAlignment="center"
-            android:alpha="0.8"/>
+            android:alpha="0.8"
+            android:radius="5dp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:text="Start by choosing your school from the dropdown menu below:"
+            android:id="@+id/schoolChoice"
+            android:textSize="15dp"
+            android:textColor="#FFFF"
+            android:layout_above="@id/spinner"
+            android:textAlignment="center"
+            android:background="#60808080"/>
         <Button
             android:id="@+id/show_menu_button"
             android:layout_centerInParent="true"
@@ -29,12 +60,13 @@
             android:layout_height="48dp"
             android:background="@android:color/white"
             android:text="Go!"
+            android:radius="20dp"
             android:textSize="18sp"
             android:gravity="center"
             android:layout_margin="16dp"
             android:textColor="@android:color/black"
             android:alpha="0.8"
-            android:layout_below="@id/spinner"/>
+            android:layout_below="@id/spinner" />
 
     </RelativeLayout>
 
@@ -44,6 +76,25 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="Welcome to"
+        android:id="@+id/welcomeText2"
+        android:textSize="25dp"
+        android:textColor="#FFFF"
+        android:textAlignment="center"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:id="@+id/titleText2"
+        android:text="KNIGHT VISION"
+        android:textAlignment="center"
+        android:textSize="50dp"
+        android:textColor="#FFFF"
+        android:textStyle="italic"
+        android:layout_below="@id/welcomeText2"/>
 <!--
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"

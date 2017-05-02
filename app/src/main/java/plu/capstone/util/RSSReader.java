@@ -116,7 +116,7 @@ public class RSSReader extends IntentService{
                                 icon="dorm";
 							}else if(temp.contains("Morken")){
 								location = "Morken Center";
-                                icon="morken";
+                                icon="morken_pic";
 							}else if(temp.contains("Library") || temp.contains("library")){
 								location = "Mortvedt Library";
                                 icon="library";

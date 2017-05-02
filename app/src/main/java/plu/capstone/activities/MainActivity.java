@@ -1,6 +1,7 @@
 package plu.capstone.activities;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -23,19 +25,23 @@ import plu.capstone.util.RSSReader;
 
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
-    private Button mapButton;
     private GridMenuFragment mGridMenuFragment;
-    int item;
+    int pic;
+    boolean hasQueried = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        RelativeLayout rel = (RelativeLayout)findViewById(R.id.mainBackgroundImg);
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        int pic = getRandomPic();
         //grid fragment
-        mGridMenuFragment = GridMenuFragment.newInstance(R.drawable.sun_khp);
+        rel.setBackgroundResource(pic);
+        mGridMenuFragment = GridMenuFragment.newInstance(pic);
 
         setupGridMenu();
 
+        //TODO: place chosen school into SharedPreferences, scale entire app to reflect choice
         Spinner spinner = (Spinner)findViewById(R.id.spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.schools, android.R.layout.simple_spinner_item);
@@ -78,47 +84,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         break;
                 }            }
         });
-        /*FloatingActionButton camButton = (FloatingActionButton) findViewById(R.id.camButton);
-        camButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                updateDB();
-            }
-        });
-        Button arButton = (Button)findViewById(R.id.arButton);
-        arButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                goToAR();
-            }
-        });
-        Button calButton = (Button) findViewById(R.id.calButton);
-        calButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                goToCal();
-            }
-        });
-        Button myEventsButton = (Button) findViewById(R.id.myEventsButton);
-        myEventsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                goToMyEvents();
-            }
-        });
-        mapButton = (Button) findViewById(R.id.mapButton);
-        mapButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               // toastLoc();
-                //Toast toast = Toast.makeText(getApplicationContext(), "Test", Toast.LENGTH_SHORT);
-                //toast.show();
-                // goToMap();
-            }
-        });*/
-
-
-
     }
 
     private void setupGridMenu() {
@@ -132,7 +97,26 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         mGridMenuFragment.setupMenu(menus);
     }
-
+    private int getRandomPic(){
+        //randomize homepage background image
+        int num = (int)(Math.random()*3);
+        Log.d("Rand", num+"");
+        switch(num){
+            case 0:
+                pic = R.drawable.sun_khp;
+                break;
+            case 1:
+                pic = R.drawable.morken_pic;
+                break;
+            case 2:
+                pic = R.drawable.clocktower;
+                break;
+            default:
+                pic = R.drawable.sun_khp;
+        }
+        Log.d("Rand", pic+"");
+        return pic;
+    }
     private void updateDB(){
         //Intent intent = new Intent(this, CameraActivity.class);
         //startActivity(intent);
@@ -143,18 +127,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         startService(rssIntent);
         Toast toast2 = Toast.makeText(getApplicationContext(), "Update Complete", Toast.LENGTH_SHORT);
         toast2.show();
-    }
-    private void goToCal(){
-        Intent intent = new Intent(this, CalendarActivity.class);
-        startActivity(intent);
+        hasQueried = true;
     }
     private void goToMyEvents(){
         Intent intent = new Intent(this, InfoViewPager.class);
         startActivity(intent);
     }
     private void goToMap(){
-        //Intent intent = new Intent(this, MapsActivity.class);
-        //startActivity(intent);
+        Intent intent = new Intent(this, MapActivity.class);
+        startActivity(intent);
     }
     private void goToAR(){
         Intent intent = new Intent(this, AR.class);
@@ -165,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         Log.d("School: ", parent.getItemAtPosition(position).toString());
 
-        }
+    }
 
     private void goto25Live() {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW,

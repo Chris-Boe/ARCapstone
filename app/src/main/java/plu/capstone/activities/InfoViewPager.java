@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Window;
 
 import com.google.api.services.calendar.model.Event;
@@ -15,6 +16,7 @@ import com.google.api.services.calendar.model.Event;
 import java.util.ArrayList;
 
 import plu.capstone.dialogs.EventsSearchDialog;
+import plu.capstone.dialogs.KeywordSearchDialog;
 import plu.capstone.fragments.CalendarViewFragment;
 import plu.capstone.Models.CustomEvent;
 import plu.capstone.R;
@@ -25,11 +27,12 @@ import plu.capstone.fragments.EventsViewFragment;
  * Created by cboe1 on 4/18/2017.
  */
 
-public class InfoViewPager extends AppCompatActivity implements EventsSearchDialog.EventsSearchListener{
+public class InfoViewPager extends AppCompatActivity implements EventsSearchDialog.EventsSearchListener, KeywordSearchDialog.KeywordListenr{
 
     InfoPagerAdapter infoPagerAdapter;
     ViewPager vP;
     ArrayList<Event> eventsToCal;
+    private EventsViewFragment eFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -45,12 +48,16 @@ public class InfoViewPager extends AppCompatActivity implements EventsSearchDial
 
     @Override
     public void onSelect(String key, String val) {
-
+        Log.d("pass2",key+"/"+val);
+        if(eFragment!=null)
+            eFragment.onSelect(key,val);
     }
 
     @Override
-    public void reDraw() {
-
+    public void selectWord(String[] words) {
+        Log.d("pass2",words.toString());
+        if(eFragment!=null)
+            eFragment.onSelectWords(words);
     }
 
 
@@ -83,7 +90,9 @@ public class InfoViewPager extends AppCompatActivity implements EventsSearchDial
         public Fragment getItem(int position) {
             //Fragment fragment = fm.findFragmentByTag("android:switcher:" + )
             switch(position){
-                case 0: return EventsViewFragment.newInstance("EventsViewFragment",null,null,"event");
+                case 0:
+                    eFragment = EventsViewFragment.newInstance("EventsViewFragment",null,null,"event");
+                    return  eFragment;
                 case 1: return CalendarViewFragment.newInstance("CalendarViewFragment");
                 case 2: return BuildingsViewFragment.newInstance("BuildingsViewFragment");
                 default: return EventsViewFragment.newInstance("Default: EventsViewFragment",null,null,"event");

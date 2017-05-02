@@ -66,6 +66,7 @@ import plu.capstone.Models.CustomEvent;
 import plu.capstone.adapters.ExpandableListAdapter;
 import plu.capstone.R;
 import plu.capstone.dialogs.EventsSearchDialog;
+import plu.capstone.dialogs.KeywordSearchDialog;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -76,7 +77,7 @@ import static android.app.Activity.RESULT_OK;
  * Created by cboe1 on 4/19/2017.
  */
 
-public class EventsViewFragment extends Fragment implements EasyPermissions.PermissionCallbacks, EventsSearchDialog.EventsSearchListener{
+public class EventsViewFragment extends Fragment implements EasyPermissions.PermissionCallbacks {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -113,6 +114,7 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
     SharedPreferences.Editor editor;
     private ActionBar actionBar;
     boolean hasCalendar;
+    private EventsSearchDialog.EventsSearchListener eListener;
 
     private ArrayList<ArrayList<String>> eventsList; //name, date, desc, link, loc
 
@@ -168,6 +170,7 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
         listHeaders = new ArrayList<>();
         listChildren = new HashMap<>();
         eventsList = new ArrayList<ArrayList<String>>();
+
         eventsMap = new HashMap<>();
         final Context con = this.getContext();
         savedEvents = new ArrayList<Event>();
@@ -298,7 +301,6 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
 
     private void updateList(ArrayList list,HashMap map){
 
-
         listAdapter = new ExpandableListAdapter(getContext(), list, map);
         expListView.setAdapter(listAdapter);
     }
@@ -412,8 +414,44 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
                 dialog.show();
                 return true;
             case R.id.queryBuilding:
-                EventsSearchDialog eDialog = new EventsSearchDialog();
-                eDialog.show(getActivity().getSupportFragmentManager(), "search");
+                builder = new AlertDialog.Builder(getActivity());
+                final String[] searchOptions = {"Building","Keyword"};
+
+                builder.setTitle("Search by").setItems(searchOptions, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(which==0){
+                            EventsSearchDialog eDialog = new EventsSearchDialog();
+                            eDialog.show(getActivity().getSupportFragmentManager(), "search_building");
+                        }
+                        if(which==1){
+                            Log.d("searchDialog","yup");
+                            KeywordSearchDialog kDialog = new KeywordSearchDialog();
+                            kDialog.show(getActivity().getSupportFragmentManager(),"search_words");
+                        }
+                    }
+                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //exit
+                    }
+                }).setPositiveButton("Show all", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //refreshing
+                        paramKey = null;
+                        paramValue = null;
+
+                        getActivity().getSupportFragmentManager()
+                                .beginTransaction()
+                                .detach(fragment)
+                                .attach(fragment)
+                                .commit();
+                    }
+                });
+
+                AlertDialog dialog2 = builder.create();
+                dialog2.show();
 
                 /*
                 Log.d("HI","The button works");
@@ -742,10 +780,11 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
         dialog.show();
     }
 
-    @Override
     public void onSelect(String key, String val) {
         paramKey = key;
         paramValue = val;
+
+        Log.d("SELECT?",paramKey+"/"+paramValue);
 
         getActivity().getSupportFragmentManager()
                 .beginTransaction()
@@ -755,10 +794,23 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
 
     }
 
-    @Override
-    public void reDraw() {
+    public void onSelectWords(String[] words) {
+        Log.d("sup","pass3");
+        HashMap<String, ArrayList<String>> newMap = new HashMap<String, ArrayList<String>>();
+        ArrayList<String> newHeaders = new ArrayList<String>();
 
+        //loop through to find keywords in eventsmap
+        for(String key : listChildren.keySet()){
+            for(String s : words)
+                if(listChildren.get(key).get(1).toLowerCase().contains(s.toLowerCase()) || key.toLowerCase().contains(s.toLowerCase())){
+                    newMap.put(key,listChildren.get(key));
+                    newHeaders.add(key);
+                }
+        }
+
+        updateList(newHeaders,newMap);
     }
+
 
     //Use an asynchronous task to handle Google API call and keep UI responsive
     private class MakeRequestTask extends AsyncTask<Void, Void, List<String>> {

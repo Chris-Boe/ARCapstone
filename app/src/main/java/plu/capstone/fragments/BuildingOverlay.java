@@ -130,13 +130,13 @@ public class BuildingOverlay extends Fragment {
     }
 
 
-    public void update(String aData, String cData, String gData, String b,
-                       String g, String o, ArrayList<PointOfInterest> poiList, CameraManager manager, String cameraId){
+    public void update(ArrayList<PointOfInterest> poiList){
 
 
         CameraCharacteristics cc = null;
         Log.d("hi", "NEW LOCATION\n");
 
+        /*
         try {
             cc = manager.getCameraCharacteristics(cameraId);
         } catch (CameraAccessException e) {
@@ -155,12 +155,12 @@ public class BuildingOverlay extends Fragment {
                 (fcc.get(CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE).getWidth() /
                         (2 * fcc.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS)[0])
                 )));
-*/
+*//*
         float vFOV = (float) (2 * Math.atan(
                 (fcc.get(CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE).getHeight() /
                         (2 * (fcc.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS)[0] - 40))
                 )));
-
+*/
 
         if(buttonsView!=null){
             buttonsView.removeAllViews();
@@ -261,7 +261,9 @@ public class BuildingOverlay extends Fragment {
                     //normalize about the fov
                    float dx = (float) ((getView().getWidth()/Math.toDegrees(hFOV)) * degreeDifference);
 
+                    /*
                     float dy = (float) ((getView().getWidth() / Math.toDegrees(hFOV)) * Math.abs((poiB.curBearing - -1*Math.toDegrees(poiB.orientation[1]))));
+*/
 
                     //Log.d("width", getView().getWidth() + "");
 

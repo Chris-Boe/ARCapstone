@@ -89,7 +89,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
         testLoc2.setAltitude(0);
     }
 
-    private float vFOV, hFOV;
+    //private float vFOV, hFOV;
     private float orientation[] = null;
     private float curBearing;
     private Time lastTime;
@@ -225,21 +225,9 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
 
 
     // TODO: Rename method, update argument and hook method into UI event
-    public void invalidate(String accelData,
-                           String compassData,
-                           String gyroData,
-                           String bearing,
-                           String gps,
-                           String ori,
-                           ArrayList<PointOfInterest> poiList) {
+    public void invalidate(ArrayList<PointOfInterest> poiList) {
         if (mListener != null) {
-            mListener.invalidate(accelData,
-                    compassData,
-                    gyroData,
-                    bearing,
-                    gps,
-                    ori,
-                    poiList);
+            mListener.invalidate(poiList);
         }
     }
 
@@ -481,7 +469,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
                         poiList.add(poi);
                 }
 
-                invalidate(accelData, compassData, gyroData, bearing, gps, ori, poiList);
+                invalidate(poiList);
 
             }
 
@@ -696,13 +684,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void invalidate(String accelData,
-                    String compassData,
-                    String gyroData,
-                    String bearing,
-                    String gps,
-                    String ori,
-                    ArrayList<PointOfInterest> poiList);
+        void invalidate(ArrayList<PointOfInterest> poiList);
     }
     @Override
     public void onPause(){

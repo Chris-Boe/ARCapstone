@@ -123,6 +123,7 @@ public class AR extends AppCompatActivity implements SensorsFragment.OnFragmentI
     };
     private boolean mVisible;
     private FrameLayout arViewPane;
+    private BuildingOverlay boFragment;
     private final Runnable mHideRunnable = new Runnable() {
         @Override
         public void run() {
@@ -186,7 +187,9 @@ public class AR extends AppCompatActivity implements SensorsFragment.OnFragmentI
         textureView = (TextureView)findViewById(R.id.texture);
 
 
-       // mDatabase = FirebaseDatabase.getInstance().getReference();
+
+
+        // mDatabase = FirebaseDatabase.getInstance().getReference();
 
 
         // Set up the user interaction to manually show or hide the system UI.
@@ -453,20 +456,16 @@ public class AR extends AppCompatActivity implements SensorsFragment.OnFragmentI
     }
 
     @Override
-    public void invalidate(String aData, String cData, String gData, String b,
-                           String g, String o, ArrayList<PointOfInterest> poiList) {
+    public void invalidate(ArrayList<PointOfInterest> poiList) {
 
-        if(isready==true) {
-
-            BuildingOverlay fragment = (BuildingOverlay) getSupportFragmentManager().findFragmentByTag("building");
-
+        if(isready==true && getSupportFragmentManager().findFragmentByTag("building")!=null) {
             //Log.d("frag",fragment+"?");
             //Log.d("man/cam",manager+"/"+cameraId+"?");
 
             //TODO:get list of buildings to send to buildingoverlay
 
             //change this to bundle
-            fragment.update(aData, cData, gData, b, g, o, poiList, manager, cameraId);
+            ((BuildingOverlay)getSupportFragmentManager().findFragmentByTag("building")).update(poiList);
         }
     }
 
@@ -505,7 +504,6 @@ public class AR extends AppCompatActivity implements SensorsFragment.OnFragmentI
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
         }
     }
-
 }
 
 

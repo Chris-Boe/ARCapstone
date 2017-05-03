@@ -398,8 +398,10 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
                         if (smoothedAccel == null)
                             Log.d(":c", "like really");
 
+                        boolean gotRotation = false;
 
-                        boolean gotRotation = SensorManager.getRotationMatrix(rotation, identity, smoothedAccel, smoothedCompass);
+                        if(rotation!=null)
+                            gotRotation = SensorManager.getRotationMatrix(rotation, identity, smoothedAccel, smoothedCompass);
 
 
                         if (gotRotation) {

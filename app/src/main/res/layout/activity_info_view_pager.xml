@@ -7,7 +7,7 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:background="@color/colorAccent"
-        android:titleTextColor="@color/colorPrimary"
+        android:titleTextColor="#FFFF"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"/>
     
@@ -16,6 +16,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/tab_layout"
         android:layout_gravity="top"
-        android:background="@color/colorPrimary"/>
+        android:background="@color/colorAccent"
+        android:textColor="#FFFF"/>
 
 </android.support.v4.view.ViewPager>

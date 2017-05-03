@@ -2,6 +2,7 @@ package plu.capstone.fragments;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.hardware.GeomagneticField;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -472,6 +473,8 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
                     double bearingTo = curBearing;
                     //convert az to (0,360 d]
                     double azDeg = Math.toDegrees(orientation[0]);
+                    //account for declination
+                    azDeg += new GeomagneticField((float)lastLocation.getLatitude(),(float)lastLocation.getLongitude(),(float)lastLocation.getAltitude(),System.currentTimeMillis()).getDeclination();
 
                    /* if(azDeg<0)
                         azDeg = 180 - azDeg;

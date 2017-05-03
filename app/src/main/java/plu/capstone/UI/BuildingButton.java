@@ -79,12 +79,45 @@ public class BuildingButton extends android.support.v7.widget.AppCompatButton {
 
     @Override
     public void setX(float x){
-        super.setX(x-this.getWidth()/2);
+        final float fX = x;
+        final BuildingButton thisButton = this;
+
+        this.getViewTreeObserver().addOnGlobalLayoutListener(
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+
+
+                    @Override
+                    public void onGlobalLayout() {
+                        thisButton.setHelperX(fX-(thisButton.getWidth()/2));
+                        thisButton.setVisibility(VISIBLE);
+                    }
+                });
+    }
+
+    public void setHelperX(float x){
+        super.setX(x);
     }
 
     @Override
     public void setY(float y){
-        super.setY(y-(this.getHeight()/2));
+
+        final float fY = y;
+        final BuildingButton thisButton = this;
+
+        this.getViewTreeObserver().addOnGlobalLayoutListener(
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+
+
+                    @Override
+                    public void onGlobalLayout() {
+                        thisButton.setHelperY(fY-(thisButton.getHeight()/2));
+                        thisButton.setVisibility(VISIBLE);
+                    }
+                });
+    }
+
+    public void setHelperY(float y){
+        super.setY(y);
     }
 
     /*

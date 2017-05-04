@@ -13,16 +13,17 @@
         android:id="@+id/connectToGCal"
         />-->
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/eventsTextView"
+        android:id="@+id/tipsTextView"
         android:textStyle="bold|italic"
         android:textAlignment="center"/>
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/apiTextView"
-        android:layout_below="@id/eventsTextView"/>
+        android:layout_below="@id/tipsTextView"
+        android:textAlignment="center"/>
     <ExpandableListView
         android:id="@+id/lvExpEvents"
         android:layout_width="match_parent"

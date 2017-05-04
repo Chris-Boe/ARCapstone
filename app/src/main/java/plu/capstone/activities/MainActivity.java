@@ -1,6 +1,7 @@
 package plu.capstone.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.support.v4.app.FragmentTransaction;
@@ -13,12 +14,16 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.goka.blurredgridmenu.GridMenu;
 import com.goka.blurredgridmenu.GridMenuFragment;
+import com.google.api.client.util.DateTime;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Random;
 
 import plu.capstone.R;
 import plu.capstone.util.RSSReader;
@@ -53,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         show_menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //updateDB();
+                updateDB();
                 FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
                 tx.replace(R.id.main_frame, mGridMenuFragment);
                 tx.addToBackStack(null);
@@ -82,8 +87,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     case 5:
                         openAbout();
                         break;
-                }            }
+                }
+            }
         });
+        TextView facts = (TextView) this.findViewById(R.id.factsView);
+        facts.setText(getRandomFact());
     }
 
     private void setupGridMenu() {
@@ -117,17 +125,43 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         Log.d("Rand", pic+"");
         return pic;
     }
+    private String getRandomFact(){
+        String fact = "";
+        Random randomGen = new Random();
+        String[] factArray = getResources().getStringArray(R.array.facts);
+        int index = randomGen.nextInt(factArray.length);
+        fact = factArray[index];
+        return "Quick Fact: "+fact;
+    }
     private void updateDB(){
         //Intent intent = new Intent(this, CameraActivity.class);
         //startActivity(intent);
-        Toast toast1 = Toast.makeText(getApplicationContext(), "Starting update", Toast.LENGTH_SHORT);
-        toast1.show();
-        Intent rssIntent = new Intent(this, RSSReader.class);
-        rssIntent.putExtra(RSSReader.urlInMessage, "https://25livepub.collegenet.com/calendars/all.rss");
-        startService(rssIntent);
-        Toast toast2 = Toast.makeText(getApplicationContext(), "Update Complete", Toast.LENGTH_SHORT);
-        toast2.show();
-        hasQueried = true;
+        SharedPreferences prefs = this.getPreferences(0);
+        SharedPreferences.Editor editor = prefs.edit();
+        long lastUpdate = 0;
+        boolean shouldQuery = false;
+        if(prefs.getAll().containsKey("updated")){
+            lastUpdate = Long.parseLong(prefs.getAll().get("updated").toString());
+            if((System.currentTimeMillis()-lastUpdate)>21600000){ //max 4 times a day
+                shouldQuery = true;
+            }
+            else{
+                Log.d("Query", "Queried "+((System.currentTimeMillis()-lastUpdate)/1000) +" seconds ago");
+            }
+        }
+        if(shouldQuery || !prefs.getAll().containsKey("updated")){
+            Toast toast1 = Toast.makeText(getApplicationContext(), "Starting update", Toast.LENGTH_SHORT);
+            toast1.show();
+            Intent rssIntent = new Intent(this, RSSReader.class);
+            rssIntent.putExtra(RSSReader.urlInMessage, "https://25livepub.collegenet.com/calendars/all.rss");
+            startService(rssIntent);
+            Toast toast2 = Toast.makeText(getApplicationContext(), "Update Complete", Toast.LENGTH_SHORT);
+            toast2.show();
+            hasQueried = true;
+            editor.putLong("updated", System.currentTimeMillis());
+            editor.commit();
+        }
+
     }
     private void goToMyEvents(){
         Intent intent = new Intent(this, InfoViewPager.class);

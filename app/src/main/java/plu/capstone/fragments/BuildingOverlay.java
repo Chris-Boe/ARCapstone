@@ -506,8 +506,8 @@ public class BuildingOverlay extends Fragment {
             }
         });
 
-        tabButtons.addView(tab2, new LinearLayout.LayoutParams((getView().getWidth() - getView().getWidth()/3)/2,LinearLayout.LayoutParams.WRAP_CONTENT));
         tabButtons.addView(tab1, new LinearLayout.LayoutParams((getView().getWidth() - getView().getWidth()/3)/2,LinearLayout.LayoutParams.WRAP_CONTENT));
+        tabButtons.addView(tab2, new LinearLayout.LayoutParams((getView().getWidth() - getView().getWidth()/3)/2,LinearLayout.LayoutParams.WRAP_CONTENT));
         tabButtons.setGravity(Gravity.CENTER_HORIZONTAL);
         tabCenter.addView(tabButtons);
         if(tabCenter.findViewById(scrollView.getId())==null)

@@ -114,7 +114,17 @@
         the requirements for the Bachelors of Science in Computer Science degree.
         \nSpecial thanks to: \nProfessor Laurie Murphy, \nDr. David Wolff, \n for their assistance
         and commitment to this project and their students.
-        \n\n\n\n\nCredits:
+        \n\n\n\n\nCredits:\n
+            Icons by icons8.com\n
+            PLU Admissions Ambassadors for PLU Facts\n
+            Google Android Developer Reference developer.android.com\n
+            Expandable List View tutorials from theopentutorials.com\n
+            Stack Overflow for tips and tricks: stackoverflow.com\n
+            Blurred Grid Menu by gotokatsuya\n
+            AR Assistance from: \n
+                Netguru\n
+                code.tutsplus.com\n
+                inducesmile.com\n
     </string>
     <string-array name="schools">
         <item>Pacific Lutheran University</item>

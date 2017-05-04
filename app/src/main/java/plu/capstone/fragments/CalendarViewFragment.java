@@ -37,7 +37,6 @@ public class CalendarViewFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_calendar_view, container, false);
         CalendarView calendarView = (CalendarView)view.findViewById(R.id.calendarView);
-        //calendarView.getDate();
         prefs = getActivity().getPreferences(0);
         editor = prefs.edit();
         listView = (ListView)view.findViewById(R.id.calListView);

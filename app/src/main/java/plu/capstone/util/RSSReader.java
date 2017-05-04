@@ -108,7 +108,7 @@ public class RSSReader extends IntentService{
 							}else if(temp.contains("Ingram")){
 								location = "Ingram";
                                 icon="ingram";
-							}else if(temp.contains("Karen Hille Phillips") || temp.contains("KHP")){
+							}else if(temp.contains("Karen Hille Phillips") || temp.contains("KHP") || temp.contains("Eastvold")){
 								location = "Karen Hille Phillips";
                                 icon="khpbuilding";
 							}else if(temp.contains("Kreidler")){
@@ -229,7 +229,7 @@ public class RSSReader extends IntentService{
 				//description = description.replaceAll("&gt;", "&");
 
 				//Find the time
-				Pattern pattern1 = Pattern.compile("[1]?[0-9](:[0-9][0-9])?([am]|[pm])?-[1]?[0-9](:[0-9][0-9])?([am]|[pm])?");
+				Pattern pattern1 = Pattern.compile("[1]?[0-9](:[0-9][0-9])?[am]?[pm]?-[1]?[0-9](:[0-9][0-9])?[am]?[pm]?");
 				Matcher matcher = pattern1.matcher(description);
 				String time = "";
 				boolean foundTime = false;
@@ -268,16 +268,24 @@ public class RSSReader extends IntentService{
 						change += 12;
 						startTime = change + "" + startTime.substring(colon);
 					}
-					if(endTime.contains("p") && !endTime.contains("12")){
+					if(endTime.contains("p")){
 						if(endTime.contains("a"))
 							endTime = endTime.replaceAll("a", "");
 						if(endTime.contains("p"))
 							endTime = endTime.replaceAll("p", "");
-						int colon = endTime.indexOf(":");
-						int change = (Integer.parseInt(endTime.substring(0, colon)));
-						change += 12;
-						endTime = change + "" + endTime.substring(colon);
+						if(!endTime.contains("12")) {
+							int colon = endTime.indexOf(":");
+							int change = (Integer.parseInt(endTime.substring(0, colon)));
+							change += 12;
+							endTime = change + "" + endTime.substring(colon);
+						}
 					}
+					if(startTime.contains("am"))
+						startTime = startTime.replaceAll("am", "");
+					if(startTime.contains("a"))
+						startTime = startTime.replaceAll("a", "");
+					if(endTime.contains("am"))
+						endTime = endTime.replaceAll("am", "");
 					if(endTime.contains("a"))
 						endTime = endTime.replaceAll("a", "");
 					int colon = startTime.indexOf(":");

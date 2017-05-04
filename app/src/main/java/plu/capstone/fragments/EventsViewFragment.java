@@ -137,7 +137,7 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_events_view, container, false);
-        tipsTextView = (TextView) view.findViewById(R.id.eventsTextView);
+        tipsTextView = (TextView) view.findViewById(R.id.tipsTextView);
         textView = (TextView) view.findViewById(R.id.apiTextView);
         prefs = getActivity().getPreferences(0);
         editor = prefs.edit();
@@ -164,7 +164,6 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
                 mCallApiButton.setEnabled(true);
             }
         });*/
-        tipsTextView.setText("Click an Event's date to add it to your calendar.\nClick an Event's link to open it in a browser.");
         mProgress = new ProgressDialog(getContext());
         mProgress.setMessage("Connecting to Google Calendar...");
 
@@ -301,7 +300,11 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
 
 
     private void updateList(ArrayList list,HashMap map){
-
+        if(list.isEmpty()){
+            tipsTextView.setText("There are no events listed.");
+        }else{
+            tipsTextView.setText("Click an Event's date to add it to your calendar.\nClick an Event's link to open it in a browser.");
+        }
         listAdapter = new ExpandableListAdapter(getContext(), list, map);
         expListView.setAdapter(listAdapter);
     }
@@ -327,8 +330,8 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.add(R.id.event_menu_buttons, R.id.queryBuilding, 0, "Building").setIcon(R.drawable.ic_search_black_24dp)
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-        menu.add(R.id.event_menu_buttons,R.id.sortby,0,"sort").setIcon(R.drawable.ic_search_black_24dp);
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        menu.add(R.id.event_menu_buttons,R.id.sortby,0,"Sort").setIcon(R.drawable.ic_sort_black_24dp).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         super.onCreateOptionsMenu(menu, inflater);
     }
 

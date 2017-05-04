@@ -29,4 +29,23 @@
         <item>Location</item>
         <item>Title</item>
     </string-array>
+    <string-array name="facts">
+        <item>The undergraduate population at PLU is ~3000</item>
+        <item>The graduate population at PLU is ~300</item>
+        <item>The female/male ratio at PLU is ~63:37</item>
+        <item>There are 27 countries represented at PLU</item>
+        <item>There are 38 states represented at PLU</item>
+        <item>The average class size at PLU is 20</item>
+        <item>The Student to Faculty ratio is 12:1</item>
+        <item>97% of students at PLU receive Financial Aid</item>
+        <item>The average Financial Aid package at PLU is $32,000</item>
+        <item>PLU was founded in 1890 by Bjug Harstad, PLU\'s 1st President</item>
+        <item>Pacific Lutheran University used to be called Pacific Lutheran College</item>
+        <item>Harstad Hall was the first building on campus, known as Old Main</item>
+        <item>In 1924, the 1st edition of the Mooring Mast (student newspaper) was printed</item>
+        <item>The first PLU football team was created in 1926 and was named the Greyhounds,
+            then Gladiators, and now the Knights</item>
+        <item>The acreage of PLU is 156</item>
+        <item>Tingelstad Hall is the tallest building in Parkland</item>
+    </string-array>
 </resources>

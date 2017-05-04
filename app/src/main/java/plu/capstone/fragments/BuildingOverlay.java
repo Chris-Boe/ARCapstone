@@ -3,6 +3,7 @@ package plu.capstone.fragments;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.hardware.GeomagneticField;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
@@ -249,9 +250,9 @@ public class BuildingOverlay extends Fragment {
 
                     double bearingTo = poiB.curBearing;
                     //convert az to (0,360 d]
-                    double azDeg = Math.toDegrees(poiB.orientation[0]);
+                    double azDeg = poiB.azdeg;  //Math.toDegrees(poiB.orientation[0]);
                     Log.d("Azimutttttth Before", azDeg+"");
-                    //azDeg = azDeg + 60.0;
+
                     //Log.d("Azimutttttth After", azDeg+"");
                    /* if(azDeg<0)
                         azDeg = 180 - azDeg;

@@ -390,7 +390,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
                 //  Log.d("CURBEARING:", curBearing + "?");
 
                 //CHECK DISTANCE
-                if(distance < 250) {
+                if(distance < 180) {
                     //using accel
                     if(accMag==true) {
                         float rotation[] = new float[9];
@@ -476,6 +476,10 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
                     double bearingTo = curBearing;
                     //convert az to (0,360 d]
                     double azDeg = Math.toDegrees(orientation[0]);
+                    azDeg = azDeg + new GeomagneticField((float)lastLocation.getLatitude(), (float)lastLocation.getLongitude(), (float) lastLocation.getAltitude(), System.currentTimeMillis()).getDeclination();
+
+                    Log.d("declination",new GeomagneticField((float)lastLocation.getLatitude(), (float)lastLocation.getLongitude(), (float) lastLocation.getAltitude(), System.currentTimeMillis()).getDeclination()+"?");
+
                     //Log.d("AzDEG SENSORS Before", azDeg + "");
                     //azDeg += new GeomagneticField((float)lastLocation.getLatitude(), (float)lastLocation.getLongitude(), (float) lastLocation.getAltitude(), System.currentTimeMillis()).getDeclination();
                     //Log.d("AzDEG SENSORS After", azDeg + "");
@@ -491,7 +495,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
 
 
 
-                    PointOfInterest poi = new PointOfInterest(orientation, curBearing, buildI, distance, dx);
+                    PointOfInterest poi = new PointOfInterest(orientation, curBearing, buildI, distance, azDeg);
                         poiList.add(poi);
                 }
 

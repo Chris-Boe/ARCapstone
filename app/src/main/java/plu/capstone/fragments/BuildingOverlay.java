@@ -248,6 +248,7 @@ public class BuildingOverlay extends Fragment {
                             ( 2 * (poiB.distance - 20))
                     ));
 
+
                     double bearingTo = poiB.curBearing;
                     //convert az to (0,360 d]
                     double azDeg = poiB.azdeg;  //Math.toDegrees(poiB.orientation[0]);
@@ -261,7 +262,11 @@ public class BuildingOverlay extends Fragment {
                     if(bearingTo<0)
                         bearingTo = 180 - bearingTo;
                     */
+
                     double degreeDifference = Math.abs(poiB.curBearing-azDeg);
+                    if(degreeDifference > 180){
+                        degreeDifference = 360 - degreeDifference;
+                    }
    //                 Log.d("DegreeDif", degreeDifference+"");
                     //normalize about the fov
                     //float dx = (float) ((getView().getWidth()/Math.toDegrees(hFOV)) * degreeDifference);

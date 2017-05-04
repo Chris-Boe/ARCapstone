@@ -395,7 +395,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
                 //  Log.d("CURBEARING:", curBearing + "?");
 
                 //CHECK DISTANCE
-                if(distance < 180) {
+                if(distance < 250) {
 
                     //Log.d("distance","here");
 

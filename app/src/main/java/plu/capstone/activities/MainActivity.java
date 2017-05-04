@@ -155,7 +155,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         startActivity(browserIntent);
     }
     private void openAbout() {
-
+        Intent intent = new Intent(this, AboutActivity.class);
+        startActivity(intent);
     }
 
     @Override

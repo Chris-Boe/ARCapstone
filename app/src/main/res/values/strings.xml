@@ -101,6 +101,21 @@
     <string name="connection_error">\"Connection Error\"</string>
     <string name="title_activity_maps">Map</string>
     <string name="title_activity_ar">AR</string>
+    <string name="about_title">About Knight Vision</string>
+    <string name="about_thanks">Thank you for downloading Knight Vision!</string>
+    <string name="about_goal">The goal of <b>Knight Vision</b> is for it to be an augmented reality tour
+        aimed at students, faculty, and visitors to the university who want to know more about the
+        different areas or events on campus. Using this app will teach them the history of PLU as
+        well as how they can be involved with PLU in future events.\n\n
+        Authors of <b>Knight Vision</b>:\nChristopher Boe, BSCS\nMicaela Pierce, BSCS\n at Pacific Lutheran University.
+        \nIf you\'d like to get in contact with the developers, or would like to <b>see your school</b> added
+        to this app, click the email button above!
+        \n\n\n<b>Knight Vision</b> is the product of the senior capstone project, as a partial fulfillment of
+        the requirements for the Bachelors of Science in Computer Science degree.
+        \nSpecial thanks to: \nProfessor Laurie Murphy, \nDr. David Wolff, \n for their assistance
+        and commitment to this project and their students.
+        \n\n\n\n\nCredits:
+    </string>
     <string-array name="schools">
         <item>Pacific Lutheran University</item>
         <item>University of Washington</item>
@@ -108,4 +123,6 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_scrolling">ScrollingActivity</string>
+
 </resources>

@@ -135,7 +135,7 @@ public class BuildingOverlay extends Fragment {
 
 
         CameraCharacteristics cc = null;
-        Log.d("hi", "NEW LOCATION\n");
+//        Log.d("hi", "NEW LOCATION\n");
 
         /*
         try {
@@ -195,7 +195,7 @@ public class BuildingOverlay extends Fragment {
                 if(poi.distance<closestBuilding.distance)
                     closestBuilding = poi;
             }
-           Log.d("closest",closestBuilding.building.Name+","+closestBuilding.distance);
+ //          Log.d("closest",closestBuilding.building.Name+","+closestBuilding.distance);
 
             for(int i=0;i<poiList.size();i++) {
 
@@ -251,7 +251,9 @@ public class BuildingOverlay extends Fragment {
                     double bearingTo = poiB.curBearing;
                     //convert az to (0,360 d]
                     double azDeg = poiB.azdeg;  //Math.toDegrees(poiB.orientation[0]);
-                    Log.d("Azimutttttth Before", azDeg+"");
+                    //temp, az seems off be 50d
+                    //azDeg+=40;
+ //                   Log.d("Azimutttttth Before", azDeg+"");
 
                     //Log.d("Azimutttttth After", azDeg+"");
                    /* if(azDeg<0)
@@ -259,11 +261,12 @@ public class BuildingOverlay extends Fragment {
                     if(bearingTo<0)
                         bearingTo = 180 - bearingTo;
                     */
-                    double degreeDifference = Math.abs(bearingTo-azDeg);
-                    Log.d("DegreeDif", degreeDifference+"");
+                    double degreeDifference = Math.abs(poiB.curBearing-azDeg);
+   //                 Log.d("DegreeDif", degreeDifference+"");
                     //normalize about the fov
-                    float dx = (float) ((getView().getWidth()/Math.toDegrees(hFOV)) * degreeDifference);
-
+                    //float dx = (float) ((getView().getWidth()/Math.toDegrees(hFOV)) * degreeDifference);
+                   // float dx = (float) ((getView().getWidth()/60) * degreeDifference);
+                    float dx = (float)(30*degreeDifference);
                     /*
                     float dy = (float) ((getView().getWidth() / Math.toDegrees(hFOV)) * Math.abs((poiB.curBearing - -1*Math.toDegrees(poiB.orientation[1]))));
 */
@@ -283,24 +286,30 @@ public class BuildingOverlay extends Fragment {
                     Spannable str = new SpannableStringBuilder("   "+poiB.building.Name+"   ");
 
                     //buildingButton.setTranslationX(getView().getWidth()/2);
-                    if(bearingTo>azDeg)
-                        buildingButton.setTranslationX(dx);
+                    if(poiB.curBearing<azDeg)
+                        buildingButton.setTranslationX((getView().getWidth()/2)-dx);
                     else
-                        buildingButton.setTranslationX(getView().getWidth()- -1*dx);
-
+                        buildingButton.setTranslationX((getView().getWidth()/2)+dx);
+/*                    if(bearingTo>azDeg)
+                        buildingButton.setTranslationX(getView().getWidth() + dx);
+                    else
+                        buildingButton.setTranslationX(getView().getWidth() + dx);
+*/
                     str.setSpan(new BackgroundColorSpan(Color.parseColor("#eeeeee")), 0,
                             (str.length()), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
                     buildingButton.setText(str);
 
                    // buildingButton.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-
-                    //  if(poiList.get(i).getBuilding().getName().equals("Rieke Science Center")) {
-                    Log.d("dx/xpos:", dx+"/"+buildingButton.getX());
-                    Log.d("oriBearing:",Math.toDegrees(poiB.orientation[0])+"");
-                    Log.d("curBearing:", bearingTo + "");
-                    Log.d("azimuth:", azDeg + "");
-                    Log.d("difference:", degreeDifference + "");
+                   if(poiList.get(i).building.Name.equalsIgnoreCase("harstad")||poiList.get(i).building.Name.equalsIgnoreCase("xavier") || poiList.get(i).building.Name.equalsIgnoreCase("ramstad") ) {
+                        Log.d("name",poiB.building.Name);
+                        Log.d("dx/xpos:", dx + "/" + buildingButton.getTranslationX());
+                        Log.d("curBearing:", poiB.curBearing + "");
+                        Log.d("azimuth:", azDeg + "");
+                        Log.d("difference:", degreeDifference + "");
+                        Log.d("hfov",Math.toDegrees(hFOV)+"");
+                        Log.d("distance",poiB.distance+"");
+                   }
                     //Log.d("directions:", "NORTH: " + 0 + " EAST: " + Math.toDegrees(Math.PI / 2) + " WEST: " + Math.toDegrees(Math.PI+Math.PI/2) + " SOUTH: " + Math.toDegrees(Math.PI));
                     //Log.d("HFOV", buildingButton.getText() + ":" + Math.toDegrees(hFOV));
                     // Log.d("dx/xtran/bearing/azi", poiList.get(i).getBuilding().getName() + ": " + dx + "/" + buildingButton.getX() + "/" + poiList.get(i).getCurBearing()+"/"+Math.toDegrees(poiList.get(i).getOrientation()[0]));

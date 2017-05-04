@@ -316,7 +316,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
                    // Log.d("using:", "magfield");
                     lastCompass = new float[event.values.length];
                     lastCompass = event.values;
-                    smoothedCompass = exponentialSmoothing(lastCompass, smoothedCompass, (float) .8);
+                    smoothedCompass = exponentialSmoothing(lastCompass, smoothedCompass, (float) .4);
                     accMag = true;
                 //}
                /*
@@ -360,7 +360,8 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
 
     @Override
     public void onLocationChanged(Location location) {
-        //  Log.d("BLIST2", buildingList.toString());
+        Log.d("umm","?????");
+        Log.d("BLIST2", buildingList.toString());
         if (buildingList.size() > 0) {
             //Log.d("BUILDING:", buildingList.get(0).Name);
 
@@ -379,6 +380,10 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
                 loc.setLongitude(buildI.Longitude);
                 loc.setAltitude(0);
 
+              //  Log.d("lat/long",lastLocation.getLatitude()+"/"+lastLocation.getLongitude());
+
+              //  Log.d("???","is this working");
+
                 String printLoc = "Lat: " + location.getLatitude() + " Long: " + location.getLongitude();
                 //Toast toast = Toast.makeText(superContext.getApplicationContext(), printLoc, Toast.LENGTH_SHORT);
                 // toast.show();
@@ -391,11 +396,15 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
 
                 //CHECK DISTANCE
                 if(distance < 180) {
+
+                    //Log.d("distance","here");
+
                     //using accel
                     if(accMag==true) {
                         float rotation[] = new float[9];
                         float identity[] = new float[9];
 
+                        Log.d("what about","this");
                         if (smoothedAccel == null)
                             Log.d(":c", "like really");
 
@@ -404,14 +413,18 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
                         if(rotation!=null && identity != null && smoothedAccel != null && smoothedCompass != null)
                             gotRotation = SensorManager.getRotationMatrix(rotation, identity, smoothedAccel, smoothedCompass);
 
+                        Log.d("rotation",gotRotation+"?");
 
                         if (gotRotation) {
                             float cameraRotation[] = new float[9];
                             //remap so camera points straight down y axis
                             SensorManager.remapCoordinateSystem(rotation, SensorManager.AXIS_X, SensorManager.AXIS_Z, cameraRotation);
+                            //SensorManager.remapCoordinateSystem(rotation, SensorManager.AXIS_X,SensorManager.AXIS_Z,cameraRotation);
+                            //SensorManager.remapCoordinateSystem(rotation,SensorManager.AXIS_X,SensorManager.AXIS_MINUS_Z,cameraRotation);
                             //orientation vec
                             orientation = new float[3];
                             SensorManager.getOrientation(cameraRotation, orientation);
+                            Log.d("what about this?","??");
                         /*if (gotRotation) {
                            cameraRotation = new float[9];
                             //remap so camera points positive
@@ -475,28 +488,29 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
 
   //                  double bearingTo = curBearing;
                     //convert az to (0,360 d]
-                    double azDeg = Math.toDegrees(orientation[0]);
-                    azDeg = azDeg + new GeomagneticField((float)lastLocation.getLatitude(), (float)lastLocation.getLongitude(), (float) lastLocation.getAltitude(), System.currentTimeMillis()).getDeclination();
+                    if(orientation!=null) {
+                        double azDeg = Math.toDegrees(orientation[0]);
+                        azDeg = azDeg + new GeomagneticField((float) lastLocation.getLatitude(), (float) lastLocation.getLongitude(), (float) lastLocation.getAltitude(), System.currentTimeMillis()).getDeclination();
 
-                    Log.d("declination",new GeomagneticField((float)lastLocation.getLatitude(), (float)lastLocation.getLongitude(), (float) lastLocation.getAltitude(), System.currentTimeMillis()).getDeclination()+"?");
+                        Log.d("declination", new GeomagneticField((float) lastLocation.getLatitude(), (float) lastLocation.getLongitude(), (float) lastLocation.getAltitude(), System.currentTimeMillis()).getDeclination() + "?");
 
-                    //Log.d("AzDEG SENSORS Before", azDeg + "");
-                    //azDeg += new GeomagneticField((float)lastLocation.getLatitude(), (float)lastLocation.getLongitude(), (float) lastLocation.getAltitude(), System.currentTimeMillis()).getDeclination();
-                    //Log.d("AzDEG SENSORS After", azDeg + "");
-                   /* if(azDeg<0)
-                        azDeg = 180 - azDeg;
-                    if(bearingTo<0)
-                        bearingTo = 180 - bearingTo;
-*/
-    //                double degreeDifference = Math.abs(bearingTo-azDeg);
+                        //Log.d("AzDEG SENSORS Before", azDeg + "");
+                        //azDeg += new GeomagneticField((float)lastLocation.getLatitude(), (float)lastLocation.getLongitude(), (float) lastLocation.getAltitude(), System.currentTimeMillis()).getDeclination();
+                        //Log.d("AzDEG SENSORS After", azDeg + "");
+                       /* if(azDeg<0)
+                            azDeg = 180 - azDeg;
+                        if(bearingTo<0)
+                            bearingTo = 180 - bearingTo;
+    */
+                        //                double degreeDifference = Math.abs(bearingTo-azDeg);
 
-                    //normalize about the fov
-      //              float dx = (float) ((getView().getWidth()/Math.toDegrees(hfov)) * degreeDifference);
+                        //normalize about the fov
+                        //              float dx = (float) ((getView().getWidth()/Math.toDegrees(hfov)) * degreeDifference);
 
 
-
-                    PointOfInterest poi = new PointOfInterest(orientation, curBearing, buildI, distance, azDeg);
+                        PointOfInterest poi = new PointOfInterest(orientation, curBearing, buildI, distance, azDeg);
                         poiList.add(poi);
+                    }
                 }
 
                 invalidate(poiList);

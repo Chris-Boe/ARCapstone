@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         show_menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                updateDB();
+                //updateDB();
                 FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
                 tx.replace(R.id.main_frame, mGridMenuFragment);
                 tx.addToBackStack(null);
@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         menus.add(new GridMenu("Events", R.drawable.ic_event_available_black_24dp));
         menus.add(new GridMenu("Map", R.drawable.ic_map_black_24dp));
         menus.add(new GridMenu("Settings", R.drawable.ic_settings_black_24dp));
-        menus.add(new GridMenu("25Live", R.drawable.ic_event_note_black_24dp));
+        menus.add(new GridMenu("Create an Event", R.drawable.ic_event_note_black_24dp));
         menus.add(new GridMenu("About", R.drawable.ic_info_black_24dp));
 
         mGridMenuFragment.setupMenu(menus);

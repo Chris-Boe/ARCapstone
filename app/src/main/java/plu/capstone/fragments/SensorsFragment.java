@@ -2,6 +2,7 @@ package plu.capstone.fragments;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.hardware.GeomagneticField;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -389,7 +390,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
                 //  Log.d("CURBEARING:", curBearing + "?");
 
                 //CHECK DISTANCE
-                if(distance < 150) {
+                if(distance < 250) {
                     //using accel
                     if(accMag==true) {
                         float rotation[] = new float[9];
@@ -400,7 +401,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
 
                         boolean gotRotation = false;
 
-                        if(rotation!=null)
+                        if(rotation!=null && identity != null && smoothedAccel != null && smoothedCompass != null)
                             gotRotation = SensorManager.getRotationMatrix(rotation, identity, smoothedAccel, smoothedCompass);
 
 
@@ -454,7 +455,9 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
                     double y = Math.sin(lonDelta)  * Math.cos(lat2);
                     double x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2)* Math.cos(lonDelta);
                     double angle = Math.atan2(y, x); //not finished here yet
-                   double headingDeg = orientation[0];
+                    double headingDeg = 0;
+                    if(orientation != null)
+                        headingDeg = orientation[0];
                     double angleDeg = angle * 180/Math.PI;
                     double heading = headingDeg*Math.PI/180;
                     angle = ((angleDeg + 360) % 360) * Math.PI/180; //normalize to 0 to 360 (instead of -180 to 180), then convert back to radians
@@ -464,7 +467,8 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
 
 
                     //Log.d("ORI:",ori+"");
-                    ori = "ORI: " + orientation[0] + " " + orientation[1] + " " + orientation[2];
+                    if(orientation != null)
+                        ori = "ORI: " + orientation[0] + " " + orientation[1] + " " + orientation[2];
                     double hfov = (2 * Math.atan(40 /
                                     ( 2 * (distance - 30))));
 
@@ -472,7 +476,9 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
                     double bearingTo = curBearing;
                     //convert az to (0,360 d]
                     double azDeg = Math.toDegrees(orientation[0]);
-
+                    //Log.d("AzDEG SENSORS Before", azDeg + "");
+                    //azDeg += new GeomagneticField((float)lastLocation.getLatitude(), (float)lastLocation.getLongitude(), (float) lastLocation.getAltitude(), System.currentTimeMillis()).getDeclination();
+                    //Log.d("AzDEG SENSORS After", azDeg + "");
                    /* if(azDeg<0)
                         azDeg = 180 - azDeg;
                     if(bearingTo<0)

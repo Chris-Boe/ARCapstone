@@ -250,16 +250,18 @@ public class BuildingOverlay extends Fragment {
                     double bearingTo = poiB.curBearing;
                     //convert az to (0,360 d]
                     double azDeg = Math.toDegrees(poiB.orientation[0]);
-
+                    Log.d("Azimutttttth Before", azDeg+"");
+                    //azDeg = azDeg + 60.0;
+                    //Log.d("Azimutttttth After", azDeg+"");
                    /* if(azDeg<0)
                         azDeg = 180 - azDeg;
                     if(bearingTo<0)
                         bearingTo = 180 - bearingTo;
-*/
+                    */
                     double degreeDifference = Math.abs(bearingTo-azDeg);
-
+                    Log.d("DegreeDif", degreeDifference+"");
                     //normalize about the fov
-                   float dx = (float) ((getView().getWidth()/Math.toDegrees(hFOV)) * degreeDifference);
+                    float dx = (float) ((getView().getWidth()/Math.toDegrees(hFOV)) * degreeDifference);
 
                     /*
                     float dy = (float) ((getView().getWidth() / Math.toDegrees(hFOV)) * Math.abs((poiB.curBearing - -1*Math.toDegrees(poiB.orientation[1]))));
@@ -313,14 +315,18 @@ public class BuildingOverlay extends Fragment {
                      buttonsView.post(new Runnable() {
                         public void run() {
                             for(int i=0;i<buttonsView.getChildCount();i++){
-                                final Buildings poi = poi2List.get((int)buttonsView.getChildAt(i).getTag()).building;
-                                final BuildingButton bu = (BuildingButton)buttonsView.getChildAt(i);
-                                buttonsView.getChildAt(i).setOnClickListener(new View.OnClickListener() {
-                                    @RequiresApi(api = Build.VERSION_CODES.M)
-                                    public void onClick(View v){
-                                        generateBuildingInfo(bu,poi);
-                                    }
-                                });
+                                try {
+                                    final Buildings poi = poi2List.get((int) buttonsView.getChildAt(i).getTag()).building;
+                                    final BuildingButton bu = (BuildingButton) buttonsView.getChildAt(i);
+                                    buttonsView.getChildAt(i).setOnClickListener(new View.OnClickListener() {
+                                        @RequiresApi(api = Build.VERSION_CODES.M)
+                                        public void onClick(View v) {
+                                            generateBuildingInfo(bu, poi);
+                                        }
+                                    });
+                                }catch(IndexOutOfBoundsException ind){
+                                    break;
+                                }
                             }
                         }
                     });
@@ -485,8 +491,8 @@ public class BuildingOverlay extends Fragment {
             }
         });
 
-        tabButtons.addView(tab1, new LinearLayout.LayoutParams((getView().getWidth() - getView().getWidth()/3)/2,LinearLayout.LayoutParams.WRAP_CONTENT));
         tabButtons.addView(tab2, new LinearLayout.LayoutParams((getView().getWidth() - getView().getWidth()/3)/2,LinearLayout.LayoutParams.WRAP_CONTENT));
+        tabButtons.addView(tab1, new LinearLayout.LayoutParams((getView().getWidth() - getView().getWidth()/3)/2,LinearLayout.LayoutParams.WRAP_CONTENT));
         tabButtons.setGravity(Gravity.CENTER_HORIZONTAL);
         tabCenter.addView(tabButtons);
         if(tabCenter.findViewById(scrollView.getId())==null)

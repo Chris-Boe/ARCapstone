@@ -245,7 +245,7 @@ public class BuildingOverlay extends Fragment {
 
                     //Calculate fov
                     float hFOV = (float) (2 * Math.atan(40 /
-                            ( 2 * (poiB.distance - 30))
+                            ( 2 * (poiB.distance - 20))
                     ));
 
                     double bearingTo = poiB.curBearing;
@@ -296,13 +296,13 @@ public class BuildingOverlay extends Fragment {
                    // buildingButton.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
                     //  if(poiList.get(i).getBuilding().getName().equals("Rieke Science Center")) {
-                 /*   Log.d("dx/xpos:", dx+"/"+buildingButton.getX());
-                    Log.d("oriBearing:",poiList.get(i).getCurBearing()+"");
+                    Log.d("dx/xpos:", dx+"/"+buildingButton.getX());
+                    Log.d("oriBearing:",Math.toDegrees(poiB.orientation[0])+"");
                     Log.d("curBearing:", bearingTo + "");
                     Log.d("azimuth:", azDeg + "");
                     Log.d("difference:", degreeDifference + "");
                     //Log.d("directions:", "NORTH: " + 0 + " EAST: " + Math.toDegrees(Math.PI / 2) + " WEST: " + Math.toDegrees(Math.PI+Math.PI/2) + " SOUTH: " + Math.toDegrees(Math.PI));
-                    Log.d("HFOV", buildingButton.getText() + ":" + Math.toDegrees(hFOV));
+                    //Log.d("HFOV", buildingButton.getText() + ":" + Math.toDegrees(hFOV));
                     // Log.d("dx/xtran/bearing/azi", poiList.get(i).getBuilding().getName() + ": " + dx + "/" + buildingButton.getX() + "/" + poiList.get(i).getCurBearing()+"/"+Math.toDegrees(poiList.get(i).getOrientation()[0]));
                     //}*/
                     buildingButton.setVisibility(View.VISIBLE);

@@ -469,11 +469,11 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
                     //Log.d("ORI:",ori+"");
                     if(orientation != null)
                         ori = "ORI: " + orientation[0] + " " + orientation[1] + " " + orientation[2];
-                    double hfov = (2 * Math.atan(40 /
+/*                    double hfov = (2 * Math.atan(40 /
                                     ( 2 * (distance - 30))));
+*/
 
-
-                    double bearingTo = curBearing;
+  //                  double bearingTo = curBearing;
                     //convert az to (0,360 d]
                     double azDeg = Math.toDegrees(orientation[0]);
                     azDeg = azDeg + new GeomagneticField((float)lastLocation.getLatitude(), (float)lastLocation.getLongitude(), (float) lastLocation.getAltitude(), System.currentTimeMillis()).getDeclination();
@@ -488,10 +488,10 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
                     if(bearingTo<0)
                         bearingTo = 180 - bearingTo;
 */
-                    double degreeDifference = Math.abs(bearingTo-azDeg);
+    //                double degreeDifference = Math.abs(bearingTo-azDeg);
 
                     //normalize about the fov
-                    float dx = (float) ((getView().getWidth()/Math.toDegrees(hfov)) * degreeDifference);
+      //              float dx = (float) ((getView().getWidth()/Math.toDegrees(hfov)) * degreeDifference);
 
 
 

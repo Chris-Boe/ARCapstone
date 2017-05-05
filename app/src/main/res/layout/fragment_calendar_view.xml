@@ -12,18 +12,27 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:gravity="top"/>
-    <TextView
+        android:gravity="top"
+        android:layout_centerHorizontal="true"/>
+    <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:id="@+id/viewCheckBox"
+        android:text="View Only Date"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/calendarView" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/calTextView"
-        android:layout_below="@id/calendarView"
+        android:layout_below="@id/viewCheckBox"
+        android:textAlignment="center"
         />
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/calListView"
         android:background="#d3d3d3"
-        android:layout_below="@id/calTextView">
+        android:layout_below="@id/viewCheckBox">
     </ListView>
 </RelativeLayout>

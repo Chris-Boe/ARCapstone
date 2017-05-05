@@ -785,7 +785,7 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
     }
 
     public void onSelect(String key, String val) {
-        paramKey = key;
+        /*paramKey = key;
         paramValue = val;
 
         Log.d("SELECT?",paramKey+"/"+paramValue);
@@ -795,7 +795,21 @@ public class EventsViewFragment extends Fragment implements EasyPermissions.Perm
                 .detach(this)
                 .attach(this)
                 .commit();
+*/
+        Log.d("sup","pass3");
+        HashMap<String, ArrayList<String>> newMap = new HashMap<String, ArrayList<String>>();
+        ArrayList<String> newHeaders = new ArrayList<String>();
 
+        //loop through to find keywords in eventsmap
+        for(String k : listChildren.keySet()){
+//            Log.d("key/val",listChildren.get(k).get(3).substring(7)+"/"+val);
+            if(listChildren.get(k).get(3).substring(7).equalsIgnoreCase(val)) {
+                    newMap.put(k, listChildren.get(k));
+                    newHeaders.add(k);
+                }
+        }
+
+        updateList(newHeaders,newMap);
     }
 
     public void onSelectWords(String[] words) {

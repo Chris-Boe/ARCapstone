@@ -395,7 +395,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
                 //  Log.d("CURBEARING:", curBearing + "?");
 
                 //CHECK DISTANCE
-                if(distance < 250) {
+                if(distance < 180) {
 
                     //Log.d("distance","here");
 
@@ -494,21 +494,20 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
 
                         Log.d("declination", new GeomagneticField((float) lastLocation.getLatitude(), (float) lastLocation.getLongitude(), (float) lastLocation.getAltitude(), System.currentTimeMillis()).getDeclination() + "?");
 
-                        //Log.d("AzDEG SENSORS Before", azDeg + "");
-                        //azDeg += new GeomagneticField((float)lastLocation.getLatitude(), (float)lastLocation.getLongitude(), (float) lastLocation.getAltitude(), System.currentTimeMillis()).getDeclination();
-                        //Log.d("AzDEG SENSORS After", azDeg + "");
-                       /* if(azDeg<0)
-                            azDeg = 180 - azDeg;
-                        if(bearingTo<0)
-                            bearingTo = 180 - bearingTo;
-    */
-                        //                double degreeDifference = Math.abs(bearingTo-azDeg);
 
-                        //normalize about the fov
-                        //              float dx = (float) ((getView().getWidth()/Math.toDegrees(hfov)) * degreeDifference);
+                        //get difference between bearing and azimuth
+                        double degreeDifference = Math.abs(curBearing-azDeg);
+
+                        //ensure its actually the difference
+                        if(degreeDifference > 180){
+                            degreeDifference = 360 - degreeDifference;
+                        }
+                        //                 Log.d("DegreeDif", degreeDifference+"");
 
 
-                        PointOfInterest poi = new PointOfInterest(orientation, curBearing, buildI, distance, azDeg);
+                        float dx = (float)(30*degreeDifference);
+
+                        PointOfInterest poi = new PointOfInterest(orientation, curBearing, buildI, distance, azDeg, dx);
                         poiList.add(poi);
                     }
                 }
@@ -517,59 +516,6 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
 
             }
 
-
-           /* Location auc = new Location("manual");
-            auc.setLatitude(buildingList.get(0).Latitude);
-            auc.setLongitude(buildingList.get(0).Longitude);
-            auc.setAltitude(0);
-
-
-            //lastLocation = location;
-            String printLoc = "Lat: " + location.getLatitude() + " Long: " + location.getLongitude();
-            //Toast toast = Toast.makeText(superContext.getApplicationContext(), printLoc, Toast.LENGTH_SHORT);
-            // toast.show();
-            gps = "GPS: " + printLoc;
-
-            curBearing = lastLocation.bearingTo(auc);
-            Log.d("CURBEARING: ", curBearing + "");
-            bearing = "bearing: " + curBearing;
-            Log.d("CURBEARING:", curBearing + "?");
-
-
-            float rotation[] = new float[9];
-            float identity[] = new float[9];
-
-            if (smoothedAccel == null)
-                Log.d(":c", "like really");
-
-            boolean gotRotation = SensorManager.getRotationMatrix(rotation, identity, smoothedAccel, smoothedCompass);
-
-            if (gotRotation) {
-                float cameraRotation[] = new float[9];
-                //remap so camera points straight down y axis
-                SensorManager.remapCoordinateSystem(rotation, SensorManager.AXIS_X, SensorManager.AXIS_Z, cameraRotation);
-                //orientation vec
-                orientation = new float[3];
-                SensorManager.getOrientation(cameraRotation, orientation);
-                if (gotRotation) {
-                    cameraRotation = new float[9];
-                    //remap so camera points positive
-                    SensorManager.remapCoordinateSystem(rotation, SensorManager.AXIS_X, SensorManager.AXIS_Z, cameraRotation);
-
-                    orientation = new float[3];
-                    SensorManager.getOrientation(cameraRotation, orientation);
-                }
-            }
-            //Log.d("ORI:",ori+"");
-            ori = "ORI: " + orientation[0] + " " + orientation[1] + " " + orientation[2];
-
-            if(distance < 100) {
-                PointOfInterest poi = new PointOfInterest(orientation, curBearing, buildingList.get(0), distance);
-                poiList.add(poi);
-            }
-
-            invalidate(accelData, compassData, gyroData, bearing, gps, ori, poiList);
-            */
         }
     }
 
@@ -623,21 +569,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
         }
         return provider1.equals(provider2);
     }
-    /*
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
 
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
-    }*/
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {

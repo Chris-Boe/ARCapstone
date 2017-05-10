@@ -135,33 +135,7 @@ public class BuildingOverlay extends Fragment {
 
 
         CameraCharacteristics cc = null;
-//        Log.d("hi", "NEW LOCATION\n");
 
-        /*
-        try {
-            cc = manager.getCameraCharacteristics(cameraId);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
-
-        //Log.d("poiListSize",poiList.size()+"?");
-
-        //calculate fov with hardware
-        CameraCharacteristics fcc = cc;
-        //tempView.setOptions(aData, cData, gData, b, g, o, poiList.get(0).getOrientation(),
-        //      poiList.get(0).getCurBearing(), cc);
-
-
-       /* float hFOV = (float) (2 * Math.atan(
-                (fcc.get(CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE).getWidth() /
-                        (2 * fcc.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS)[0])
-                )));
-*//*
-        float vFOV = (float) (2 * Math.atan(
-                (fcc.get(CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE).getHeight() /
-                        (2 * (fcc.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS)[0] - 40))
-                )));
-*/
 
         if(buttonsView!=null){
             buttonsView.removeAllViews();
@@ -171,6 +145,8 @@ public class BuildingOverlay extends Fragment {
 
         //TODO:make better check
         if(poiList.size()>=1) {
+
+            //draw compass
             if(compass!=null){
                 arViewPane.removeView(compass);
             }
@@ -185,9 +161,6 @@ public class BuildingOverlay extends Fragment {
 
             float rotDeg = (float)Math.toDegrees(poiList.get(0).orientation[0]);
 
-                 //   if(rotDeg<0)
-                   //     rotDeg = 180 - rotDeg;
-
             compass.setRotation(rotDeg);
 
             PointOfInterest closestBuilding = poiList.get(0);
@@ -199,6 +172,8 @@ public class BuildingOverlay extends Fragment {
 
             for(int i=0;i<poiList.size();i++) {
 
+
+                //initialize button
                 PointOfInterest poiB = poiList.get(i);
 
                 buildingButton = new BuildingButton(getContext());
@@ -243,70 +218,33 @@ public class BuildingOverlay extends Fragment {
                 else {
 
 
-                    //Calculate fov
-                    float hFOV = (float) (2 * Math.atan(40 /
-                            ( 2 * (poiB.distance - 20))
-                    ));
-
-
-                    double bearingTo = poiB.curBearing;
-                    //convert az to (0,360 d]
-                    double azDeg = poiB.azdeg;  //Math.toDegrees(poiB.orientation[0]);
-                    //temp, az seems off be 50d
-                    //azDeg+=40;
- //                   Log.d("Azimutttttth Before", azDeg+"");
-
-                    //Log.d("Azimutttttth After", azDeg+"");
-                   /* if(azDeg<0)
-                        azDeg = 180 - azDeg;
-                    if(bearingTo<0)
-                        bearingTo = 180 - bearingTo;
-                    */
-
-                    double degreeDifference = Math.abs(poiB.curBearing-azDeg);
-                    if(degreeDifference > 180){
-                        degreeDifference = 360 - degreeDifference;
-                    }
-   //                 Log.d("DegreeDif", degreeDifference+"");
-                    //normalize about the fov
-                    //float dx = (float) ((getView().getWidth()/Math.toDegrees(hFOV)) * degreeDifference);
-                   // float dx = (float) ((getView().getWidth()/60) * degreeDifference);
-                    float dx = (float)(30*degreeDifference);
-                    /*
-                    float dy = (float) ((getView().getWidth() / Math.toDegrees(hFOV)) * Math.abs((poiB.curBearing - -1*Math.toDegrees(poiB.orientation[1]))));
-*/
-
-                    //Log.d("width", getView().getWidth() + "");
-
                     RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                     //params.leftMargin = getView().getWidth()/2;
                     params.topMargin = getView().getHeight() / 2;
 
                     buttonsView.addView(buildingButton, params);
 
-                    //rotate around y axis
+                    //rotate around roll
                     buildingButton.setRotation((float) (0.0f - Math.toDegrees(poiB.orientation[2])));
 
 
                     Spannable str = new SpannableStringBuilder("   "+poiB.building.Name+"   ");
 
-                    //buildingButton.setTranslationX(getView().getWidth()/2);
-                    if(poiB.curBearing<azDeg)
-                        buildingButton.setTranslationX((getView().getWidth()/2)-dx);
+
+                    //rotate around azimuth
+                    if(poiB.curBearing<poiB.azdeg)
+                        buildingButton.setTranslationX((getView().getWidth()/2)-poiB.dx);
                     else
-                        buildingButton.setTranslationX((getView().getWidth()/2)+dx);
-/*                    if(bearingTo>azDeg)
-                        buildingButton.setTranslationX(getView().getWidth() + dx);
-                    else
-                        buildingButton.setTranslationX(getView().getWidth() + dx);
-*/
+                        buildingButton.setTranslationX((getView().getWidth()/2)+poiB.dx);
+
                     str.setSpan(new BackgroundColorSpan(Color.parseColor("#eeeeee")), 0,
                             (str.length()), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
                     buildingButton.setText(str);
 
-                   // buildingButton.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                   if(poiList.get(i).building.Name.equalsIgnoreCase("harstad")||poiList.get(i).building.Name.equalsIgnoreCase("xavier") || poiList.get(i).building.Name.equalsIgnoreCase("ramstad") ) {
+                   //PRINT RESULTS FOR ERROR CHECKS
+                    // buildingButton.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                 /*  if(poiList.get(i).building.Name.equalsIgnoreCase("harstad")||poiList.get(i).building.Name.equalsIgnoreCase("xavier") || poiList.get(i).building.Name.equalsIgnoreCase("ramstad") ) {
                         Log.d("name",poiB.building.Name);
                         Log.d("dx/xpos:", dx + "/" + buildingButton.getTranslationX());
                         Log.d("curBearing:", poiB.curBearing + "");

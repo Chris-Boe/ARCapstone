@@ -17,7 +17,6 @@ public class PointOfInterest {
     public Buildings building;      //building of the poi
     public float distance;          //distance from user to poi (not needed)
     public double azdeg;            //azimuth in degrees
-
     public float dx;
 
     public PointOfInterest(){

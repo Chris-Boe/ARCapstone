@@ -3,14 +3,8 @@ package plu.capstone.fragments;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.hardware.GeomagneticField;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -50,8 +44,6 @@ public class BuildingOverlay extends Fragment {
     private BuildingButton buildingButton,compass;
     private OnFragmentInteractionListener mListener;
     private ViewGroup buildingView;
-    private Handler mBackgroundHandler;
-    private HandlerThread mBackgroundThread;
 
     public BuildingOverlay() {
         // Required empty public constructor
@@ -84,13 +76,24 @@ public class BuildingOverlay extends Fragment {
         }
     }
 
-   
+
+    /**
+     * create new fragment
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
     }
 
+    /**
+     * create view
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -133,13 +136,9 @@ public class BuildingOverlay extends Fragment {
 
     public void update(ArrayList<PointOfInterest> poiList){
 
-
-        CameraCharacteristics cc = null;
-
-
+        //remove current buttons from view
         if(buttonsView!=null){
             buttonsView.removeAllViews();
-            //arViewPane.removeView(buttonsView);
         }
         buttonsView = (RelativeLayout)getView().findViewById(R.id.bView);
 
@@ -173,9 +172,8 @@ public class BuildingOverlay extends Fragment {
             for(int i=0;i<poiList.size();i++) {
 
 
-                //initialize button
+                //initialize buttons (name/tag/icon)
                 PointOfInterest poiB = poiList.get(i);
-
                 buildingButton = new BuildingButton(getContext());
 
                 buildingButton.setTag(i);
@@ -199,6 +197,7 @@ public class BuildingOverlay extends Fragment {
                 //IF USER IS AT A BUILDING:
                 if(poiList.get(i).distance == closestBuilding.distance && poiList.get(i).distance<55){
 
+                    //set building name, padding and draw in upper right corner
                     buildingButton.setPadding(25,25,25,25);
                     Spannable str = new SpannableStringBuilder("   You are at: "+poiList.get(i).building.Name+"   ");
                     str.setSpan(new BackgroundColorSpan(Color.parseColor("#eeeeee")), 0,
@@ -207,19 +206,20 @@ public class BuildingOverlay extends Fragment {
                     buildingButton.setText(str);
 
                     RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                    //params.leftMargin = getView().getWidth()/2;
-                    //params.topMargin = getView().getHeight() / 2;
+
                     buildingButton.setVisibility(View.VISIBLE);
                     buttonsView.addView(buildingButton, params);
 
 
                 }
 
+                //draw buildings user is not at
                 else {
 
 
                     RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                    //params.leftMargin = getView().getWidth()/2;
+
+                    //put button in vertical middle
                     params.topMargin = getView().getHeight() / 2;
 
                     buttonsView.addView(buildingButton, params);
@@ -228,14 +228,14 @@ public class BuildingOverlay extends Fragment {
                     buildingButton.setRotation((float) (0.0f - Math.toDegrees(poiB.orientation[2])));
 
 
-                    Spannable str = new SpannableStringBuilder("   "+poiB.building.Name+"   ");
-
-
                     //rotate around azimuth
                     if(poiB.curBearing<poiB.azdeg)
                         buildingButton.setTranslationX((getView().getWidth()/2)-poiB.dx);
                     else
                         buildingButton.setTranslationX((getView().getWidth()/2)+poiB.dx);
+
+                    //set building name
+                    Spannable str = new SpannableStringBuilder("   "+poiB.building.Name+"   ");
 
                     str.setSpan(new BackgroundColorSpan(Color.parseColor("#eeeeee")), 0,
                             (str.length()), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -262,6 +262,8 @@ public class BuildingOverlay extends Fragment {
 
             }
 
+            //make buildings clickable
+            //TODO: we tried putting this in a seperate thread so to reduce work but it's not responsive enough, should switch back to being in main thread (or same thread as drawing buttons
             final ArrayList<PointOfInterest> poi2List = poiList;
             new Thread(new Runnable() {
                 public void run() {
@@ -291,29 +293,12 @@ public class BuildingOverlay extends Fragment {
         }
     }
 
-    /**
-     * concurrently generate buttons
-     */
-    protected void startBackgroundThread() {
-        mBackgroundThread = new HandlerThread("Camera Background");
-        mBackgroundThread.start();
-        mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
-    }
-    protected void stopBackgroundThread() {
-        mBackgroundThread.quitSafely();
-        try {
-            mBackgroundThread.join();
-            mBackgroundThread = null;
-            mBackgroundHandler = null;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
+
 
     /**
      * helper method to create buildinginfoview
-     * TODO:make this a class!
-     * @param bu
+     * TODO:this could be better as a fragment so the user can use the return button to return to AR not main menu
+     * @param bu (building button to use)
      * @param poi (find a way to only pass that building)
      */
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -325,12 +310,14 @@ public class BuildingOverlay extends Fragment {
             arViewPane.removeView(compass);
         }
 
+        //remove building view if already initialized
         if(buildingView!=null){
             buildingView.removeAllViews();
             //arViewPane.removeView(buttonsView);
         }
 
-        //layouts
+        //initialize layouts
+        //TODO:initialize in createView
         LinearLayout parentLayout = (LinearLayout) getView().findViewById(R.id.layoutparent);
         final FrameLayout tabLayout = (FrameLayout) getView().findViewById(R.id.tablayout);
         final FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
@@ -353,6 +340,8 @@ public class BuildingOverlay extends Fragment {
      */
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void generateTabs(Buildings poi, final FragmentTransaction ft, final FrameLayout tabLayout, final EventsViewFragment event){
+
+        //define tabcenter
         final LinearLayout tabCenter = new LinearLayout(getContext());
 
         tabCenter.setOrientation(LinearLayout.VERTICAL);
@@ -362,23 +351,26 @@ public class BuildingOverlay extends Fragment {
         final ScrollView scrollView = new ScrollView(getContext());
         scrollView.setBackgroundColor(Color.parseColor("#eeeeee"));
 
+        //create textview for building info
         final TextView buildingInfo = new TextView(getContext());
         buildingInfo.setText(poi.Description);
         scrollView.addView(buildingInfo);
         scrollView.setId(R.id.tab1);
 
-
+        //make scrollable
         final ScrollView.LayoutParams scrollParams =
                 new ScrollView.LayoutParams(getView().getWidth() - getView().getWidth()/3,getView().getWidth() - getView().getWidth()/4);
 
 
+        //define buttons for tabs
         LinearLayout tabButtons = new LinearLayout(getContext());
 
         final RelativeLayout eView = new RelativeLayout(getContext());;
         final Buildings fPoi = poi;
         tabButtons.setOrientation(LinearLayout.HORIZONTAL);
         LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(getView().getWidth() - getView().getWidth()/3, LinearLayout.LayoutParams.WRAP_CONTENT);
-        //building info
+
+        //building info tab
         final Button tab1 = new Button(getContext());
         tab1.setBackgroundColor(getResources().getColor(R.color.colorPrimary,null));
         tab1.setText("Building Information");
@@ -386,6 +378,8 @@ public class BuildingOverlay extends Fragment {
         tab1.setHeight(25);
         tab1.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
         tab1.setGravity(Gravity.CENTER);
+
+        //building event tab
         Button tab2 = new Button(getContext());
         tab2.setText("Building Events");
         tab2.setHeight(25);
@@ -394,6 +388,7 @@ public class BuildingOverlay extends Fragment {
         tab2.setTextColor(getResources().getColor(R.color.colorBaseWhite,null));
         tab2.setBackgroundColor(getResources().getColor(R.color.colorPrimary,null));
 
+        //if clicked, switch tab
         tab1.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if(!ft.isEmpty()) {
@@ -412,8 +407,7 @@ public class BuildingOverlay extends Fragment {
             }
         });
 
-        //events list
-
+        //if clicked switch tabs
         final RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(getView().getWidth() - getView().getWidth() / 3, getView().getWidth() - getView().getWidth() / 4);
         tab2.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -423,7 +417,7 @@ public class BuildingOverlay extends Fragment {
                 if(ft.isEmpty()) {
 
 
-
+                    //generate events view
                     eView.setId(R.id.fragment_events_view);
                     eView.setBackgroundColor(Color.parseColor("#eeeeee"));
 
@@ -444,6 +438,7 @@ public class BuildingOverlay extends Fragment {
             }
         });
 
+        //add tabs to tabview
         tabButtons.addView(tab1, new LinearLayout.LayoutParams((getView().getWidth() - getView().getWidth()/3)/2,LinearLayout.LayoutParams.WRAP_CONTENT));
         tabButtons.addView(tab2, new LinearLayout.LayoutParams((getView().getWidth() - getView().getWidth()/3)/2,LinearLayout.LayoutParams.WRAP_CONTENT));
         tabButtons.setGravity(Gravity.CENTER_HORIZONTAL);
@@ -452,6 +447,7 @@ public class BuildingOverlay extends Fragment {
             tabCenter.addView(scrollView,scrollParams);
         tabLayout.addView(tabCenter,tabParams);
     }
+
 
     /**
      * generates building names
@@ -499,6 +495,7 @@ public class BuildingOverlay extends Fragment {
             }
         });
 
+        //add exit button
         params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
         params.gravity=Gravity.RIGHT;
         params.setMargins(0,0,35,25);

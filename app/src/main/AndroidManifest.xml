@@ -47,7 +47,7 @@
                 android:value="plu.capstone.activities.MainActivity" />
         </activity>
         <activity
-            android:name=".activities.SettingsActivity"
+            android:name=".deprecated.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:parentActivityName=".activities.MainActivity">
             <meta-data
@@ -63,7 +63,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="plu.capstone.activities.MainActivity" />
         </activity>
-        <activity android:name=".activities.CalendarActivity" />
+        <activity android:name=".deprecated.CalendarActivity" />
         <activity
             android:name=".deprecated.MyEvents"
             android:label="@string/title_activity_my_events"

@@ -7,20 +7,14 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Window;
 
-import com.google.api.services.calendar.model.Event;
-
-import java.util.ArrayList;
-
+import plu.capstone.R;
 import plu.capstone.dialogs.EventsSearchDialog;
 import plu.capstone.dialogs.KeywordSearchDialog;
-import plu.capstone.fragments.CalendarViewFragment;
-import plu.capstone.Models.CustomEvent;
-import plu.capstone.R;
 import plu.capstone.fragments.BuildingsViewFragment;
+import plu.capstone.fragments.CalendarViewFragment;
 import plu.capstone.fragments.EventsViewFragment;
 
 /**
@@ -31,7 +25,6 @@ public class InfoViewPager extends AppCompatActivity implements EventsSearchDial
 
     InfoPagerAdapter infoPagerAdapter;
     ViewPager vP;
-    ArrayList<Event> eventsToCal;
     private EventsViewFragment eFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -39,8 +32,6 @@ public class InfoViewPager extends AppCompatActivity implements EventsSearchDial
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_info_view_pager);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
         infoPagerAdapter = new InfoPagerAdapter(getSupportFragmentManager());
         vP = (ViewPager) findViewById(R.id.pager);
         vP.setAdapter(infoPagerAdapter);
@@ -59,36 +50,13 @@ public class InfoViewPager extends AppCompatActivity implements EventsSearchDial
         if(eFragment!=null)
             eFragment.onSelectWords(words);
     }
-
-
-   /*
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
-        menu.add(0, 0, 0, "History").setIcon(R.drawable.ic_play_dark)
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-
-        return true;
-    }*/
-
-    /*@Override
-    public void onEventAdded(Event e) {
-        eventsToCal = new ArrayList<Event>();
-        eventsToCal.add(e);
-        CalendarViewFragment.newInstance("CalendarViewFragment", eventsToCal);
-    }*/
-
-
     private class InfoPagerAdapter extends FragmentStatePagerAdapter {
-        CustomEvent event;
-        //private FragmentManager fm;
         public InfoPagerAdapter(FragmentManager fragMan){
             super(fragMan);
 
         }
         @Override
         public Fragment getItem(int position) {
-            //Fragment fragment = fm.findFragmentByTag("android:switcher:" + )
             switch(position){
                 case 0:
                     eFragment = EventsViewFragment.newInstance("EventsViewFragment",null,null,"event");

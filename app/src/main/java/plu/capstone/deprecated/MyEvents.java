@@ -23,7 +23,6 @@ import java.util.HashMap;
 
 import plu.capstone.Models.CustomEvent;
 import plu.capstone.R;
-import plu.capstone.activities.CalendarActivity;
 import plu.capstone.adapters.ExpandableListAdapter;
 
 public class MyEvents extends AppCompatActivity {

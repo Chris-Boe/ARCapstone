@@ -1,4 +1,4 @@
-package plu.capstone.activities;
+package plu.capstone.deprecated;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

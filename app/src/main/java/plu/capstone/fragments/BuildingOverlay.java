@@ -413,7 +413,6 @@ public class BuildingOverlay extends Fragment {
             public void onClick(View v) {
                 if(scrollView.getChildCount()!=0)
                     scrollView.removeAllViews();
-
                 if(ft.isEmpty()) {
 
 
@@ -426,15 +425,12 @@ public class BuildingOverlay extends Fragment {
 
                     ft.replace(eView.getId(), event, "events");
                     ft.commit();
-
                 }
                 else {
                     tabCenter.removeView(scrollView);
                     if(tabCenter.findViewById(R.id.fragment_events_view)==null)
                         tabCenter.addView(eView, param);
                 }
-
-
             }
         });
 
@@ -500,12 +496,7 @@ public class BuildingOverlay extends Fragment {
         params.gravity=Gravity.RIGHT;
         params.setMargins(0,0,35,25);
         barLayout.addView(exitB,params);
-
     }
-
-
-
-
     /**
      * Interface to interact with activity
      */

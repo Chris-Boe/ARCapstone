@@ -32,18 +32,6 @@ public class EventsSearchDialog extends android.support.v4.app.DialogFragment  i
         }
     }
 
-
-/*
-   public void onSelect(String key, String val){
-        Log.d("events","first pass");
-        if (eListener != null) {
-            Log.d("events","second pass");
-            eListener.onSelect(key,val);
-        }
-    }*/
-
-
-
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -56,18 +44,10 @@ public class EventsSearchDialog extends android.support.v4.app.DialogFragment  i
         builder.setPositiveButton("Show all", new DialogInterface.OnClickListener(){
             @Override
             public void onClick(DialogInterface dialog, int id) {
-                //refreshing
-                //onSelect(null,null);
-                //paramKey = null;
-                //paramValue = null;
+
                 EventsSearchListener activity = (EventsSearchListener) getActivity();
                 activity.onSelect(null,null);
 
-                /*getActivity().getSupportFragmentManager()
-                        .beginTransaction()
-                        .detach(fragment)
-                        .attach(fragment)
-                        .commit();*/
 
             }
         });
@@ -91,25 +71,9 @@ public class EventsSearchDialog extends android.support.v4.app.DialogFragment  i
             //building found
             if(i==which){
                 Log.d("building:", building[i]);
-                //modify list
-                //if (eListener != null) {
-                //    Log.d("events","second pass");
-                //    eListener.onSelect("loc",building[i]);
-                //}
 
                 EventsSearchListener activity = (EventsSearchListener) getActivity();
                 activity.onSelect("loc",building[i]);
-//                mListener.onSelect("loc", building[i]);
-                //paramKey = "loc";
-                //paramValue = building[i];
-
-                            /*    getActivity().getSupportFragmentManager()
-                                        .beginTransaction()
-                                        .detach(fragment)
-                                        .attach(fragment)
-                                        .commit(); */
-
-
             }
         }
     }

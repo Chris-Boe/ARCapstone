@@ -507,6 +507,8 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
     /**
      * Exponential smoothing algorithm provided by variant-45 of stackoverflow.com
      * http://stackoverflow.com/a/8110907
+     * provides a low pass(exponential smoother) to smooth data as sensors are very sensitive
+     * the higher alpha is, the less its smoothed (ie: 1 = no smoothing, 0 = straight line)
      * @param input original sensor data
      * @param output smoothed sensor data
      * @param alpha ammount to smooth data by

@@ -4,9 +4,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -19,10 +19,8 @@ import android.widget.Toast;
 
 import com.goka.blurredgridmenu.GridMenu;
 import com.goka.blurredgridmenu.GridMenuFragment;
-import com.google.api.client.util.DateTime;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Random;
 
 import plu.capstone.R;
@@ -134,8 +132,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         return "Quick Fact: "+fact;
     }
     private void updateDB(){
-        //Intent intent = new Intent(this, CameraActivity.class);
-        //startActivity(intent);
         SharedPreferences prefs = this.getPreferences(0);
         SharedPreferences.Editor editor = prefs.edit();
         long lastUpdate = 0;
@@ -197,10 +193,4 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
-    //public HashMap getMap(){
-    //    return map;
-    //}
-
-
-
 }

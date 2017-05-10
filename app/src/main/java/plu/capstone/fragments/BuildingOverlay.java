@@ -419,11 +419,7 @@ public class BuildingOverlay extends Fragment {
             public void onClick(View v) {
                 if(scrollView.getChildCount()!=0)
                     scrollView.removeAllViews();
-
                 if(ft.isEmpty()) {
-
-
-
                     eView.setId(R.id.fragment_events_view);
                     eView.setBackgroundColor(Color.parseColor("#eeeeee"));
 
@@ -432,18 +428,14 @@ public class BuildingOverlay extends Fragment {
 
                     ft.replace(eView.getId(), event, "events");
                     ft.commit();
-
                 }
                 else {
                     tabCenter.removeView(scrollView);
                     if(tabCenter.findViewById(R.id.fragment_events_view)==null)
                         tabCenter.addView(eView, param);
                 }
-
-
             }
         });
-
         tabButtons.addView(tab1, new LinearLayout.LayoutParams((getView().getWidth() - getView().getWidth()/3)/2,LinearLayout.LayoutParams.WRAP_CONTENT));
         tabButtons.addView(tab2, new LinearLayout.LayoutParams((getView().getWidth() - getView().getWidth()/3)/2,LinearLayout.LayoutParams.WRAP_CONTENT));
         tabButtons.setGravity(Gravity.CENTER_HORIZONTAL);
@@ -464,11 +456,8 @@ public class BuildingOverlay extends Fragment {
     public void generateBuildingName(Buildings poi, final EventsViewFragment event, final FrameLayout tabLayout, final FragmentTransaction ft){
         final LinearLayout barLayout = (LinearLayout) getView().findViewById(R.id.barlayout);
         barLayout.setBackgroundColor(getResources().getColor(R.color.colorAccent,null));
-
         //Generate building name
-
         LinearLayout nameBar = new LinearLayout(getContext());
-
         TextView name = new TextView(getContext());
         name.setText(poi.Name);
         name.setPadding(25,25,35,25);
@@ -503,12 +492,7 @@ public class BuildingOverlay extends Fragment {
         params.gravity=Gravity.RIGHT;
         params.setMargins(0,0,35,25);
         barLayout.addView(exitB,params);
-
     }
-
-
-
-
     /**
      * Interface to interact with activity
      */

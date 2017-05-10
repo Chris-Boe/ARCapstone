@@ -44,7 +44,6 @@ public class BuildingsViewFragment extends Fragment {
         final Context con = this.getContext();
         setHasOptionsMenu(false);
 
-
         //gets instance/reference of database
         mDatabase = FirebaseDatabase.getInstance().getReference();
         //queries each event
@@ -68,7 +67,6 @@ public class BuildingsViewFragment extends Fragment {
                 expListView = (ExpandableListView) view.findViewById(R.id.lvExpEvents);
                 listAdapter = new ExpandableListAdapter(con, listHeaders, listChildren);
                 expListView.setAdapter(listAdapter);
-
             }
 
             //error
@@ -105,10 +103,6 @@ public class BuildingsViewFragment extends Fragment {
     public void addToBuildingChildren(String s, Buildings b){
         ArrayList<String> details = new ArrayList<>();
         details.add(b.Description);
-        //user only needs to see the description of the building
-        //details.add(b.getLatitude()+"");
-        //details.add(b.getLongitude()+"");
-        //details.add(b.getName());
         listChildren.put(s, details);
     }
     public HashMap<String, ArrayList<String>> getEventChildren(){

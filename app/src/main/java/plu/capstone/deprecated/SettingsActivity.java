@@ -1,4 +1,4 @@
-package plu.capstone.activities;
+package plu.capstone.deprecated;
 
 
 import android.annotation.TargetApi;
@@ -24,7 +24,6 @@ import android.support.v4.app.NavUtils;
 import java.util.List;
 
 import plu.capstone.R;
-import plu.capstone.deprecated.AppCompatPreferenceActivity;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On

@@ -41,8 +41,15 @@ import plu.capstone.R;
 import plu.capstone.activities.AR;
 import plu.capstone.deprecated.DataBaseBuildings;
 
-import static java.lang.System.currentTimeMillis;
+/**
+ * A Fragment to catch device location and sensor data then calculate it and send information to AR.java
+ * A model/controller model would advise doing the calculations in AR but as the calculations involve location and other information that would be expensive to pass forward, it's more efficient to calculate in here
+ */
 
+/**
+ * TODO:consider refactoring so onsensorschanged invalidates view so onlocationchanged isn't called as often
+ * this would involve ensuring POI is not null before invalidating with POI
+ */
 
 /**
  * A simple {@link Fragment} subclass.
@@ -53,14 +60,7 @@ import static java.lang.System.currentTimeMillis;
  * create an instance of this fragment.
  */
 public class SensorsFragment extends Fragment implements SensorEventListener, com.google.android.gms.location.LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    // private static final String ARG_PARAM1 = "man";
-    // private static final String ARG_PARAM2 = "cId";
 
-    // TODO: Rename and change types of parameters
-    // private CameraManager man;
-    //private String cId;
 
     public static final String TAG = "OverlayView Log";
     String accelData = "Accelerometer Data";
@@ -126,13 +126,8 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
      *
      * @return A new instance of fragment SensorsFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static SensorsFragment newInstance() {
         SensorsFragment fragment = new SensorsFragment();
-        // Bundle args = new Bundle();
-        // args.putString(ARG_PARAM2, cid);
-        // args.putSerializable(ARG_PARAM2, c);
-        // fragment.setArguments(args);
 
         return fragment;
     }
@@ -141,14 +136,14 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            //  mParam1 = getArguments().getString(ARG_PARAM1);
-            //  mParam2 = getArguments().getString(ARG_PARAM2);
+
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         man = ((AR) getActivity()).getCameraManager();
         cId = ((AR) getActivity()).getCameraId();
@@ -156,16 +151,18 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
 
         /**
          * GENERATE BUILDINGS
-         * todo:SORT THIS BY LOCATION SOMEHOW
+         * todo:might be more efficient to sort this by location
          */
         //get this moved later
         buildingList = new ArrayList<Buildings>();
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         Query testQuery = mDatabase.child("Pacific Lutheran University/Buildings");
-        //probably use minheap instead
+
+        //todo:consider using a minheap
         testQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-            //reads in data whenever changed (maybe find a more appropriate callback)
+
+            //reads in data whenever changed to put in buildingsList
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
@@ -184,16 +181,15 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
         Log.d("BLIST:", buildingList.toString());
 
 
+        //register sensors
         SensorManager sensors = (SensorManager) getContext().getSystemService(Context.SENSOR_SERVICE);
         Sensor accelSensor = sensors.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         Sensor compassSensor = sensors.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        Sensor gyroSensor = sensors.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         Sensor rotationSensor = sensors.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
         Sensor gravitySensor = sensors.getDefaultSensor(Sensor.TYPE_GRAVITY);
 
         isAccelAvailable = sensors.registerListener(this, accelSensor, SensorManager.SENSOR_DELAY_UI);
         isCompassAvailable = sensors.registerListener(this, compassSensor, SensorManager.SENSOR_DELAY_UI);
-        isGyroAvailable = sensors.registerListener(this, gyroSensor, SensorManager.SENSOR_DELAY_UI);
         isGravityAvailable = sensors.registerListener(this,gravitySensor,SensorManager.SENSOR_DELAY_UI);
         isRotationAvailable = sensors.registerListener(this,rotationSensor,SensorManager.SENSOR_DELAY_UI);
 
@@ -206,26 +202,11 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
         }
         mGoogleApiClient.connect();
 
-
-        //GET FOV
-        cc = null;
-        //Log.d("TEST", cId +" ?");
-        try {
-            cc = man.getCameraCharacteristics(cId);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
-
-        //Log.d("cc return:", cc + " ?");
-
-        // dbb = new DataBaseBuildings(getContext());
-        // dName = "";
-
         return inflater.inflate(R.layout.fragment_sensors, container, false);
     }
 
 
-    // TODO: Rename method, update argument and hook method into UI event
+    // TODO: Rename method
     public void invalidate(ArrayList<PointOfInterest> poiList) {
         if (mListener != null) {
             mListener.invalidate(poiList);
@@ -253,32 +234,26 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
     public void onSensorChanged(SensorEvent event) {
         StringBuilder msg = new StringBuilder(event.sensor.getName()).append(" ");
 
-        int smoothing = 15;
-        Time time = new Time(currentTimeMillis());
-
         switch (event.sensor.getType()) {
             case Sensor.TYPE_ROTATION_VECTOR:
-               // Log.d("using","rotationvec");
-/*
-                lastRotation = new float[16];
-                SensorManager.getRotationMatrixFromVector(lastRotation,event.values);
-
-                //Log.d("just to make usre",lastRotation.toString()+"");
-                accMag = false;*/
+               //TODO: rotation_vector would be a good thing to eventual implement though more was learned using gravity+magnetometer
                 break;
 
+            //if gravity is available
             case Sensor.TYPE_GRAVITY:
+
+                //initialize accelerometer
                 lastAccelerometer = new float[event.values.length];
                 lastAccelerometer = event.values;
+
+                //smooth with low pass filter
                 smoothedAccel = exponentialSmoothing(lastAccelerometer, smoothedAccel, (float) 0.1);
                 accMag = true;
                 break;
            case Sensor.TYPE_ACCELEROMETER:
                if(isGravityAvailable)
-                   //gravity > accelerometer
+                   //if gravity is available, use gravity
                    break;
-             /*  if(isRotationAvailable)
-                   break;*/
                else {
                   // Log.d("using","accel");
                    lastAccelerometer = new float[event.values.length];
@@ -286,65 +261,25 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
                    smoothedAccel = exponentialSmoothing(lastAccelerometer, smoothedAccel, (float) 0.1);
                    accMag = true;
                }
-                /*
-                float temp[] = null;
-                smoothedAccel = lastAccelerometer;
-                if (smoothedAccel == null)
-                    for (int i = 0; i < event.values.length; i++) {
-                        smoothedAccel = new float[event.values.length];
-                        smoothedAccel[i] = 0;
-                    }
-                lastAccelerometer = event.values;
-                float elapsed[] = new float[3];
-                for (int i = 0; i < event.values.length; i++) {
-                    smoothedAccel[i] += elapsed[i] * (lastAccelerometer[i] - smoothedAccel[i]) / smoothing;
-                    lastTime = time;
-                }
-                for (float value : smoothedAccel) {
-                    msg.append("[").append(value).append("]");
-                }
-                accelData = msg.toString();
-                */
                 break;
-          /*  case Sensor.TYPE_GYROSCOPE:
-                gyroData = msg.toString();
-                break;*/
+
             case Sensor.TYPE_MAGNETIC_FIELD:
-                /*if(isRotationAvailable)
-                    break;
-                else {*/
-                   // Log.d("using:", "magfield");
-                    lastCompass = new float[event.values.length];
-                    lastCompass = event.values;
-                    smoothedCompass = exponentialSmoothing(lastCompass, smoothedCompass, (float) .4);
-                    accMag = true;
-                //}
-               /*
-                smoothedCompass = lastCompass;
-                if (smoothedCompass == null)
-                    for (int i = 0; i < event.values.length; i++) {
-                        smoothedCompass = new float[event.values.length];
-                        smoothedCompass[i] = 0;
-                    }
+               // Log.d("using:", "magfield");
+                lastCompass = new float[event.values.length];
                 lastCompass = event.values;
-                float elapsedC[] = new float[3];
-                for (int i = 0; i < event.values.length; i++) {
-                    if (smoothedAccel == null)
-                        smoothedAccel = new float[3];
-                    smoothedCompass[i] += elapsedC[i] * (lastCompass[i] - smoothedCompass[i]) / smoothing;
-                    lastTime = time;
-                }
-                for (float value : smoothedCompass) {
-                    msg.append("[").append(value).append("]");
-                }
-                compassData = msg.toString();*/
+                smoothedCompass = exponentialSmoothing(lastCompass, smoothedCompass, (float) .4);
+                accMag = true;
+
                break;
         }
 
 
-        //  invalidate(accelData, compassData, gyroData, bearing, gps, ori, orientation, curBearing);
     }
 
+    /**
+     * print if accuracy is changed for debugging purposes
+     * 3 is highest, 0 lowest (uncertain
+     */
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         int SensorType = sensor.getType();
@@ -363,7 +298,6 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
         Log.d("umm","?????");
         Log.d("BLIST2", buildingList.toString());
         if (buildingList.size() > 0) {
-            //Log.d("BUILDING:", buildingList.get(0).Name);
 
             ArrayList<PointOfInterest> poiList = new ArrayList<PointOfInterest>();
             if (isBetterLocation(location, lastLocation)) {
@@ -371,19 +305,15 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
             }
             Log.d("prov", lastLocation.getProvider() + "");
 
-            //TODO:this should be buildinglist.size()
-            //buildinglist.size
+            //loop through buildings, its more optimized to use enhanced loops in mobile
             for(Buildings buildI : buildingList){
-           // for (int i = 0; i < buildingList.size(); i++) {
                 Location loc = new Location("manual");
                 loc.setLatitude(buildI.Latitude);
                 loc.setLongitude(buildI.Longitude);
                 loc.setAltitude(0);
 
-              //  Log.d("lat/long",lastLocation.getLatitude()+"/"+lastLocation.getLongitude());
 
-              //  Log.d("???","is this working");
-
+                //debug print statements
                 String printLoc = "Lat: " + location.getLatitude() + " Long: " + location.getLongitude();
                 //Toast toast = Toast.makeText(superContext.getApplicationContext(), printLoc, Toast.LENGTH_SHORT);
                 // toast.show();
@@ -399,7 +329,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
 
                     //Log.d("distance","here");
 
-                    //using accel
+                    //get rotation if using accelometer/gravity
                     if(accMag==true) {
                         float rotation[] = new float[9];
                         float identity[] = new float[9];
@@ -419,24 +349,16 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
                             float cameraRotation[] = new float[9];
                             //remap so camera points straight down y axis
                             SensorManager.remapCoordinateSystem(rotation, SensorManager.AXIS_X, SensorManager.AXIS_Z, cameraRotation);
-                            //SensorManager.remapCoordinateSystem(rotation, SensorManager.AXIS_X,SensorManager.AXIS_Z,cameraRotation);
-                            //SensorManager.remapCoordinateSystem(rotation,SensorManager.AXIS_X,SensorManager.AXIS_MINUS_Z,cameraRotation);
-                            //orientation vec
+
+                            //get orientation vec
                             orientation = new float[3];
                             SensorManager.getOrientation(cameraRotation, orientation);
                             Log.d("what about this?","??");
-                        /*if (gotRotation) {
-                           cameraRotation = new float[9];
-                            //remap so camera points positive
-                           SensorManager.remapCoordinateSystem(rotation, SensorManager.AXIS_X, SensorManager.AXIS_Z, cameraRotation);
 
-                            orientation = new float[3];
-                            SensorManager.getOrientation(cameraRotation,orientation);
-                        }*/
                         }
                     }
                     else {
-                        //else using matrix
+                        //get rotation if using matrix
                         float[] smoothedRotation = new float[16];
                         orientation = new float[3];
                         SensorManager.remapCoordinateSystem(lastRotation,SensorManager.AXIS_X, SensorManager.AXIS_Z, smoothedRotation);
@@ -446,48 +368,11 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
                         SensorManager.getOrientation(smoothedRotation,orientation);
                     }
 
-                    double lon1 = lastLocation.getLongitude();
-                    double lon2 = loc.getLongitude();
-                    double lat1 = lastLocation.getLatitude();
-                    double lat2 = lastLocation.getLongitude();
 
-
-
-                    double phi1 = Math.toRadians(lat1);
-                    double phi2 = Math.toRadians(lat2);
-                    double lam1 = Math.toRadians(lon1);
-                    double lam2 = Math.toRadians(lon2);
-
-                    double mathBearing = Math.atan2(Math.sin(lam2-lam1)*Math.cos(phi2),
-                            Math.cos(phi1)*Math.sin(phi2) - Math.sin(phi1)*Math.cos(phi2)*Math.cos(lam2-lam1)
-                    ) * 180/Math.PI;
-
-
-                    double latDelta = (lat2 - lat1);
-                    double lonDelta = (lon2 - lon1);
-                    double y = Math.sin(lonDelta)  * Math.cos(lat2);
-                    double x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2)* Math.cos(lonDelta);
-                    double angle = Math.atan2(y, x); //not finished here yet
-                    double headingDeg = 0;
-                    if(orientation != null)
-                        headingDeg = orientation[0];
-                    double angleDeg = angle * 180/Math.PI;
-                    double heading = headingDeg*Math.PI/180;
-                    angle = ((angleDeg + 360) % 360) * Math.PI/180; //normalize to 0 to 360 (instead of -180 to 180), then convert back to radians
-                    angleDeg = angle * 180/Math.PI;
-
-
-
-
-                    //Log.d("ORI:",ori+"");
                     if(orientation != null)
                         ori = "ORI: " + orientation[0] + " " + orientation[1] + " " + orientation[2];
-/*                    double hfov = (2 * Math.atan(40 /
-                                    ( 2 * (distance - 30))));
-*/
 
-  //                  double bearingTo = curBearing;
-                    //convert az to (0,360 d]
+                    //convert az to [-180,180] d and convert to true north
                     if(orientation!=null) {
                         double azDeg = Math.toDegrees(orientation[0]);
                         azDeg = azDeg + new GeomagneticField((float) lastLocation.getLatitude(), (float) lastLocation.getLongitude(), (float) lastLocation.getAltitude(), System.currentTimeMillis()).getDeclination();
@@ -518,6 +403,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
 
         }
     }
+
 
     //From Google Location Strategies
     //Smooth location results
@@ -573,6 +459,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
+        //request permissions
         if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -617,6 +504,14 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
 
     }
 
+    /**
+     * Exponential smoothing algorithm provided by variant-45 of stackoverflow.com
+     * http://stackoverflow.com/a/8110907
+     * @param input original sensor data
+     * @param output smoothed sensor data
+     * @param alpha ammount to smooth data by
+     * @return output data
+     */
     private float[] exponentialSmoothing( float[] input, float[] output, float alpha ) {
         if ( output == null )
             return input;
@@ -659,7 +554,7 @@ public class SensorsFragment extends Fragment implements SensorEventListener, co
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
+
         void invalidate(ArrayList<PointOfInterest> poiList);
     }
     @Override
